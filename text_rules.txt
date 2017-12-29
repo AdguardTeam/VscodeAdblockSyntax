@@ -1,4 +1,14 @@
 !
+! Basic rules
+!
+example.org
+@@||example.org^
+||example.org^
+|https://www.example.org/|
+||example.org^$third-party
+*.domain.com$domain=example.org,third-party,subdocument
+
+!
 ! Elemhide rules
 !
 ##valid_selector
@@ -21,6 +31,7 @@ example.org,123,test.com##valid_selector
 #$#invalid_style
 example.org#$#some_style { visibitility: hidden; }
 example.org,example.com,test.com#@$#valid_selector { visibitility: hidden; }
+! Wrong rule here:
 example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
 
 !
@@ -29,6 +40,10 @@ example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
 $$script[id="hello"]
 example.org$$script[id="hello"][tag-content="hello"][max-length="hi"]
 example.org,example.com$@$script[id="hello"][tag-content="something"]
+exam$$script[id="hello"]
+$$tag-name[id=value]
+$$tag-name[id=value
+$$div[id="value"]["val"="val"]
 
 !
 ! JS rules

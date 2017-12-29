@@ -16,6 +16,9 @@
 		},
 		{
 			"include": "#jsRules"
+		},
+		{
+			"include": "#basicRules"
 		}
 	],
 	"repository": {
@@ -142,10 +145,113 @@
 				}
 			]
 		},
+		"basicRules": {
+			"patterns": [
+				{
+					"match": "^(.+?)((\\$)(.*))?$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#urlPattern"
+								}
+							]
+						},
+						"3": {
+							"name": "keyword.control.adblock"
+						},
+						"4": {
+							"patterns": [
+								{
+									"include": "#basicRulesOptions"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"urlPattern": {
+			"patterns": [
+				{
+					"match": "^@@\\|?\\|?",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "^\\|\\|",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "^\\|",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "\\|$",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "\\^",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "\\*",
+					"name": "keyword.other.adblock"
+				}
+			]
+		},
+		"basicRulesOptions": {
+			"patterns": [
+				{
+					"match": "(domain)(=)([^,]+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						}						
+					}
+				},
+				{
+					"match": "replace=([^,]+)",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "(csp)(=)([^,]+)",
+					"name": "keyword.other.adblock",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						}					
+					}
+				},
+				{
+					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttrequest|other)",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "third-party|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttrequest|other",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": ",",
+					"name": "punctuation.definition.adblock"
+				}
+			]
+		},
 		"contentAttributes": {
 			"patterns": [
 				{
-					"match": "(\\[)(.+?)(\\=)(\".+?\")(\\])",
+					"match": "(\\[)([^\"=]+?)(\\=)(\".+?\")(\\])",
 					"captures": {
 						"1": {
 							"name": "punctuation.section.adblock"
