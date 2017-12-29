@@ -30,12 +30,12 @@ example.org,example.com,test.com##valid_selector
 business-service.me#@##banner_ad
 q.gs#@##bottom
 j.gs#@##bottom
+berlin.de##.teaser[-ext-has='>.inner>h3>a.trakkking,>.inner>h3:not(:has(>))']
 
 !
 ! Elemhide invalid rules
 !
 ##invalid_selector { invalid part of it }
-##invalid_selector , with comma
 example.org,example.com|test.com##valid_selector
 example.org,123,test.com##valid_selector
 
@@ -45,6 +45,7 @@ example.org,123,test.com##valid_selector
 #$#valid_style { position: absolute!important; }
 example.org#$#some_style { visibitility: hidden; }
 example.org,example.com,test.com#@$#valid_selector { visibitility: hidden; }
+aternos.org#$##detect { height: 1px!important; }
 
 !
 ! CSS invalid rules

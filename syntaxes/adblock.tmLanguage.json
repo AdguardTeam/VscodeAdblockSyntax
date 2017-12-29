@@ -6,17 +6,17 @@
 			"include": "#comments"
 		},
 		{
-			"include": "#elemhideRules"
+			"include": "#cssRules"
 		},
 		{
-			"include": "#cssRules"
+			"include": "#jsRules"
 		},
 		{
 			"include": "#contentRules"
 		},
 		{
-			"include": "#jsRules"
-		},
+			"include": "#elemhideRules"
+		},		
 		{
 			"include": "#basicRules"
 		}
@@ -291,7 +291,7 @@
 		"cssStyle": {
 			"patterns": [
 				{
-					"match": "([^{},]+)\\s*((\\{)(.+?)(\\}))",
+					"match": "([^{}]+)\\s*((\\{)(.+?)(\\}))",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.adblock"
@@ -317,7 +317,7 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.adblock",
-					"match": "[^{},]+"
+					"match": "[^{}]+"
 				},
 				{
 					"name": "invalid.illegal.adblock",
