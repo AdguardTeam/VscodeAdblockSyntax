@@ -32,6 +32,8 @@ business-service.me#@##banner_ad
 q.gs#@##bottom
 j.gs#@##bottom
 berlin.de##.teaser[-ext-has='>.inner>h3>a.trakkking,>.inner>h3:not(:has(>))']
+xn--fgelsng-exae.se##banner
+xn--80aneaaefcxzcih6g1e.xn--p1ai##banner
 
 !
 ! Elemhide invalid rules
@@ -39,6 +41,7 @@ berlin.de##.teaser[-ext-has='>.inner>h3>a.trakkking,>.inner>h3:not(:has(>))']
 ##invalid_selector { invalid part of it }
 example.org,example.com|test.com##valid_selector
 example.org,123,test.com##valid_selector
+пример.рф##banner
 
 !
 ! CSS valid rules

@@ -10,3 +10,6 @@
 ## 0.0.4
 - Fixed CSS selector regular expression
 - Fixed one more issue with CSS rules detection
+
+## 0.0.5
+- Fixed punycode domains handling
