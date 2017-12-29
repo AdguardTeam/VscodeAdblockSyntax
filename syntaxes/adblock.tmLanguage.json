@@ -342,6 +342,20 @@
 					}
 				},
 				{
+					"match": "((~?)(([0-9]{1,3}\\.?){4})(,?))",
+					"captures": {
+						"2": {
+							"name": "keyword.other.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						},
+						"5": {
+							"name": "punctuation.definition.adblock"
+						}
+					}
+				},
+				{
 					"name": "invalid.illegal.domain-list",
 					"match": ".*"
 				}
@@ -351,6 +365,20 @@
 			"patterns": [
 				{
 					"match": "((~?)(([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\\.?)+\\.[a-zA-Z]{2,})(\\|?))",
+					"captures": {
+						"2": {
+							"name": "keyword.other.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						},
+						"5": {
+							"name": "punctuation.definition.adblock"
+						}
+					}
+				},
+				{
+					"match": "((~?)(([0-9]{1,3}\\.?){4})(\\|?))",
 					"captures": {
 						"2": {
 							"name": "keyword.other.adblock"

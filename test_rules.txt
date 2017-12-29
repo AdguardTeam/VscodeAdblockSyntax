@@ -20,6 +20,7 @@ example.org
 ! Elemhide valid rules
 !
 ##.valid_selector
+j.gs,46.166.167.16,example.org##banner
 example.org##valid_selector
 ~example.org##valid_selector
 example.org,~hello.com##valid_selector
