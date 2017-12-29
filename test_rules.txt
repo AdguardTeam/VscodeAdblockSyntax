@@ -1,5 +1,5 @@
 !
-! Basic rules
+! Basic valid rules
 !
 example.org
 @@||example.org^
@@ -8,13 +8,18 @@ example.org
 ||example.org^$third-party
 ||example.org$domain=~example.org|~test.org
 *.domain.com$domain=example.org|test.org,third-party,subdocument
+||example.org$domain=j.gs
 
 !
-! Elemhide rules
+! Basic valid rules
 !
-##valid_selector
-##invalid_selector { invalid part of it }
-##invalid_selector , with comma
+||example.org$domain=~example.org,~test.org
+||example.org$domain=~example.org.~test.org
+
+!
+! Elemhide valid rules
+!
+##.valid_selector
 example.org##valid_selector
 ~example.org##valid_selector
 example.org,~hello.com##valid_selector
@@ -22,33 +27,52 @@ example.org#@#valid_selector
 example.org#@#valid_selector
 example.org,example.com##valid_selector
 example.org,example.com,test.com##valid_selector
+business-service.me#@##banner_ad
+q.gs#@##bottom
+j.gs#@##bottom
+
+!
+! Elemhide invalid rules
+!
+##invalid_selector { invalid part of it }
+##invalid_selector , with comma
 example.org,example.com|test.com##valid_selector
 example.org,123,test.com##valid_selector
 
 !
-! CSS rules
+! CSS valid rules
 !
 #$#valid_style { position: absolute!important; }
-#$#invalid_style
 example.org#$#some_style { visibitility: hidden; }
 example.org,example.com,test.com#@$#valid_selector { visibitility: hidden; }
-! Wrong rule here:
+
+!
+! CSS invalid rules
+!
+#$#invalid_style
+dayt.se#$##synpit { height:1px!important; }
 example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
 
 !
-! Content-filtering rules
+! Content-filtering valid rules
 !
 $$script[id="hello"]
 example.org$$script[id="hello"][tag-content="hello"][max-length="hi"]
 example.org,example.com$@$script[id="hello"][tag-content="something"]
+
+!
+! Content-filtering invalid rules
+!
 exam$$script[id="hello"]
 $$tag-name[id=value]
 $$tag-name[id=value
 $$div[id="value"]["val"="val"]
 
 !
-! JS rules
+! JS rules valid rules
 !
 #%#window.adblock = 1;
 example.org#@%#window.adblock = 1;
 example.org,hello.com#%#window.adblock = 1;
+nj.com#%#window.hello = 1;
+southwalesargus.co.uk#%#window.hello = 1;

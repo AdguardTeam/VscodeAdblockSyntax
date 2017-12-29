@@ -2,7 +2,7 @@
     "name": "adblock",
     "displayName": "Adblock Rules Language",
     "description": "VS code extension that adds support for ad blocking rules syntax.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "adguard",
     "engines": {
         "vscode": "^1.18.0"
