@@ -1,0 +1,91 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Adblock",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#elemhideRules"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line",
+					"match": "^!.*"
+				},
+				{
+					"name": "comment.line.header",
+					"match": "^(?:!|# |\\[).*"
+				},
+				{
+					"name": "comment.line.batch-style",
+					"match": " # .*"
+				}
+			]
+		},
+		"elemhideRules": {
+			"patterns": [
+				{
+					"name": "entity.name.function",
+					"begin": "^(.*)(#@?#)(.+)",
+					"beginCaptures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#domainListCommaSeparated"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.elemhide"
+						},
+						"3": {
+							"patterns": [
+								{
+									"include": "#cssSelector"
+								}
+							]
+						}
+					},
+					"end": "$"
+				}
+			]
+		},
+		"cssSelector": {
+			"patterns": [
+				{
+					"name": "entity.name.function",
+					"match": "[^{},]+"
+				},
+				{
+					"name": "invalid.illegal.css-selector",
+					"match": ".*"
+				}
+			]
+		},
+		"domainListCommaSeparated": {
+			"patterns": [
+				{
+					"name": "keyword.control.domain-list",
+					"match": "(([a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\\.[a-zA-Z]{2,})(,?))",
+					"captures": {
+						"2": {
+							"name": "entity.name.class.domain-name"
+						},
+						"3": {
+							"name": "keyword.control.domain-list-separator"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.domain-list",
+					"match": ".*"
+				}
+			]
+		}
+	},
+	"scopeName": "text.adblock"
+}

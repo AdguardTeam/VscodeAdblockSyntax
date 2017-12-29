@@ -1,0 +1,26 @@
+{
+    "name": "adblock",
+    "displayName": "adblock",
+    "description": "Ad blocking rules syntax",
+    "version": "0.0.1",
+    "publisher": "AdGuard",
+    "engines": {
+        "vscode": "^1.18.0"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "adblock",
+            "aliases": ["Adblock", "adblock"],
+            "extensions": [".txt"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "adblock",
+            "scopeName": "text.adblock",
+            "path": "./syntaxes/adblock.tmLanguage.json"
+        }]
+    }
+}
