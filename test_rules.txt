@@ -6,7 +6,8 @@ example.org
 ||example.org^
 |https://www.example.org/|
 ||example.org^$third-party
-*.domain.com$domain=example.org,third-party,subdocument
+||example.org$domain=~example.org|~test.org
+*.domain.com$domain=example.org|test.org,third-party,subdocument
 
 !
 ! Elemhide rules

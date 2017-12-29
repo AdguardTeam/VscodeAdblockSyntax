@@ -1,9 +1,9 @@
 {
     "name": "adblock",
-    "displayName": "adblock",
-    "description": "Ad blocking rules syntax",
-    "version": "0.0.1",
-    "publisher": "AdGuard",
+    "displayName": "Adblock Rules Language",
+    "description": "VS code extension that adds support for ad blocking rules syntax.",
+    "version": "0.1",
+    "publisher": "Andrey Meshkov",
     "engines": {
         "vscode": "^1.18.0"
     },
@@ -11,16 +11,26 @@
         "Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "adblock",
-            "aliases": ["Adblock", "adblock"],
-            "extensions": [".txt"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "adblock",
-            "scopeName": "text.adblock",
-            "path": "./syntaxes/adblock.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "adblock",
+                "aliases": [
+                    "adblock",
+                    "adguard",
+                    "ublock"
+                ],
+                "extensions": [
+                    ".txt"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "adblock",
+                "scopeName": "text.adblock",
+                "path": "./syntaxes/adblock.tmLanguage.json"
+            }
+        ]
     }
 }

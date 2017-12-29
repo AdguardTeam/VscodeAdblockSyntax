@@ -211,7 +211,11 @@
 							"name": "keyword.operator.adblock"
 						},
 						"3": {
-							"name": "string.unquoted.adblock"
+							"patterns": [
+								{
+									"include": "#domainListPipeSeparated"
+								}
+							]
 						}						
 					}
 				},
@@ -342,7 +346,30 @@
 					"match": ".*"
 				}
 			]
+		},
+		"domainListPipeSeparated": {
+			"patterns": [
+				{
+					"match": "((~?)([a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\\.[a-zA-Z]{2,})(\\|?))",
+					"captures": {
+						"2": {
+							"name": "keyword.other.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						},
+						"4": {
+							"name": "punctuation.definition.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.domain-list",
+					"match": ".*"
+				}
+			]
 		}
+		
 	},
 	"scopeName": "text.adblock"
 }
