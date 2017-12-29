@@ -5,6 +5,9 @@
 ##invalid_selector { invalid part of it }
 ##invalid_selector , with comma
 example.org##valid_selector
+~example.org##valid_selector
+example.org,~hello.com##valid_selector
+example.org#@#valid_selector
 example.org#@#valid_selector
 example.org,example.com##valid_selector
 example.org,example.com,test.com##valid_selector
@@ -19,3 +22,17 @@ example.org,123,test.com##valid_selector
 example.org#$#some_style { visibitility: hidden; }
 example.org,example.com,test.com#@$#valid_selector { visibitility: hidden; }
 example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
+
+!
+! Content-filtering rules
+!
+$$script[id="hello"]
+example.org$$script[id="hello"][tag-content="hello"][max-length="hi"]
+example.org,example.com$@$script[id="hello"][tag-content="something"]
+
+!
+! JS rules
+!
+#%#window.adblock = 1;
+example.org#@%#window.adblock = 1;
+example.org,hello.com#%#window.adblock = 1;

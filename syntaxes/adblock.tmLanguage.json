@@ -10,6 +10,12 @@
 		},
 		{
 			"include": "#cssRules"
+		},
+		{
+			"include": "#contentRules"
+		},
+		{
+			"include": "#jsRules"
 		}
 	],
 	"repository": {
@@ -81,6 +87,97 @@
 				}
 			]
 		},
+		"contentRules": {
+			"patterns": [
+				{
+					"match": "^(.*)(\\$@?\\$)(.+?)(\\[.+)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#domainListCommaSeparated"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
+							"name": "entity.name.function.adblock"
+						},
+						"4": {
+							"patterns": [
+								{
+									"include": "#contentAttributes"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"jsRules": {
+			"patterns": [
+				{
+					"match": "^(.*)(#@?%#)(.+)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#domainListCommaSeparated"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
+							"patterns": [
+								{
+									"include": "#jsFunction"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"contentAttributes": {
+			"patterns": [
+				{
+					"match": "(\\[)(.+?)(\\=)(\".+?\")(\\])",
+					"captures": {
+						"1": {
+							"name": "punctuation.section.adblock"
+						},
+						"2": {
+							"name": "keyword.other.adblock"
+						},
+						"3": {
+							"name": "keyword.operator.adblock"
+						},
+						"4": {
+							"name": "string.quoted.adblock"
+						},
+						"5": {
+							"name": "punctuation.section.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.adblock",
+					"match": ".*"
+				}
+			]
+		},
+		"jsFunction": {
+			"patterns": [
+				{
+					"name": "constant.character.jscode.adblock",
+					"match": ".+"
+				}
+			]
+		},
 		"cssStyle": {
 			"patterns": [
 				{
@@ -121,12 +218,15 @@
 		"domainListCommaSeparated": {
 			"patterns": [
 				{
-					"match": "(([a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\\.[a-zA-Z]{2,})(,?))",
+					"match": "((~?)([a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\\.[a-zA-Z]{2,})(,?))",
 					"captures": {
 						"2": {
-							"name": "string.unquoted.adblock"
+							"name": "keyword.other.adblock"
 						},
 						"3": {
+							"name": "string.unquoted.adblock"
+						},
+						"4": {
 							"name": "punctuation.definition.adblock"
 						}
 					}
