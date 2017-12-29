@@ -13,3 +13,6 @@
 
 ## 0.0.5
 - Fixed punycode domains handling
+
+## 0.0.6
+- Improve extension's description & meta data

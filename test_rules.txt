@@ -1,5 +1,5 @@
 !
-! Basic valid rules
+! Basic rules (valid)
 !
 example.org
 @@||example.org^
@@ -11,13 +11,13 @@ example.org
 ||example.org$domain=j.gs
 
 !
-! Basic valid rules
+! Basic rules (invalid)
 !
 ||example.org$domain=~example.org,~test.org
 ||example.org$domain=~example.org.~test.org
 
 !
-! Elemhide valid rules
+! Elemhide rules (valid)
 !
 ##.valid_selector
 j.gs,46.166.167.16,example.org##banner
@@ -36,7 +36,7 @@ xn--fgelsng-exae.se##banner
 xn--80aneaaefcxzcih6g1e.xn--p1ai##banner
 
 !
-! Elemhide invalid rules
+! Elemhide rules (invalid)
 !
 ##invalid_selector { invalid part of it }
 example.org,example.com|test.com##valid_selector
@@ -44,7 +44,7 @@ example.org,123,test.com##valid_selector
 пример.рф##banner
 
 !
-! CSS valid rules
+! CSS rules (valid)
 !
 #$#valid_style { position: absolute!important; }
 example.org#$#some_style { visibitility: hidden; }
@@ -52,21 +52,21 @@ example.org,example.com,test.com#@$#valid_selector { visibitility: hidden; }
 aternos.org#$##detect { height: 1px!important; }
 
 !
-! CSS invalid rules
+! CSS rules (invalid)
 !
 #$#invalid_style
 dayt.se#$##synpit { height:1px!important; }
 example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
 
 !
-! Content-filtering valid rules
+! Content-filtering rules (valid)
 !
 $$script[id="hello"]
 example.org$$script[id="hello"][tag-content="hello"][max-length="hi"]
 example.org,example.com$@$script[id="hello"][tag-content="something"]
 
 !
-! Content-filtering invalid rules
+! Content-filtering rules (invalid)
 !
 exam$$script[id="hello"]
 $$tag-name[id=value]
@@ -74,7 +74,7 @@ $$tag-name[id=value
 $$div[id="value"]["val"="val"]
 
 !
-! JS rules valid rules
+! JS rules rules (valid)
 !
 #%#window.adblock = 1;
 example.org#@%#window.adblock = 1;
