@@ -7,6 +7,9 @@
 		},
 		{
 			"include": "#elemhideRules"
+		},
+		{
+			"include": "#cssRules"
 		}
 	],
 	"repository": {
@@ -29,9 +32,8 @@
 		"elemhideRules": {
 			"patterns": [
 				{
-					"name": "entity.name.function",
-					"begin": "^(.*)(#@?#)(.+)",
-					"beginCaptures": {
+					"match": "^(.*)(#@?\\??#)(.+)$",
+					"captures": {
 						"1": {
 							"patterns": [
 								{
@@ -40,7 +42,7 @@
 							]
 						},
 						"2": {
-							"name": "keyword.control.elemhide"
+							"name": "keyword.control.adblock"
 						},
 						"3": {
 							"patterns": [
@@ -49,19 +51,69 @@
 								}
 							]
 						}
-					},
-					"end": "$"
+					}
+				}
+			]
+		},
+		"cssRules": {
+			"patterns": [
+				{
+					"match": "^(.*)(#@?\\$#)(.+)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#domainListCommaSeparated"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
+							"patterns": [
+								{
+									"include": "#cssStyle"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"cssStyle": {
+			"patterns": [
+				{
+					"match": "([^{},]+)\\s*((\\{)(.+?)(\\}))",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.adblock"
+						},
+						"3": {
+							"name": "punctuation.section.adblock"
+						},
+						"4": {
+							"name": "string.quoted.adblock"
+						},
+						"5": {
+							"name": "punctuation.section.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.adblock",
+					"match": ".*"
 				}
 			]
 		},
 		"cssSelector": {
 			"patterns": [
 				{
-					"name": "entity.name.function",
+					"name": "entity.name.function.adblock",
 					"match": "[^{},]+"
 				},
 				{
-					"name": "invalid.illegal.css-selector",
+					"name": "invalid.illegal.adblock",
 					"match": ".*"
 				}
 			]
@@ -69,14 +121,13 @@
 		"domainListCommaSeparated": {
 			"patterns": [
 				{
-					"name": "keyword.control.domain-list",
 					"match": "(([a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\\.[a-zA-Z]{2,})(,?))",
 					"captures": {
 						"2": {
-							"name": "entity.name.class.domain-name"
+							"name": "string.unquoted.adblock"
 						},
 						"3": {
-							"name": "keyword.control.domain-list-separator"
+							"name": "punctuation.definition.adblock"
 						}
 					}
 				},

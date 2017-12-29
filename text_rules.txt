@@ -1,0 +1,21 @@
+!
+! Elemhide rules
+!
+##valid_selector
+##invalid_selector { invalid part of it }
+##invalid_selector , with comma
+example.org##valid_selector
+example.org#@#valid_selector
+example.org,example.com##valid_selector
+example.org,example.com,test.com##valid_selector
+example.org,example.com|test.com##valid_selector
+example.org,123,test.com##valid_selector
+
+!
+! CSS rules
+!
+#$#valid_style { position: absolute!important; }
+#$#invalid_style
+example.org#$#some_style { visibitility: hidden; }
+example.org,example.com,test.com#@$#valid_selector { visibitility: hidden; }
+example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
