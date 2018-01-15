@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.0.7
+- Added $replace modifier support: #3
+- Fixed comments highlighting: #6
+- Added basic regex rules hightlighting: #8
+
 ## 0.0.6
 - Improve extension's description & meta data
 
