@@ -30,11 +30,11 @@
 				},
 				{
 					"name": "comment.line.header",
-					"match": "^(?:!|# |\\[).*"
+					"match": "^\\[Adblock.*"
 				},
 				{
 					"name": "comment.line.batch-style",
-					"match": " # .*"
+					"match": "^# .*"
 				}
 			]
 		},
