@@ -217,6 +217,15 @@
 		"basicRulesOptions": {
 			"patterns": [
 				{
+					"match": "replace=((\\/)(((\\\\\\/)|[^,\/]|(\\\\,))+?)(\\/)(((\\\\\\/)|[^,\/]|(\\\\,))*?)(\\/)([a-z]*))",
+					"name": "keyword.other.adblock",
+					"captures": {
+						"1": {
+							"name": "string.regexp.adblock"
+						}
+					}
+				},				
+				{
 					"match": "(domain)(=)([^,]+)",
 					"captures": {
 						"1": {
@@ -235,10 +244,6 @@
 					}
 				},
 				{
-					"match": "replace=([^,]+)",
-					"name": "keyword.other.adblock"
-				},
-				{
 					"match": "(csp)(=)([^,]+)",
 					"name": "keyword.other.adblock",
 					"captures": {
@@ -254,11 +259,11 @@
 					}
 				},
 				{
-					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttrequest|other)",
+					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttrequest|other|important)",
 					"name": "keyword.other.adblock"
 				},
 				{
-					"match": "third-party|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttrequest|other",
+					"match": "third-party|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttrequest|other|important",
 					"name": "keyword.other.adblock"
 				},
 				{

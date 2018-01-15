@@ -17,6 +17,19 @@ example.org
 ||example.org$domain=~example.org.~test.org
 
 !
+! Basic rules (regex)
+!
+/banner/
+/banner\d+/$third-party
+
+!
+! Basic rules ($replace)
+!
+||example.org^$replace=/(<VAST[\s\S]*?>)[\s\S]*<\/VAST>\/\$1<\/VAST>/gi,third-party
+||example.org^$important,replace=/(<VAST[\s\S]*?>)[\s\S]*<\/VAST>\/\$1<\/VAST>/gi,third-party
+||example.net^$replace=/[\s\S]+//,important,domain=example.org|example.com
+
+!
 ! Elemhide rules (valid)
 !
 ##.valid_selector
