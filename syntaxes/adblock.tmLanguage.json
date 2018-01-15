@@ -175,18 +175,12 @@
 			"patterns": [
 				{
 					"name": "string.regexp.adblock",
-					"begin": "^(@@)?(/)",
-					"beginCaptures": {
+					"match": "^(@@)?(\\/)(.+)\\/$",
+					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"
 						}
-					},
-					"end": "/$",
-					"patterns": [
-						{
-							"match": ".*"
-						}
-					]
+					}
 				},
 				{
 					"match": "^@@\\|?\\|?",

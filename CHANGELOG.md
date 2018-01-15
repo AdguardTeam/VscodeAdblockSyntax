@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.7
+## 0.0.8
 - Added $replace modifier support: #3
 - Fixed comments highlighting: #6
 - Added basic regex rules hightighting: #8

@@ -9,6 +9,7 @@ example.org
 ||example.org$domain=~example.org|~test.org
 *.domain.com$domain=example.org|test.org,third-party,subdocument
 ||example.org$domain=j.gs
+/banner
 
 !
 ! Basic rules (invalid)
@@ -20,7 +21,7 @@ example.org
 ! Basic rules (regex)
 !
 /banner/
-/banner\d+/$third-party
+@@/banner\d+/$third-party
 
 !
 ! Basic rules ($replace)
