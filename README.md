@@ -1,6 +1,6 @@
 # Ad blocking rules syntax
 
-Visual Studio Code extension that adds support for ad blocking filtering rules syntax.
+Visual Studio Code extension that adds support for ad blocking filtering rules syntax. It is available on [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=adguard.adblock).
 
 More information on the syntax:
 
