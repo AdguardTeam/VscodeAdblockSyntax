@@ -18,6 +18,9 @@
 			"include": "#elemhideRules"
 		},		
 		{
+			"include": "#basicRulesNoUrl"
+		},		
+		{
 			"include": "#basicRules"
 		}
 	],
@@ -138,6 +141,25 @@
 							"patterns": [
 								{
 									"include": "#jsFunction"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"basicRulesNoUrl": {
+			"patterns": [
+				{
+					"match": "^(\\$)(.+)$",
+					"captures": {
+						"1": {
+							"name": "keyword.control.adblock"
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "#basicRulesOptions"
 								}
 							]
 						}
@@ -271,7 +293,7 @@
 					}
 				},
 				{
-					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object|object-subrequest|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc)",
+					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc)",
 					"name": "keyword.other.adblock"
 				},
 				{
