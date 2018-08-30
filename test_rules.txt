@@ -58,6 +58,20 @@ example.org,123,test.com##valid_selector
 пример.рф##banner
 
 !
+! ExtCss rules (valid)
+!
+example.org#?#banner
+example.org,example.com#@?#banner
+example.org#$?#banner { display: none!important; }
+example.org#@?$#banner { display: none!important; }
+
+!
+! ExtCss rules (invalid)
+!
+example.org#?#banner { invalid part of it }
+example.org,example.com|test.com#@?#banner
+
+!
 ! CSS rules (valid)
 !
 #$#valid_style { position: absolute!important; }

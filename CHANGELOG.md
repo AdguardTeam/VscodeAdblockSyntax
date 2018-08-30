@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.9
+- Added new elemhide and CSS rules markers: #11
+
 ## 0.0.8
 - Added $replace modifier support: #3
 - Fixed comments highlighting: #6

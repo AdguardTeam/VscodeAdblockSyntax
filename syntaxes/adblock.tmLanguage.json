@@ -67,7 +67,7 @@
 		"cssRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#@?\\$#)(.+)$",
+					"match": "^(.*?)(#@?\\?\\$#)(.+)$",
 					"captures": {
 						"1": {
 							"patterns": [
