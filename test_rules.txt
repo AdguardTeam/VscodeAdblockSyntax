@@ -73,6 +73,7 @@ xn--80aneaaefcxzcih6g1e.xn--p1ai##banner
 example.org,example.com|test.com##valid_selector
 example.org,123,test.com##valid_selector
 пример.рф##banner
+|example.org##banner
 
 !
 ! ExtCss rules (valid)
@@ -87,6 +88,7 @@ example.org#@?$#banner { display: none!important; }
 !
 example.org#?#banner { invalid part of it }
 example.org,example.com|test.com#@?#banner
+|example.org#?#banner
 
 !
 ! CSS rules (valid)
@@ -102,6 +104,7 @@ aternos.org#$##detect { height: 1px!important; }
 #$#invalid_style
 dayt.se#$##synpit { height:1px!important; }
 example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
+|example.org#$#banner { }
 
 !
 ! Content-filtering rules (valid)
