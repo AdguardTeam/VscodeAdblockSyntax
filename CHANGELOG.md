@@ -2,6 +2,7 @@
 
 ## 0.0.9
 - Added new elemhide and CSS rules markers: #11
+- Added $websocket, $webrtc, $xmlhttprequest, $app: #9
 
 ## 0.0.8
 - Added $replace modifier support: #3

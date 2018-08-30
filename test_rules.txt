@@ -10,12 +10,18 @@ example.org
 *.domain.com$domain=example.org|test.org,third-party,subdocument
 ||example.org$domain=j.gs
 /banner
+||testwinapp.org^$app=Skype.exe
+||testapp.org^$app=com.adguard.android|~com.example
+||testws.org^$websocket,xmlhttprequest
+||testws.org^$~websocket,~xmlhttprequest
 
 !
 ! Basic rules (invalid)
 !
 ||example.org$domain=~example.org,~test.org
 ||example.org$domain=~example.org.~test.org
+||testwinapp.org^$app=Skype.exe,~test.com
+||testwinapp.org^$app=Skype.exe.~com.adguard
 
 !
 ! Basic rules (regex)
