@@ -5,15 +5,22 @@ example.org
 @@||example.org^
 ||example.org^
 |https://www.example.org/|
+/banner
 ||example.org^$third-party
+
+! Domain
 ||example.org$domain=~example.org|~test.org
 *.domain.com$domain=example.org|test.org,third-party,subdocument
 ||example.org$domain=j.gs
-/banner
+
+! App
 ||testwinapp.org^$app=Skype.exe
 ||testapp.org^$app=com.adguard.android|~com.example
 ||testws.org^$websocket,xmlhttprequest
 ||testws.org^$~websocket,~xmlhttprequest
+
+! Csp
+||example.org^$csp=frame-src 'none'
 
 !
 ! Basic rules (invalid)
