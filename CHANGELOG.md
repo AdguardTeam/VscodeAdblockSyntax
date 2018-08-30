@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.11
+- Fixed an issue with CSS rules highlighting: #13
+
 ## 0.0.9
 - Added new elemhide and CSS rules markers: #11
 - Added $websocket, $webrtc, $xmlhttprequest, $app: #9
