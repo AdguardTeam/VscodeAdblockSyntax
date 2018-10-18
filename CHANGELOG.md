@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.12
+- Added hints and pre-processor syntax
+
 ## 0.0.11
 - Fixed an issue with CSS rules highlighting: #13
 

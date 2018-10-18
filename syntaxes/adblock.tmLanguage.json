@@ -3,6 +3,9 @@
 	"name": "Adblock",
 	"patterns": [
 		{
+			"include": "#preprocessor"
+		},
+		{
 			"include": "#comments"
 		},
 		{
@@ -16,15 +19,86 @@
 		},
 		{
 			"include": "#elemhideRules"
-		},		
+		},
 		{
 			"include": "#basicRulesNoUrl"
-		},		
+		},
 		{
 			"include": "#basicRules"
 		}
 	],
 	"repository": {
+		"preprocessor": {
+			"patterns": [
+				{
+					"match": "^(!#if) (.*)$",
+					"captures": {
+						"1": {
+							"name": "keyword.preprocessor.directive"
+						},
+						"2": {
+							"patterns": [
+								{
+									"name": "constant.language.platform.name",
+									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|ext_ublock|adguard)"
+								},
+								{
+									"name": "keyword.control.characters",
+									"match": "(&&|!|\\|\\|)"
+								},
+								{
+									"name": "keyword.control.characters",
+									"match": "(\\(|\\))"
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "^(!#include) (.*)$",
+					"captures": {
+						"1": {
+							"name": "keyword.preprocessor.directive"
+						},
+						"2": {
+							"name": "string.unquoted"
+						}
+					}
+				},
+				{
+					"match": "^!#endif\\s*$",
+					"name": "keyword.preprocessor.directive"
+				},
+				{
+					"match": "^(!\\+) (.*)$",
+					"captures": {
+						"1": {
+							"name": "keyword.preprocessor.hint"
+						},
+						"2": {
+							"patterns": [
+								{
+									"name": "keyword.control.hint.name",
+									"match": "(NOT_OPTIMIZED|OPTIMIZED|PLATFORM|NOT_PLATFORM)"
+								},
+								{
+									"name": "constant.language.platform.name",
+									"match": "(windows|mac|android|ios|ext_chromium|ext_ff|ext_edge|ext_opera|ext_ublock|ext_safari|ext_android_cb)"
+								},
+								{
+									"name": "keyword.control.characters",
+									"match": "(\\(|\\)|,)"
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "^!#.+$",
+					"name": "invalid.preprocessor"
+				}
+			]
+		},
 		"comments": {
 			"patterns": [
 				{
@@ -240,7 +314,7 @@
 							"name": "string.regexp.adblock"
 						}
 					}
-				},				
+				},
 				{
 					"match": "(domain)(=)([^,]+)",
 					"captures": {
@@ -256,7 +330,7 @@
 									"include": "#domainListPipeSeparated"
 								}
 							]
-						}						
+						}
 					}
 				},
 				{
@@ -289,7 +363,7 @@
 						},
 						"3": {
 							"name": "string.unquoted.adblock"
-						}					
+						}
 					}
 				},
 				{
@@ -468,7 +542,7 @@
 					"match": ".*"
 				}
 			]
-		}		
+		}
 	},
 	"scopeName": "text.adblock"
 }

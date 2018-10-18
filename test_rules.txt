@@ -1,4 +1,15 @@
 !
+! Pre-processor directives and hints
+!
+!#if (adguard && !adguard_ext_safari)
+!#include https://example.org/
+!#endif
+!+ NOT_OPTIMIZED PLATFORM(android)
+||example.org^
+!#invalidpreprocessor
+!#if (invalid_platform)
+
+!
 ! Basic rules (valid)
 !
 example.org
@@ -80,7 +91,7 @@ example.org,123,test.com##valid_selector
 !
 example.org#?#banner
 example.org,example.com#@?#banner
-example.org#$?#banner { display: none!important; }
+example.org#?$#banner { display: none!important; }
 example.org#@?$#banner { display: none!important; }
 
 !
