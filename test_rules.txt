@@ -162,6 +162,7 @@ lablue.*##+js(setTimeout-defuser.js, r(), 500)
 !
 ! HTML filtering (uBO)
 !
-express.de,giga.de,kicker.de,kino.de,meinestadt.de,spieletipps.de##^script:has-text((window);)
+express.de,giga.de,kicker.de##^script:has-text((window);)
 wetteronline.de##^script:has-text(runCount)
 finanzen.*##^script:has-text(Inject=!)
+
