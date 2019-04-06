@@ -24,6 +24,7 @@ example.org
 ||example.org$domain=~example.org|~test.org
 *.domain.com$domain=example.org|test.org,third-party,subdocument
 ||example.org$domain=j.gs
+||example.org$domain=google.*
 
 ! No URL
 $websocket,domain=example.org
@@ -76,6 +77,9 @@ j.gs#@##bottom
 berlin.de##.teaser[-ext-has='>.inner>h3>a.trakkking,>.inner>h3:not(:has(>))']
 xn--fgelsng-exae.se##banner
 xn--80aneaaefcxzcih6g1e.xn--p1ai##banner
+! TLD
+google.*###center_col > #main > .dfrd > .mnr-c > .c._oc._zs
+google.*###center_col > #res > #topstuff + #search > div > #ires > #rso > #flun
 
 !
 ! Elemhide rules (invalid)
@@ -140,3 +144,7 @@ example.org#@%#window.adblock = 1;
 example.org,hello.com#%#window.adblock = 1;
 nj.com#%#window.hello = 1;
 southwalesargus.co.uk#%#window.hello = 1;
+
+!
+! Scriptlets
+!
