@@ -166,3 +166,12 @@ express.de,giga.de,kicker.de##^script:has-text((window);)
 wetteronline.de##^script:has-text(runCount)
 finanzen.*##^script:has-text(Inject=!)
 
+!
+! $cookie rules
+!
+$cookie=__cfduid
+$cookie=test,domain=example.org
+||example.org^$cookie
+||facebook.com^$third-party,cookie=c_user
+@@||example.org^$cookie=/regular_expression/
+||example.org^$cookie=NAME;maxAge=3600;sameSite=lax

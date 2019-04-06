@@ -428,6 +428,20 @@
 					}
 				},
 				{
+					"match": "(cookie)(=)([^,]+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						}
+					}
+				},
+				{
 					"match": "(csp)(=)([^,]+)",
 					"name": "keyword.other.adblock",
 					"captures": {
@@ -443,7 +457,7 @@
 					}
 				},
 				{
-					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc)",
+					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc|cookie)",
 					"name": "keyword.other.adblock"
 				},
 				{
