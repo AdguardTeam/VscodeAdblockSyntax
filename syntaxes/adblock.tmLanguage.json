@@ -594,11 +594,7 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.adblock",
-					"match": "[^{}]+"
-				},
-				{
-					"name": "invalid.illegal.adblock",
-					"match": ".*"
+					"match": ".+"
 				}
 			]
 		},
