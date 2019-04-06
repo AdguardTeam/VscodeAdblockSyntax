@@ -12,6 +12,9 @@
 			"include": "#cssRules"
 		},
 		{
+			"include": "#scriptletRules"
+		},
+		{
 			"include": "#jsRules"
 		},
 		{
@@ -191,6 +194,41 @@
 									"include": "#contentAttributes"
 								}
 							]
+						}
+					}
+				}
+			]
+		},
+		"scriptletRules": {
+			"patterns": [
+				{
+					"match": "^(.*?)(#@?%#)(\\/\\/scriptlet)(\\()(.+)(\\)\\s*)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#domainListCommaSeparated"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
+							"name": "entity.name.function.adblock"
+						},
+						"4": {
+							"name": "punctuation.section.adblock"
+						},
+						"5": {
+							"patterns": [
+								{
+									"include": "#scriptletFunction"
+								}
+							]
+						},
+						"6": {
+							"name": "punctuation.section.adblock"
 						}
 					}
 				}
@@ -395,6 +433,25 @@
 						},
 						"5": {
 							"name": "punctuation.section.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.adblock",
+					"match": ".*"
+				}
+			]
+		},
+		"scriptletFunction": {
+			"patterns": [
+				{
+					"match": "(['|\"].+?['|\"])(,\\s*)?",
+					"captures": {
+						"1": {
+							"name": "string.quoted.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
 						}
 					}
 				},

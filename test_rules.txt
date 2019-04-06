@@ -146,5 +146,8 @@ nj.com#%#window.hello = 1;
 southwalesargus.co.uk#%#window.hello = 1;
 
 !
-! Scriptlets
+! Scriptlets (AdGuard)
 !
+example.org#%#//scriptlet('name')
+example.org#%#//scriptlet('name', 'param')
+example.org#%#//scriptlet("abort-on-property-read", "alert")
