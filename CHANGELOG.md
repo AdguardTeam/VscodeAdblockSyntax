@@ -1,10 +1,14 @@
 # Change Log
 
+## 0.0.15
+- Added ABP snippets syntax support: #14
+- Fixed regex highlighting issue: #18
+
 ## 0.0.14
 - Added $cookie modifier support: #16
 - Added AdGuard scriptlet rules support: #20
-- Add uBO ##^ and ##+ syntax support: #15
-- Add support for TLD domain restriction: #19
+- Added uBO ##^ and ##+js syntax support: #15
+- Added support for TLD domain restriction: #19
 
 ## 0.0.12
 - Added hints and pre-processor syntax
