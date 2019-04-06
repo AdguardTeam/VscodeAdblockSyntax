@@ -160,6 +160,14 @@ ze.tt##+js(addEventListener-defuser.js, /^(?:DOMContentLoaded|load)$/, =!0)
 lablue.*##+js(setTimeout-defuser.js, r(), 500)
 
 !
+! ABP snippets
+!
+reuters.com#$#abort-current-inline-script String.fromCharCode 69bfbfdbe821fab7200e9613cab94c8b
+yandex.com#$#hide-if-contains ad li.serp-item 'li.serp-item div.label'
+zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.serve
+facebook.com#$#hide-if-has-and-matches-style 'abbr .timestampContent' 'div[id^="hyperfeed_story_id_"]' 'div[id*="feed_subtitle_"] > span, div[id*="feed_subtitle_"] > s' '' 'display: none'; hide-if-contains /.*/ .ego_section 'a[href^="/ad__campaign/landing.php?"]'; hide-if-contains /.*/ .ego_section 'a[href^="/ad_campaign/landing.php?"]'; hide-if-contains /.*/ .ego_section 'a[href^="/ad___campaign/landing.php?"]'
+
+!
 ! HTML filtering (uBO)
 !
 express.de,giga.de,kicker.de##^script:has-text((window);)
