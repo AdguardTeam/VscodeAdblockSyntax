@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.0.14
+- Added $cookie modifier support: #16
+- Added AdGuard scriptlet rules support: #20
+- Add uBO ##^ and ##+ syntax support: #15
+- Add support for TLD domain restriction: #19
+
 ## 0.0.12
 - Added hints and pre-processor syntax
 
