@@ -15,6 +15,9 @@
 			"include": "#scriptletRules"
 		},
 		{
+			"include": "#scriptletRulesUBO"
+		},
+		{
 			"include": "#jsRules"
 		},
 		{
@@ -121,7 +124,7 @@
 		"elemhideRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#@?\\??#)(.+)$",
+					"match": "^(.*?)(#@?\\??#\\^?)(.+)$",
 					"captures": {
 						"1": {
 							"patterns": [
@@ -224,6 +227,41 @@
 							"patterns": [
 								{
 									"include": "#scriptletFunction"
+								}
+							]
+						},
+						"6": {
+							"name": "punctuation.section.adblock"
+						}
+					}
+				}
+			]
+		},
+		"scriptletRulesUBO": {
+			"patterns": [
+				{
+					"match": "^(.*?)(##)(\\+js)(\\()(.+)(\\)\\s*)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#domainListCommaSeparated"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
+							"name": "entity.name.function.adblock"
+						},
+						"4": {
+							"name": "punctuation.section.adblock"
+						},
+						"5": {
+							"patterns": [
+								{
+									"include": "#scriptletFunctionUBO"
 								}
 							]
 						},
@@ -446,6 +484,25 @@
 			"patterns": [
 				{
 					"match": "(['|\"].+?['|\"])(,\\s*)?",
+					"captures": {
+						"1": {
+							"name": "string.quoted.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.adblock",
+					"match": ".*"
+				}
+			]
+		},
+		"scriptletFunctionUBO": {
+			"patterns": [
+				{
+					"match": "([^,]+)(,\\s*)?",
 					"captures": {
 						"1": {
 							"name": "string.quoted.adblock"

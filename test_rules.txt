@@ -151,3 +151,17 @@ southwalesargus.co.uk#%#window.hello = 1;
 example.org#%#//scriptlet('name')
 example.org#%#//scriptlet('name', 'param')
 example.org#%#//scriptlet("abort-on-property-read", "alert")
+
+!
+! Scriptlets (uBO)
+!
+example.org##+js(goyavelab-defuser.js)
+ze.tt##+js(addEventListener-defuser.js, /^(?:DOMContentLoaded|load)$/, =!0)
+lablue.*##+js(setTimeout-defuser.js, r(), 500)
+
+!
+! HTML filtering (uBO)
+!
+express.de,giga.de,kicker.de,kino.de,meinestadt.de,spieletipps.de##^script:has-text((window);)
+wetteronline.de##^script:has-text(runCount)
+finanzen.*##^script:has-text(Inject=!)
