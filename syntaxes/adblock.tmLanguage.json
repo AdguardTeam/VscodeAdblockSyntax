@@ -467,6 +467,39 @@
 					}
 				},
 				{
+					"match": "(redirect)(=)([^,]+)",
+					"name": "keyword.other.adblock",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						}
+					}
+				},
+				{
+					"match": "(rewrite)(=)(abp-resource:)([^,]+)",
+					"name": "keyword.other.adblock",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"name": "keyword.other.adblock"
+						},
+						"4": {
+							"name": "string.unquoted.adblock"
+						}
+					}
+				},
+				{
 					"match": "(csp)(=)([^,]+)",
 					"name": "keyword.other.adblock",
 					"captures": {

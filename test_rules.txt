@@ -41,6 +41,12 @@ $websocket,domain=example.org
 ! Csp
 ||example.org^$csp=frame-src 'none'
 
+! Redirect
+||example.org^$redirect=google-analytics.com/ga.js
+
+! Rewrite
+||example.org^$rewrite=abp-resource:blank-html
+
 !
 ! Basic rules (invalid)
 !
