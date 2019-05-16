@@ -1,5 +1,6 @@
 # Change Log
 
+## 0.0.16
 - Improved the $domain modifier performance: #26
 - Added $redirect modifier support: #21
 - Added $rewrite modifier support: #22
