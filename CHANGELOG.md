@@ -1,5 +1,7 @@
 # Change Log
 
+- Improved the $domain modifier performance: #26
+
 ## 0.0.15
 - Added ABP snippets syntax support: #14
 - Fixed regex highlighting issue: #18

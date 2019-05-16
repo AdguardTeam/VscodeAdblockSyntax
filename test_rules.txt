@@ -26,6 +26,9 @@ example.org
 ||example.org$domain=j.gs
 ||example.org$domain=google.*
 
+! Domain invalid: https://github.com/ameshkov/VscodeAdblockSyntax/issues/26
+||parajumpersnettbutikk.com^$document,domain=~ Advarselen vises grunnet: En grovt falsk nettbutikksvindel som er svartelistet av Forbrukertilsynet.
+
 ! No URL
 $websocket,domain=example.org
 
