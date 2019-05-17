@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.17
+## 0.0.18
 - Fixed: domains with "-" are marked as invalid: #27
 
 ## 0.0.16

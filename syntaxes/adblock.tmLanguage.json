@@ -634,7 +634,7 @@
 		"domainListCommaSeparated": {
 			"patterns": [
 				{
-					"match": "(~?)([a-zA-Z0-9-.*]+)(,?)",
+					"match": "(~?)([a-zA-Z0-9.*-]+)(,?)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"
@@ -656,7 +656,7 @@
 		"domainListPipeSeparated": {
 			"patterns": [
 				{
-					"match": "(~?)([a-zA-Z0-9-.*]+)(\\|?)",
+					"match": "(~?)([a-zA-Z0-9.*-]+)(\\|?)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"
