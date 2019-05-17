@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.17
+- Fixed: domains with "-" are marked as invalid: #27
+
 ## 0.0.16
 - Improved the $domain modifier performance: #26
 - Added $redirect modifier support: #21
