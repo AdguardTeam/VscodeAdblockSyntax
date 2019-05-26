@@ -55,6 +55,13 @@ $websocket,domain=example.org
 ! Rewrite
 ||example.org^$rewrite=abp-resource:blank-html
 
+! Helper modifiers: #23
+||example.org^$first-party
+||example.org^$xhr
+||example.org^$inline-script
+||example.org^$inline-font
+||example.org^$popunder
+
 !
 ! Basic rules (invalid)
 !

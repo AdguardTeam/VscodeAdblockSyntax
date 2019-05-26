@@ -515,7 +515,11 @@
 					}
 				},
 				{
-					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc|cookie|csp|replace)",
+					"match": "(inline-script|inline-font|mp4|empty|badfilter|genericblock|generichide|network|popup|popunder|important|cookie|csp|replace)",
+					"name": "keyword.other.adblock"
+				},
+				{
+					"match": "(~?)(xhr|first-party|third-party|match-case|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|webrtc)",
 					"name": "keyword.other.adblock"
 				},
 				{

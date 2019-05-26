@@ -1,5 +1,6 @@
 # Change Log
 
+- Added helper modifiers support: `xhr`, `first-party`, `inline-script`, `inline-font`: #23
 - Fixed: handle `cookie`, `csp`, `replace` without value: #29
 - Fixed: matching of content filtering rules without attribute selectors: #28
 
