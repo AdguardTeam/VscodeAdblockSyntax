@@ -1,5 +1,6 @@
 # Change Log
 
+- Fixed: handle `cookie`, `csp`, `replace` without value: #29
 - Fixed: matching of content filtering rules without attribute selectors: #28
 
 ## 0.0.18

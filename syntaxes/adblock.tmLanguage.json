@@ -515,7 +515,7 @@
 					}
 				},
 				{
-					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc|cookie)",
+					"match": "(~?)(mp4|empty|badfilter|genericblock|generichide|third-party|network|match-case|popup|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|important|webrtc|cookie|csp|replace)",
 					"name": "keyword.other.adblock"
 				},
 				{

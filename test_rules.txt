@@ -46,6 +46,9 @@ $websocket,domain=example.org
 ||example.org^$csp=frame-src 'none'
 @@||example.org^$csp
 
+! Badfilter
+@@||example.org^$badfilter
+
 ! Redirect
 ||example.org^$redirect=google-analytics.com/ga.js
 
