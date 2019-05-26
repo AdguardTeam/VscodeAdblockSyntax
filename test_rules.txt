@@ -38,8 +38,13 @@ $websocket,domain=example.org
 ||testws.org^$websocket,xmlhttprequest
 ||testws.org^$~websocket,~xmlhttprequest
 
+! -------------------------
+! Modifiers
+! -------------------------
+
 ! Csp
 ||example.org^$csp=frame-src 'none'
+@@||example.org^$csp
 
 ! Redirect
 ||example.org^$redirect=google-analytics.com/ga.js
@@ -67,6 +72,7 @@ $websocket,domain=example.org
 ||example.org^$replace=/(<VAST[\s\S]*?>)[\s\S]*<\/VAST>\/\$1<\/VAST>/gi,third-party
 ||example.org^$important,replace=/(<VAST[\s\S]*?>)[\s\S]*<\/VAST>\/\$1<\/VAST>/gi,third-party
 ||example.net^$replace=/[\s\S]+//,important,domain=example.org|example.com
+@@||example.org^$replace
 
 !
 ! Elemhide rules (valid)
@@ -138,6 +144,7 @@ example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
 $$script[id="hello"]
 example.org$$script[id="hello"][tag-content="hello"][max-length="hi"]
 example.org,example.com$@$script[id="hello"][tag-content="something"]
+example.org$$script
 
 !
 ! Content-filtering rules (invalid)
@@ -194,3 +201,4 @@ $cookie=test,domain=example.org
 ||facebook.com^$third-party,cookie=c_user
 @@||example.org^$cookie=/regular_expression/
 ||example.org^$cookie=NAME;maxAge=3600;sameSite=lax
+@@||example.org^$cookie
