@@ -179,6 +179,8 @@ southwalesargus.co.uk#%#window.hello = 1;
 example.org#%#//scriptlet('name')
 example.org#%#//scriptlet('name', 'param')
 example.org#%#//scriptlet("abort-on-property-read", "alert")
+example.com#%#//scriptlet('abort-current-inline-script', 'document.addEventListener', '/example|test/')
+example.com#%#//scriptlet("remove-class", 'branding', "div[class^=\"inner\"]")
 
 !
 ! Scriptlets (uBO)
