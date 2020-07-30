@@ -65,6 +65,17 @@ $websocket,domain=example.org
 ! extension modifier: #31
 @@||taxes.hrblock.com^$extension
 
+! more modifiers aliases: #34
+||example.org^$all
+||example.org^$3p
+||example.org^$1p
+||example.org^$css
+||example.org^$frame
+||example.org^$ghide
+||example.org^$ehide
+||example.org^$shide
+||example.org^$specifichide
+
 !
 ! Basic rules (invalid)
 !

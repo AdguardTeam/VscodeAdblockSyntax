@@ -4,6 +4,7 @@
 - Fixed scriptlet rules arguments: #35
 - Added ping modifier: #33
 - Added extension modifier: #31
+- Added more modifiers aliases: `all`, `1p`, `3p`, `css`, `frame`, `ghide`, `ehide`, `shide`, `specifichide`: #34
 
 ## 0.0.19
 - Added helper modifiers support: `xhr`, `first-party`, `inline-script`, `inline-font`: #23
