@@ -559,12 +559,12 @@
 		"scriptletFunction": {
 			"patterns": [
 				{
-					"match": "(['|\"].+?['|\"])(,\\s*)?",
+					"match": "((['|\"])(.+?)(?<!\\\\)(\\2))(,\\s*)?",
 					"captures": {
 						"1": {
 							"name": "string.quoted.adblock"
 						},
-						"2": {
+						"5": {
 							"name": "keyword.operator.adblock"
 						}
 					}
