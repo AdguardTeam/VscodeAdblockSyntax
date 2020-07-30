@@ -62,6 +62,9 @@ $websocket,domain=example.org
 ||example.org^$inline-font
 ||example.org^$popunder
 
+! extension modifier: #31
+@@||taxes.hrblock.com^$extension
+
 !
 ! Basic rules (invalid)
 !

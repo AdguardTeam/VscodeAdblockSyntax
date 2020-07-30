@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.0.20
+- Fixed scriptlet rules arguments: #35
+- Added ping modifier: #33
+- Added extension modifier: #31
+
 ## 0.0.19
 - Added helper modifiers support: `xhr`, `first-party`, `inline-script`, `inline-font`: #23
 - Fixed: handle `cookie`, `csp`, `replace` without value: #29

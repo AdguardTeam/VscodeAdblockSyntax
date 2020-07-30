@@ -519,7 +519,7 @@
 					"name": "keyword.other.adblock"
 				},
 				{
-					"match": "(~?)(xhr|first-party|third-party|match-case|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|webrtc|ping)",
+					"match": "(~?)(xhr|first-party|third-party|match-case|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|webrtc|ping|extension)",
 					"name": "keyword.other.adblock"
 				},
 				{
