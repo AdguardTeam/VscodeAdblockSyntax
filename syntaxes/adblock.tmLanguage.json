@@ -417,7 +417,7 @@
 					}
 				},
 				{
-					"match": "(domain)(=)([^,]+)",
+					"match": "(domain|denyallow)(=)([^,]+)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"
@@ -467,7 +467,7 @@
 					}
 				},
 				{
-					"match": "(redirect)(=)([^,]+)",
+					"match": "(redirect|redirect-rule)(=)([^,]+)",
 					"name": "keyword.other.adblock",
 					"captures": {
 						"1": {
