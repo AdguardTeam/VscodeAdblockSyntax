@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.21
+- Added `denyallow` and `redirect-rule` modifiers
+
 ## 0.0.20
 - Fixed scriptlet rules arguments: #35
 - Added ping modifier: #33
