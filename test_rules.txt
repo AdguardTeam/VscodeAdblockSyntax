@@ -25,6 +25,7 @@ example.org
 *.domain.com$domain=example.org|test.org,third-party,subdocument
 ||example.org$domain=j.gs
 ||example.org$domain=google.*
+*$3p,script,denyallow=hello.com|service.me,domain=example.*|test.org
 
 ! Domain invalid: https://github.com/ameshkov/VscodeAdblockSyntax/issues/26
 ||parajumpersnettbutikk.com^$document,domain=~ Advarselen vises grunnet: En grovt falsk nettbutikksvindel som er svartelistet av Forbrukertilsynet.
@@ -51,6 +52,7 @@ $websocket,domain=example.org
 
 ! Redirect
 ||example.org^$redirect=google-analytics.com/ga.js
+||example.org/$script,redirect-rule=noop.txt
 
 ! Rewrite
 ||example.org^$rewrite=abp-resource:blank-html
