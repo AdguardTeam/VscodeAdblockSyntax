@@ -1,3 +1,7 @@
+# Some comments (should be all green)
+!
+#
+
 !
 ! Pre-processor directives and hints
 !

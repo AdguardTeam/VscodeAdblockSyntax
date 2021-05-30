@@ -149,6 +149,10 @@
 				{
 					"name": "comment.line.batch-style",
 					"match": "^# .*"
+				},
+				{
+					"name": "comment.line.batch-style",
+					"match": "^#$"
 				}
 			]
 		},
