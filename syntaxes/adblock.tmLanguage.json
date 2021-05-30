@@ -587,7 +587,7 @@
 		"scriptletFunction": {
 			"patterns": [
 				{
-					"match": "((['|\"])(.+?)(?<!\\\\)(\\2))(,\\s*)?",
+					"match": "((['|\"])(.*?)(?<!\\\\)(\\2))(,\\s*)?",
 					"captures": {
 						"1": {
 							"name": "string.quoted.adblock"

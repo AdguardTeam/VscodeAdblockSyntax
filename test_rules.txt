@@ -196,6 +196,8 @@ southwalesargus.co.uk#%#window.hello = 1;
 ! Scriptlets (AdGuard)
 !
 example.org#%#//scriptlet('name')
+example.org#%#//scriptlet('name', '')
+example.org#%#//scriptlet('name', "")
 example.org#%#//scriptlet('name', 'param')
 example.org#%#//scriptlet("abort-on-property-read", "alert")
 example.com#%#//scriptlet('abort-current-inline-script', 'document.addEventListener', '/example|test/')
