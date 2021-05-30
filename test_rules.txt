@@ -257,3 +257,24 @@ $cookie=test,domain=example.org
 !
 @@||example.org^$stealth
 @@||example.org^$stealth,domain=example.org
+
+!
+! DNS filtering modifiers
+!
+! $client
+@@||*^$client=127.0.0.1
+||example.org^$client=192.168.0.0/24
+||example.org^$client=~'Mary\'s\, John\'s\, and Boris\'s laptops',denyallow=example.org
+||example.org^$client=~Mom|~Dad|Kids
+! $ctag
+||example.org^$ctag=device_pc|device_phone
+||example.org^$ctag=~device_phone
+! $dnstype
+||example.org^$dnstype=AAAA
+||example.org^$dnstype=~A|~CNAME
+! $dnsrewrite
+||example.com^$dnsrewrite=example.net
+||example.com^$dnsrewrite=NOERROR;CNAME;example.net
+||example.com^$dnsrewrite=NOERROR;A;1.2.3.4
+||example.com^$dnsrewrite=NOERROR;SVCB;32 example.com alpn=h3
+||example.com^$dnsrewrite=NXDOMAIN;;

@@ -485,7 +485,44 @@
 					}
 				},
 				{
-					"match": "(cookie)(=)([^,]+)",
+					"match": "(dnstype)(=)([^,]+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"patterns": [
+								{
+									"include": "#dnsTypesPipeSeparated"
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "(client|ctag)(=)(((\\\\,)|[^,])+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"patterns": [
+								{
+									"include": "#dnsClientsPipeSeparated"
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "(redirect|redirect-rule|csp|cookie)(=)(((\\\\,)|[^,])+)",
+					"name": "keyword.other.adblock",
 					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"
@@ -499,7 +536,7 @@
 					}
 				},
 				{
-					"match": "(redirect|redirect-rule)(=)([^,]+)",
+					"match": "(dnsrewrite)(=)(((\\\\,)|[^,])+)",
 					"name": "keyword.other.adblock",
 					"captures": {
 						"1": {
@@ -509,7 +546,16 @@
 							"name": "keyword.operator.adblock"
 						},
 						"3": {
-							"name": "string.unquoted.adblock"
+							"patterns": [
+								{
+									"name": "keyword.other.delimiter",
+									"match": ";"
+								},
+								{
+									"name": "string.unquoted.adblock",
+									"match": "[^;]*"
+								}
+							]
 						}
 					}
 				},
@@ -532,22 +578,7 @@
 					}
 				},
 				{
-					"match": "(csp)(=)([^,]+)",
-					"name": "keyword.other.adblock",
-					"captures": {
-						"1": {
-							"name": "keyword.other.adblock"
-						},
-						"2": {
-							"name": "keyword.operator.adblock"
-						},
-						"3": {
-							"name": "string.unquoted.adblock"
-						}
-					}
-				},
-				{
-					"match": "(removeparam|queryprune)(=)(~)?([^,]+)",
+					"match": "(removeparam|queryprune)(=)(~)?(((\\\\,)|[^,])+)",
 					"name": "keyword.other.adblock",
 					"captures": {
 						"1": {
@@ -733,6 +764,50 @@
 			"patterns": [
 				{
 					"match": "((~?)([a-zA-Z0-9.-_]+)(\\|?))",
+					"captures": {
+						"2": {
+							"name": "keyword.other.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						},
+						"4": {
+							"name": "punctuation.definition.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.app-list",
+					"match": ".*"
+				}
+			]
+		},
+		"dnsTypesPipeSeparated": {
+			"patterns": [
+				{
+					"match": "((~?)([a-zA-Z0-9.-_]+)(\\|?))",
+					"captures": {
+						"2": {
+							"name": "keyword.other.adblock"
+						},
+						"3": {
+							"name": "string.unquoted.adblock"
+						},
+						"4": {
+							"name": "punctuation.definition.adblock"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.app-list",
+					"match": ".*"
+				}
+			]
+		},
+		"dnsClientsPipeSeparated": {
+			"patterns": [
+				{
+					"match": "((~?)([^|]+)(\\|?))",
 					"captures": {
 						"2": {
 							"name": "keyword.other.adblock"
