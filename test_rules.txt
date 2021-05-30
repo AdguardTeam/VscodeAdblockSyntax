@@ -8,6 +8,9 @@
 ||example.org^
 !#invalidpreprocessor
 !#if (invalid_platform)
+!#safari_cb_affinity(general,privacy)
+!#safari_cb_affinity
+!#safari_cb_affinity(invalid)
 
 !
 ! Basic rules (valid)

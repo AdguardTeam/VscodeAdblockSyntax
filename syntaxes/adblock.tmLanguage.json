@@ -49,7 +49,7 @@
 							"patterns": [
 								{
 									"name": "constant.language.platform.name",
-									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|ext_ublock|adguard)"
+									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|adguard|ext_abp|ext_ublock|env_chromium|env_edge|env_firefox|env_mobile|env_safari|false|cap_html_filtering|cap_user_stylesheet)"
 								},
 								{
 									"name": "keyword.control.characters",
@@ -58,6 +58,10 @@
 								{
 									"name": "keyword.control.characters",
 									"match": "(\\(|\\))"
+								},
+								{
+									"name": "invalid.illegal",
+									"match": ".*"
 								}
 							]
 						}
@@ -77,6 +81,30 @@
 				{
 					"match": "^!#endif\\s*$",
 					"name": "keyword.preprocessor.directive"
+				},
+				{
+					"match": "^(!#safari_cb_affinity)(.*)$",
+					"captures": {
+						"1": {
+							"name": "keyword.preprocessor.directive"
+						},
+						"2": {
+							"patterns": [
+								{
+									"name": "constant.language.contentblocker.name",
+									"match": "(all|general|privacy|social|security|other|custom)"
+								},
+								{
+									"name": "keyword.control.characters",
+									"match": "(\\(|\\)|,)"
+								},
+								{
+									"name": "invalid.illegal",
+									"match": ".*"
+								}
+							]
+						}
+					}
 				},
 				{
 					"match": "^(!\\+) (.*)$",
