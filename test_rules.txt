@@ -235,3 +235,21 @@ $cookie=test,domain=example.org
 @@||example.org^$cookie=/regular_expression/
 ||example.org^$cookie=NAME;maxAge=3600;sameSite=lax
 @@||example.org^$cookie
+
+!
+! $removeparam and $queryprune rules
+!
+||example.org^$removeparam
+||example.org^$removeparam=test
+||example.org^$removeparam=~test
+||example.org^$removeparam=/^(test|test2)=/i
+||example.org^$queryprune
+||example.org^$queryprune=test
+||example.org^$queryprune=~test
+||example.org^$queryprune=/^(test|test2)=/i
+
+!
+! $stealth rules
+!
+@@||example.org^$stealth
+@@||example.org^$stealth,domain=example.org

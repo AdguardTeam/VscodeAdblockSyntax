@@ -543,7 +543,25 @@
 					}
 				},
 				{
-					"match": "(inline-script|inline-font|mp4|empty|badfilter|genericblock|generichide|network|popup|popunder|important|cookie|csp|replace)",
+					"match": "(removeparam|queryprune)(=)(~)?([^,]+)",
+					"name": "keyword.other.adblock",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"name": "keyword.other.adblock"
+						},
+						"4": {
+							"name": "string.unquoted.adblock"
+						}
+					}
+				},
+				{
+					"match": "(inline-script|inline-font|mp4|empty|badfilter|genericblock|generichide|network|popup|popunder|important|cookie|csp|replace|stealth|removeparam|queryprune)",
 					"name": "keyword.other.adblock"
 				},
 				{
