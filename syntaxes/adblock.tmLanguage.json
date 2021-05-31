@@ -53,7 +53,7 @@
 								},
 								{
 									"name": "keyword.control.characters",
-									"match": "(&&|!|\\|\\|)"
+									"match": "(&&|!|\\|\\|| )"
 								},
 								{
 									"name": "keyword.control.characters",
