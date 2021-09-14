@@ -560,6 +560,30 @@
 					}
 				},
 				{
+					"match": "(removeheader)(=)(((\\\\,)|[^,])+)",
+					"name": "keyword.other.adblock",
+					"captures": {
+						"1": {
+							"name": "keyword.other.adblock"
+						},
+						"2": {
+							"name": "keyword.operator.adblock"
+						},
+						"3": {
+							"patterns": [
+								{
+									"name": "keyword.other.delimiter",
+									"match": ":"
+								},
+								{
+									"name": "string.unquoted.adblock",
+									"match": "[^:]*"
+								}
+							]
+						}
+					}
+				},
+				{
 					"match": "(rewrite)(=)(abp-resource:)([^,]+)",
 					"name": "keyword.other.adblock",
 					"captures": {

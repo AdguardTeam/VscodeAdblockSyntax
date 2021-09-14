@@ -1,3 +1,7 @@
+!
+! Test rules for the syntax highlighter
+!
+
 # Some comments (should be all green)
 !
 #
@@ -251,6 +255,14 @@ $cookie=test,domain=example.org
 ||example.org^$queryprune=test
 ||example.org^$queryprune=~test
 ||example.org^$queryprune=/^(test|test2)=/i
+
+!
+! $removeheader rules
+!
+||destyy.com^$removeheader=request:user-agent
+||utarget.ru/ranging/*/click/$removeheader=location
+$removeheader=location,domain=zannn.top|innal.top
+/games-pc.top\/forum\/(?!login.php)/$removeheader=location
 
 !
 ! $stealth rules
