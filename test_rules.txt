@@ -290,3 +290,22 @@ $removeheader=location,domain=zannn.top|innal.top
 ||example.com^$dnsrewrite=NOERROR;A;1.2.3.4
 ||example.com^$dnsrewrite=NOERROR;SVCB;32 example.com alpn=h3
 ||example.com^$dnsrewrite=NXDOMAIN;;
+
+!
+! Cosmetic rules modifiers
+!
+[$path=/test]##banner
+[$path=/test]#@#banner
+[$path=/test]#?#.banner
+[$path=/test]#@?#.banner
+[$path=/test]#$#banner { style: display: none!important; }
+[$path=/test]#@$#banner { style: display: none!important; }
+[$path=/test,app=com.google.search]##banner
+[$path=/test,domain=example.org]##banner
+[$path=/test]$$banner
+[$path=/test]example.org#%#//scriptlet('name', '')
+
+!
+! Cosmetic rules modifiers, invalid modifiers
+!
+[$randommodifier=test]##banner

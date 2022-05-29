@@ -159,19 +159,26 @@
 		"elemhideRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#@?\\??#\\^?)(.+)$",
+					"match": "^(\\[.+?\\])?(.*?)(#@?\\??#\\^?)(.+)$",
 					"captures": {
 						"1": {
+							"patterns": [
+								{
+									"include": "#cosmeticRulesOptions"
+								}
+							]
+						},
+						"2": {
 							"patterns": [
 								{
 									"include": "#domainListCommaSeparated"
 								}
 							]
 						},
-						"2": {
+						"3": {
 							"name": "keyword.control.adblock"
 						},
-						"3": {
+						"4": {
 							"patterns": [
 								{
 									"include": "#cssSelector"
@@ -207,19 +214,26 @@
 		"cssRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#@?\\$\\??#)(.+)$",
+					"match": "^(\\[.+?\\])?(.*?)(#@?\\$\\??#)(.+)$",
 					"captures": {
 						"1": {
+							"patterns": [
+								{
+									"include": "#cosmeticRulesOptions"
+								}
+							]
+						},
+						"2": {
 							"patterns": [
 								{
 									"include": "#domainListCommaSeparated"
 								}
 							]
 						},
-						"2": {
+						"3": {
 							"name": "keyword.control.adblock"
 						},
-						"3": {
+						"4": {
 							"patterns": [
 								{
 									"include": "#cssStyle"
@@ -233,22 +247,29 @@
 		"contentRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(\\$@?\\$)(.+?)(\\[.+)?$",
+					"match": "^(\\[.+?\\])?(.*?)(\\$@?\\$)(.+?)(\\[.+)?$",
 					"captures": {
 						"1": {
+							"patterns": [
+								{
+									"include": "#cosmeticRulesOptions"
+								}
+							]
+						},
+						"2": {
 							"patterns": [
 								{
 									"include": "#domainListCommaSeparated"
 								}
 							]
 						},
-						"2": {
+						"3": {
 							"name": "keyword.control.adblock"
 						},
-						"3": {
+						"4": {
 							"name": "entity.name.function.adblock"
 						},
-						"4": {
+						"5": {
 							"patterns": [
 								{
 									"include": "#contentAttributes"
@@ -262,32 +283,39 @@
 		"scriptletRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#@?%#)(\\/\\/scriptlet)(\\()(.+)(\\)\\s*)$",
+					"match": "^(\\[.+?\\])?(.*?)(#@?%#)(\\/\\/scriptlet)(\\()(.+)(\\)\\s*)$",
 					"captures": {
 						"1": {
+							"patterns": [
+								{
+									"include": "#cosmeticRulesOptions"
+								}
+							]
+						},
+						"2": {
 							"patterns": [
 								{
 									"include": "#domainListCommaSeparated"
 								}
 							]
 						},
-						"2": {
+						"3": {
 							"name": "keyword.control.adblock"
 						},
-						"3": {
+						"4": {
 							"name": "entity.name.function.adblock"
 						},
-						"4": {
+						"5": {
 							"name": "punctuation.section.adblock"
 						},
-						"5": {
+						"6": {
 							"patterns": [
 								{
 									"include": "#scriptletFunction"
 								}
 							]
 						},
-						"6": {
+						"7": {
 							"name": "punctuation.section.adblock"
 						}
 					}
@@ -632,6 +660,83 @@
 					"name": "punctuation.definition.adblock"
 				}
 			]
+		},
+		"cosmeticRulesOptions": {
+			"match": "(\\[)(.+?)(\\])",
+			"captures": {
+				"1": {
+					"name": "keyword.control.adblock"
+				},
+				"2": {
+					"patterns": [
+						{
+							"match": "(path)(=)(((\\\\,)|[^,])+)",
+							"captures": {
+								"1": {
+									"name": "keyword.other.adblock"
+								},
+								"2": {
+									"name": "keyword.operator.adblock"
+								},
+								"3": {
+									"name": "string.unquoted.adblock"
+								}
+							}
+						},
+						{
+							"match": "(domain)(=)([^,]+)",
+							"captures": {
+								"1": {
+									"name": "keyword.other.adblock"
+								},
+								"2": {
+									"name": "keyword.operator.adblock"
+								},
+								"3": {
+									"patterns": [
+										{
+											"include": "#domainListPipeSeparated"
+										}
+									]
+								}
+							}
+						},
+						{
+							"match": "(app)(=)([^,]+)",
+							"captures": {
+								"1": {
+									"name": "keyword.other.adblock"
+								},
+								"2": {
+									"name": "keyword.operator.adblock"
+								},
+								"3": {
+									"patterns": [
+										{
+											"include": "#appListPipeSeparated"
+										}
+									]
+								}
+							}
+						},
+						{
+							"match": "\\$",
+							"name": "keyword.control.adblock"
+						},
+						{
+							"match": ",",
+							"name": "punctuation.definition.adblock"
+						},
+						{
+							"name": "invalid.illegal.adblock",
+							"match": ".*"
+						}
+					]
+				},
+				"3": {
+					"name": "keyword.control.adblock"
+				}
+			}
 		},
 		"contentAttributes": {
 			"patterns": [
