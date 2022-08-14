@@ -2,6 +2,9 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "Adblock",
 	"patterns": [
+        {
+			"include": "#adblockAgent"
+		},
 		{
 			"include": "#preprocessor"
 		},
@@ -37,6 +40,51 @@
 		}
 	],
 	"repository": {
+        "adblockAgent": {
+			"patterns": [
+				{
+					"match": "^(\\[)([^\\]]+)(\\])\\s*$",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.array.start.ablock.agent"
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "#adblockData"
+								},
+								{
+									"match": ";",
+									"name": "punctuation.separator"
+								},
+								{
+									"name": "invalid.illegal",
+									"match": ".*"
+								}
+							]
+						},
+						"3": {
+							"name": "punctuation.definition.array.end.ablock.agent"
+						}
+					}
+				}
+			]
+		},
+		"adblockData": {
+			"patterns": [
+				{
+					"match": "(?:\\s*)([Aa]d[Bb]lock(?:\\s[Pp]lus)?|u[Bb]lock(?:\\s[Oo]rigin)?|[Aa]d[Gg]uard)(?:\\s+(\\d+(?:\\.\\d+)*+\\+?))?(?:\\s*)",
+					"captures": {
+						"1": {
+							"name": "constant.language.agent.adblocker.name"
+						},
+						"2": {
+							"name": "constant.numeric.decimal"
+						}
+					}
+				}
+			]
+		},
 		"preprocessor": {
 			"patterns": [
 				{
@@ -141,10 +189,6 @@
 				{
 					"name": "comment.line",
 					"match": "^!.*"
-				},
-				{
-					"name": "comment.line.header",
-					"match": "^\\[Adblock.*"
 				},
 				{
 					"name": "comment.line.batch-style",
