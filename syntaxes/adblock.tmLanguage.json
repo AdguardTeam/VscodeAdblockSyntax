@@ -449,7 +449,7 @@
 		"basicRules": {
 			"patterns": [
 				{
-					"match": "^(.+?)((\\$)(.*))?$",
+					"match": "^(.+?)((\\$(?!\\/))(.*))?$",
 					"captures": {
 						"1": {
 							"patterns": [
@@ -702,6 +702,10 @@
 				{
 					"match": ",",
 					"name": "punctuation.definition.adblock"
+				},
+				{
+					"match": "\\$",
+					"name": "invalid.illegal.redundant.modifier.separator"
 				}
 			]
 		},
