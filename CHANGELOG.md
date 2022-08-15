@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.0.27
+
+- Added support for adblock agents
+- Fix redundant modifier detection: #25
+
 ## 0.0.26
 
 - Added support for cosmetic rules modifiers: #47
