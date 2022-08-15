@@ -317,3 +317,40 @@ $removeheader=location,domain=zannn.top|innal.top
 ||example.com/example.js^$script,$third-party,$domain=example.org
 ||example.com/example.js^$script,$~third-party,$domain=example.org
 ||example.com/example.js^$script,third-party,$domain=example.org|example.net
+
+!
+! CSS highlight test rules
+!
+
+! Pseudo class, pseudo element
+##:empty
+##div:empty
+! Pseudo element
+##div > :empty::before
+! Extended CSS
+##:-abp-has(div:-abp-contains(ad):is(.ad, .ad-extra):xpath(//*[@class="test-xpath-class"])):has(ad):contains(ad):upward(div[id]):contains(/^ad$/):nth-ancestor(2):matches-css(padding:1px):matches-property("check.track"):matches-attr("/-unit/"="/click/")
+! Pseudo inside another pseudo
+##div:-abp-has(> .anything:-abp-has(custom-element:-abp-has(a)):-abp-contains(advert))
+! Regex parameter
+##div:contains(/^example$/i):upward(1)
+! Handle ) in the regex
+##div:contains(/^example\.(org|com)$/):has(a):upward(1)
+! Handle string escapes
+##[data-something="ab\"c"] + .abc
+##[data-something="a b\"c"] + .abc
+! Comma separated parameter
+example.com##aside.widget > a:not([href*="example.net"], [href*="example.org"], [href*="example.eu"]) > img
+! Invalid selectors
+##.ad > $$
+##[aaa
+##[data-something="ab\"c"] + ..abc
+##:-abp-has2(> h2)
+##[data-testé^="ads" style="asd"]
+! Redundant )
+##:-abp-has(div))
+! Mixed
+##[a=bc d="ef"]
+##[a b c]
+##div.ad > section > .ad ~ #some-ad > a#id:-abp-has(ad-component > ad-wrapper:-abp-has(some-element):-abp-contains(hello))
+##a:has(:not(.ad):not(.test))
+example.com#?##block > li.some:has(> .another caption > p:matches-css-before(content: /^(Ad|Reklama)$/)):has(a)
