@@ -1,3 +1,5 @@
+[Adblock Plus 3.1; AdGuard]
+[AdGuard; Invalid Name 2.0]
 !
 ! Test rules for the syntax highlighter
 !
@@ -309,3 +311,9 @@ $removeheader=location,domain=zannn.top|innal.top
 ! Cosmetic rules modifiers, invalid modifiers
 !
 [$randommodifier=test]##banner
+
+! https://github.com/ameshkov/VscodeAdblockSyntax/issues/25
+/^https:\/\/.*?\/v2\/0\/[a-zA-Z0-9_-]{30,}$/$third-party,script,$domain=~example.org
+||example.com/example.js^$script,$third-party,$domain=example.org
+||example.com/example.js^$script,$~third-party,$domain=example.org
+||example.com/example.js^$script,third-party,$domain=example.org|example.net
