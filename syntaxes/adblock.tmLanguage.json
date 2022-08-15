@@ -404,8 +404,8 @@
 		"jsRules": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#@?%#)(.+)$",
-					"captures": {
+					"begin": "^(.*?)(#@?%#)",
+					"beginCaptures": {
 						"1": {
 							"patterns": [
 								{
@@ -415,15 +415,15 @@
 						},
 						"2": {
 							"name": "keyword.control.adblock"
-						},
-						"3": {
-							"patterns": [
-								{
-									"include": "#jsFunction"
-								}
-							]
 						}
-					}
+					},
+					"end": "$",
+					"contentName": "source.js",
+					"patterns": [
+						{
+							"include": "source.js"
+						}
+					]
 				}
 			]
 		},
@@ -849,14 +849,6 @@
 				{
 					"name": "invalid.illegal.adblock",
 					"match": ".*"
-				}
-			]
-		},
-		"jsFunction": {
-			"patterns": [
-				{
-					"name": "constant.character.jscode.adblock",
-					"match": ".+"
 				}
 			]
 		},

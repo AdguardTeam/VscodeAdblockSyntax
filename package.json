@@ -38,7 +38,10 @@
             {
                 "language": "adblock",
                 "scopeName": "text.adblock",
-                "path": "./syntaxes/adblock.tmLanguage.json"
+                "path": "./syntaxes/adblock.tmLanguage.json",
+                "embeddedLanguages": {
+                    "source.js": "javascript"
+                }
             }
         ]
     }
