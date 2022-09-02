@@ -939,6 +939,9 @@
 				{
 					"include": "#cssWhitespace"
 				},
+                {
+					"include": "#extendedCssRemovePseudo"
+				},
 				{
 					"match": ".*",
 					"name": "invalid.illegal.css-selector"
@@ -1316,6 +1319,21 @@
 				{
 					"match": "\\s",
 					"name": "string.whitespace"
+				}
+			]
+		},
+		"extendedCssRemovePseudo": {
+			"patterns": [
+				{
+					"match": "(:)(remove\\(\\))\\s*$",
+					"captures": {
+						"1": {
+							"name": "keyword.operator.pseudo"
+						},
+						"2": {
+							"name": "entity.other.pseudo-class-name"
+						}
+					}
 				}
 			]
 		},

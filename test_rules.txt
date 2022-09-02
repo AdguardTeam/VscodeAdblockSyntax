@@ -370,3 +370,6 @@ example.com##aside.widget > a:not([href*="example.net"], [href*="example.org"], 
 ##a:has(:not(.ad):not(.test))
 example.com#?##block > li.some:has(> .another caption > p:matches-css-before(content: /^(Ad|Reklama)$/)):has(a)
 ##div[class*=" "]:has(>div[class]:first-child:empty+img[src*="advert"][alt]:empty)
+##.some-ad:remove()
+! Pseudo-class :remove() is limited to work properly only at the end of selector.
+##.some-ad:remove() + div
