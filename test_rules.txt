@@ -241,8 +241,8 @@ example.com#$#snippet1 ; snippet2 ; snippet3;
 example.com#$#snippet1  ;  snippet2  arg1     arg2  ;   snippet3 "arg1" 'arg2';
 ! Invalid
 example.com#$#$snippet1 arg1 arg2
-example.com#$#snipápet1 arg1 arg2
-example.com#$#snippet1 arg1 arg2; ásnippet2 arg1 arg2; snippet3 arg1;
+example.com#$#snip@pet1 arg1 arg2
+example.com#$#snippet1 arg1 arg2; &snippet2 arg1 arg2; snippet3 arg1;
 
 !
 ! HTML filtering (uBO)
