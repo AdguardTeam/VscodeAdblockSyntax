@@ -235,6 +235,10 @@ facebook.com#$#hide-if-has-and-matches-style 'abbr .timestampContent' 'div[id^="
 example.com#$#snippet1 arg1 arg2; snippet2 arg1 arg2; snippet3 arg1;
 ! Contains {} - possible conflict with CSS injections
 example.com#$#snippet1 /[Sponsred]{9}|[Gesponrtd]{10}/
+! Spaces
+example.com#$#snippet1;snippet2;snippet3;
+example.com#$#snippet1 ; snippet2 ; snippet3;
+example.com#$#snippet1  ;  snippet2  arg1     arg2  ;   snippet3 "arg1" 'arg2';
 ! Invalid
 example.com#$#$snippet1 arg1 arg2
 example.com#$#snipápet1 arg1 arg2
