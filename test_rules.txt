@@ -227,6 +227,14 @@ reuters.com#$#abort-current-inline-script String.fromCharCode 69bfbfdbe821fab720
 yandex.com#$#hide-if-contains ad li.serp-item 'li.serp-item div.label'
 zhlednito.cz#$#abort-on-property-read Aloader; abort-on-property-read ExoLoader; abort-on-property-read ExoLoader.serve
 facebook.com#$#hide-if-has-and-matches-style 'abbr .timestampContent' 'div[id^="hyperfeed_story_id_"]' 'div[id*="feed_subtitle_"] > span, div[id*="feed_subtitle_"] > s' '' 'display: none'; hide-if-contains /.*/ .ego_section 'a[href^="/ad__campaign/landing.php?"]'; hide-if-contains /.*/ .ego_section 'a[href^="/ad_campaign/landing.php?"]'; hide-if-contains /.*/ .ego_section 'a[href^="/ad___campaign/landing.php?"]'
+! Multiple
+example.com#$#snippet1 arg1 arg2; snippet2 arg1 arg2; snippet3 arg1;
+! Contains {} - possible conflict with CSS injections
+example.com#$#snippet1 /[Sponsred]{9}|[Gesponrtd]{10}/
+! Invalid
+example.com#$#$snippet1 arg1 arg2
+example.com#$#snipápet1 arg1 arg2
+example.com#$#snippet1 arg1 arg2; ásnippet2 arg1 arg2; snippet3 arg1;
 
 !
 ! HTML filtering (uBO)

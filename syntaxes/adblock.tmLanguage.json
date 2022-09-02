@@ -236,7 +236,7 @@
 		"snippetRulesABP": {
 			"patterns": [
 				{
-					"match": "^(.*?)(#\\$#)([^{]+)$",
+					"match": "^(.*?)(#\\$#)(((?!\\{([^\\d,]|\\d[^\\d,])*\\}).)*)$",
 					"captures": {
 						"1": {
 							"patterns": [
@@ -249,7 +249,34 @@
 							"name": "keyword.control.adblock"
 						},
 						"3": {
-							"name": "constant.character.snippet.adblock"
+							"patterns": [
+								{
+									"match": "(?<=#\\$\\??#|;)((?:\\s|\\t)*[a-zA-Z0-9-]+)",
+									"name": "entity.name.function.abp-scriptlet-name"
+								},
+								{
+									"match": "(?<!#\\$\\??#|;)(?:\\s|\\t)+(?:(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\")|('[^'\\\\]*(?:\\.[^'\\\\]*)*')|([^;\\s]+))",
+									"captures": {
+										"1": {
+											"name": "string.quoted.double.abp-scriptlet-arg"
+										},
+										"2": {
+											"name": "string.quoted.single.abp-scriptlet-arg"
+										},
+										"3": {
+											"name": "string.unquoted.abp-scriptlet-arg"
+										}
+									}
+								},
+								{
+									"match": ";",
+									"name": "keyword.other.delimiter"
+								},
+								{
+									"match": ".*",
+									"name": "invalid.illegal"
+								}
+							]
 						}
 					}
 				}
