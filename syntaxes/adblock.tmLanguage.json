@@ -1283,7 +1283,7 @@
 					]
 				},
 				{
-					"match": "(?<=[-a-zA-Z0-9_\\]\\(\\)#\\*\\+\\s])(:)(fullscreen|modal|picture-in-picture|autofill|enabled|disabled|read-only|read-write|placeholder-shown|default|checked|indeterminate|blank|valid|invalid|in-range|out-of-range|required|optional|user-invalid|any-link|link|visited|local-link|target|target-within|scope|playing|paused|root|empty|first-child|last-child|only-child|first-of-type|last-of-type|only-of-type|hover|active|focus|focus-visible|focus-within)(?=$|[#\\s\\.\\[:\\)])",
+					"match": "(?<=[-a-zA-Z0-9_\\]\\(\\)#\\*\\+\\s])(:)(fullscreen|modal|picture-in-picture|autofill|enabled|disabled|read-only|read-write|placeholder-shown|default|checked|indeterminate|blank|valid|invalid|in-range|out-of-range|required|optional|user-invalid|any-link|link|visited|local-link|target|target-within|scope|playing|paused|root|empty|first-child|last-child|only-child|first-of-type|last-of-type|only-of-type|hover|active|focus|focus-visible|focus-within)(?=$|[#\\s\\.\\[:\\)+\\~])",
 					"captures": {
 						"1": {
 							"name": "keyword.operator.pseudo"

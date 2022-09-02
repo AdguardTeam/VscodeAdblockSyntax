@@ -369,3 +369,4 @@ example.com##aside.widget > a:not([href*="example.net"], [href*="example.org"], 
 ##div.ad > section > .ad ~ #some-ad > a#id:-abp-has(ad-component > ad-wrapper:-abp-has(some-element):-abp-contains(hello))
 ##a:has(:not(.ad):not(.test))
 example.com#?##block > li.some:has(> .another caption > p:matches-css-before(content: /^(Ad|Reklama)$/)):has(a)
+##div[class*=" "]:has(>div[class]:first-child:empty+img[src*="advert"][alt]:empty)
