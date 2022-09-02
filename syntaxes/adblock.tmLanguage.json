@@ -863,7 +863,7 @@
 		"scriptletFunctionUBO": {
 			"patterns": [
 				{
-					"match": "([^,]+)(,\\s*)?",
+					"match": "([^,]*)(,\\s*)?",
 					"captures": {
 						"1": {
 							"name": "string.quoted.adblock"
