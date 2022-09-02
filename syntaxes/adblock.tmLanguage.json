@@ -1119,7 +1119,7 @@
 					]
 				},
 				{
-					"begin": "(?:(?<=[-a-zA-Z0-9_\\]\\(\\)#\\*\\+\\s])(:)(-abp-contains|contains|has-text|xpath)(\\())",
+					"begin": "(?:(?<=[-a-zA-Z0-9_\\]\\(\\)#\\*\\+\\s])(:)(-abp-contains|contains|has-text)(\\())",
 					"beginCaptures": {
 						"1": {
 							"name": "keyword.operator.pseudo"
@@ -1143,6 +1143,32 @@
 						},
 						{
 							"match": "[^\\)]+",
+							"name": "string"
+						}
+					]
+				},
+                {
+					"begin": "(?:(?<=[-a-zA-Z0-9_\\]\\(\\)#\\*\\+\\s])(:)(xpath)(\\())",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.operator.pseudo"
+						},
+						"2": {
+							"name": "entity.other.pseudo-class-name"
+						},
+						"3": {
+							"name": "punctuation.section.function.begin.bracket.round"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.section.function.end.bracket.round"
+						}
+					},
+					"patterns": [
+						{
+							"match": "((?:[^\\(\\)])+|\\([^\\)]+\\))",
 							"name": "string"
 						}
 					]

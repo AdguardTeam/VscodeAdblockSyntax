@@ -339,6 +339,9 @@ $removeheader=location,domain=zannn.top|innal.top
 ##:-abp-has(div:-abp-contains(ad):is(.ad, .ad-extra):xpath(//*[@class="test-xpath-class"])):has(ad):contains(ad):upward(div[id]):contains(/^ad$/):nth-ancestor(2):matches-css(padding:1px):matches-property("check.track"):matches-attr("/-unit/"="/click/")
 ! Pseudo inside another pseudo
 ##div:-abp-has(> .anything:-abp-has(custom-element:-abp-has(a)):-abp-contains(advert))
+! xpath (parentheses are a possible issue)
+#?#:xpath(//div[contains(@style,"b") and contains(@style,"b")]/ancestor-or-self::div[@style][1])
+#?#:xpath(//div[contains(@style,"b") and contains(@style,"b")]/ancestor-or-self::div[@style][1]) > .something:xpath(//div[contains(@style,"b") and contains(@style,"b")]/ancestor-or-self::div[@style][1]) > section > div
 ! Regex parameter
 ##div:contains(/^example$/i):upward(1)
 ! Handle ) in the regex
