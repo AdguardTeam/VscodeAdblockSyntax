@@ -396,7 +396,7 @@
 		"scriptletRulesUBO": {
 			"patterns": [
 				{
-					"match": "^(.*?)(##)(\\+js)(\\()(.+)(\\)\\s*)$",
+					"match": "^(.*?)(#@?#)(\\+js)(\\()(.+)(\\)\\s*)$",
 					"captures": {
 						"1": {
 							"patterns": [

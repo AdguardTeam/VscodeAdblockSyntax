@@ -223,6 +223,8 @@ lablue.*##+js(setTimeout-defuser.js, r(), 500)
 example.com##+js(scriptlet, , arg2)
 example.com##+js(scriptlet, , , arg3)
 example.com##+js(scriptlet, arg1, , arg3)
+! Exception
+example.com#@#+js(scriptlet, arg1, , arg3)
 
 !
 ! ABP snippets
