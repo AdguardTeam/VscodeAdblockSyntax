@@ -343,39 +343,77 @@ $removeheader=location,domain=zannn.top|innal.top
 ! Pseudo class, pseudo element
 ##:empty
 ##div:empty
+
 ! Pseudo element
 ##div > :empty::before
+
 ! Extended CSS
 ##:-abp-has(div:-abp-contains(ad):is(.ad, .ad-extra):xpath(//*[@class="test-xpath-class"])):has(ad):contains(ad):upward(div[id]):contains(/^ad$/):nth-ancestor(2):matches-css(padding:1px):matches-property("check.track"):matches-attr("/-unit/"="/click/")
+
 ! Pseudo inside another pseudo
 ##div:-abp-has(> .anything:-abp-has(custom-element:-abp-has(a)):-abp-contains(advert))
+
 ! xpath (parentheses are a possible issue)
 #?#:xpath(//div[contains(@style,"b") and contains(@style,"b")]/ancestor-or-self::div[@style][1])
 #?#:xpath(//div[contains(@style,"b") and contains(@style,"b")]/ancestor-or-self::div[@style][1]) > .something:xpath(//div[contains(@style,"b") and contains(@style,"b")]/ancestor-or-self::div[@style][1]) > section > div
+! xpath from uBO filters
+foxnews.com##:xpath(//*[contains(text(),"blocking software")]/../../..)
+
 ! Regex parameter
 ##div:contains(/^example$/i):upward(1)
+
 ! Handle ) in the regex
 ##div:contains(/^example\.(org|com)$/):has(a):upward(1)
+
 ! Handle string escapes
 ##[data-something="ab\"c"] + .abc
 ##[data-something="a b\"c"] + .abc
+
 ! Comma separated parameter
 example.com##aside.widget > a:not([href*="example.net"], [href*="example.org"], [href*="example.eu"]) > img
+
 ! Invalid selectors
 ##.ad > $$
 ##[aaa
 ##[data-something="ab\"c"] + ..abc
 ##:-abp-has2(> h2)
 ##[data-testé^="ads" style="asd"]
+
 ! Redundant )
 ##:-abp-has(div))
+
 ! Mixed
 ##[a=bc d="ef"]
 ##[a b c]
+##.\aaa
 ##div.ad > section > .ad ~ #some-ad > a#id:-abp-has(ad-component > ad-wrapper:-abp-has(some-element):-abp-contains(hello))
 ##a:has(:not(.ad):not(.test))
 example.com#?##block > li.some:has(> .another caption > p:matches-css-before(content: /^(Ad|Reklama)$/)):has(a)
 ##div[class*=" "]:has(>div[class]:first-child:empty+img[src*="advert"][alt]:empty)
 ##.some-ad:remove()
-! Pseudo-class :remove() is limited to work properly only at the end of selector.
+! remove is limited to work properly only at the end of selector
 ##.some-ad:remove() + div
+
+!
+! CSS injection rules
+!
+
+! Regular CSS inection rules
+example.com#$#div:-abp-has(> ad.some-element:contains(ad)) { display: none !important; }
+#$#div:-abp-has(> ad.some-element:contains(ad)) { display: none !important; }
+#@$#div:-abp-has(> ad.some-element:contains(ad)) { display: none !important; }
+! Invalid selector
+#@$#div:-abp-has(> ad.séome-element:contains(ad)) { display: none !important; }
+#@$#$$ { display: none !important; }
+! Invalid rules (highlight ignored)
+#@$#div:-abp-has(> ad.some-element:contains(ad)) { display: aaa !important; }
+
+! Media queries
+! Some idea from https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries
+example.com#$#@media (min-width: 1200px and( min-width: 200px) { body { padding-top: 0!important; } }
+example.com#$#@media and not screen and (color), print and (color) { body { padding-top: 0!important; } }
+example.com#$#@media (min-width: 30em) and (orientation: landscape) { body { padding-top: 0!important; } }
+example.com#$#@media not screen and (color), print and (color) { body { padding-top: 0!important; } }
+example.com#$#@media (min-width: 30em) and (max-width: 50em) { body { padding-top: 0!important; } }
+! Missing selector
+example.com#$#@media (min-width: 1200px) { padding-top: 0!important; }
