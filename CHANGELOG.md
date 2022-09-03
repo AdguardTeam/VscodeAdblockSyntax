@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.0.28
+
+- Highlight CSS rules
+    - Support for (Extended) CSS selectors
+    - Support for media queries
+    - Support for uBO `:style()`
+- JavaScript tmLanguage injection for `#%#` rules
+- Improve ABP snippets
+- Fix skipped uBO scriptlet argument
+
 ## 0.0.27
 
 - Added support for adblock agents

@@ -11,3 +11,9 @@ Known issues:
 
 * https://github.com/ameshkov/VscodeAdblockSyntax/issues
 * It is able to highlight some obvious mistakes, but it's not a full-scale linter
+
+Demo:
+```adblock
+! This is an adblock rule
+example.com#?#div:has(> section.ad)
+```
