@@ -1053,7 +1053,7 @@
 		"cssPseudoElementSelector": {
 			"patterns": [
 				{
-					"match": "(?<=[-a-zA-Z0-9_\\]\\(\\)#])(?:(::)(before|after|backdrop|cue|cue-region|file-selector-button|first-letter|first-line))(?=$|[#\\s\\.\\[:\\)])",
+					"match": "(?<=[-a-zA-Z0-9_\\]\\(\\)#\\*])(?:(::)(before|after|backdrop|cue|cue-region|file-selector-button|first-letter|first-line|selection|grammar-error|marker|placeholder|spelling-error|target-text))(?=$|[#\\s\\.\\[:\\)])",
 					"captures": {
 						"1": {
 							"name": "keyword.operator.pseudo-element"
