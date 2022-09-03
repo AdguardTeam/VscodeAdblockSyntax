@@ -408,6 +408,10 @@ example.com#$#div:-abp-has(> ad.some-element:contains(ad)) { display: none !impo
 ! Invalid rules (highlight ignored)
 #@$#div:-abp-has(> ad.some-element:contains(ad)) { display: aaa !important; }
 
+! uBO :style()
+example.com##body:style(padding-top: 0!important;)
+example.com##div:-abp-has(> ad.some-element:contains(ad)):style(display: none !important;)
+
 ! Media queries
 ! Some idea from https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries
 example.com#$#@media (min-width: 1200px and( min-width: 200px) { body { padding-top: 0!important; } }
