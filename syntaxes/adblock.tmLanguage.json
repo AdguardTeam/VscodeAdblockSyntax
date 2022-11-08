@@ -97,7 +97,7 @@
 							"patterns": [
 								{
 									"name": "constant.language.platform.name",
-									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|adguard|ext_abp|ext_ublock|env_chromium|env_edge|env_firefox|env_mobile|env_safari|false|cap_html_filtering|cap_user_stylesheet)"
+									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|adguard|ext_abp|ext_ublock|env_chromium|env_edge|env_firefox|env_mobile|env_safari|false|cap_html_filtering|cap_user_stylesheet|env_legacy)"
 								},
 								{
 									"name": "keyword.control.characters",
