@@ -179,8 +179,8 @@
 					}
 				},
 				{
-					"match": "^!#.+$",
-					"name": "invalid.preprocessor"
+					"match": "^!#(?!#).+$",
+					"name": "invalid.illegal.preprocessor"
 				}
 			]
 		},
