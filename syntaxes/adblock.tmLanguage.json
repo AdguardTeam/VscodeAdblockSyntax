@@ -36,6 +36,9 @@
 			"include": "#basicRulesNoUrl"
 		},
 		{
+			"include": "#basicRulesRegex"
+		},
+		{
 			"include": "#basicRules"
 		}
 	],
@@ -436,6 +439,32 @@
 							"name": "keyword.control.adblock"
 						},
 						"2": {
+							"patterns": [
+								{
+									"include": "#basicRulesOptions"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		"basicRulesRegex": {
+			"patterns": [
+				{
+					"match": "^(\\\/[^\\\/\\\\]*(?:\\\\.[^\\\/\\\\]*)*\\\/)(\\$)(.+)$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"name": "string.regexp.adblock"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
 							"patterns": [
 								{
 									"include": "#basicRulesOptions"
