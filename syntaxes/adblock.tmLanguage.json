@@ -452,12 +452,12 @@
 		"basicRulesRegex": {
 			"patterns": [
 				{
-					"match": "^(\\\/[^\\\/\\\\]*(?:\\\\.[^\\\/\\\\]*)*\\\/)(?:(\\$)(.+))?$",
+					"match": "^(\\\/[^\\\/\\\\]*(?:\\\\.[^\\\/\\\\]*)*\\\/[dgimsuy]*)(?:(\\$)(.+))?$",
 					"captures": {
 						"1": {
 							"patterns": [
 								{
-									"name": "string.regexp.adblock"
+									"include": "#regularExpression"
 								}
 							]
 						},
@@ -498,6 +498,34 @@
 							]
 						}
 					}
+				}
+			]
+		},
+		"regularExpression": {
+			"patterns": [
+				{
+					"begin": "(/)",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.other.regex.begin"
+						}
+					},
+					"end": "((?<!\\\\)/)([dgimsuy]*)?",
+					"endCaptures": {
+						"1": {
+							"name": "keyword.other.regex.end"
+						},
+						"2": {
+							"name": "keyword.other.regex"
+						}
+					},
+					"contentName": "string.regexp",
+					"patterns": [
+						{
+							"match": "(?<!\\\\)([/\\^\\$\\|])",
+							"name": "keyword.control.regex"
+						}
+					]
 				}
 			]
 		},
