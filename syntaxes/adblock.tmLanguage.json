@@ -36,6 +36,9 @@
 			"include": "#basicRulesNoUrl"
 		},
 		{
+			"include": "#basicRulesRegex"
+		},
+		{
 			"include": "#basicRules"
 		}
 	],
@@ -97,7 +100,7 @@
 							"patterns": [
 								{
 									"name": "constant.language.platform.name",
-									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|adguard|ext_abp|ext_ublock|env_chromium|env_edge|env_firefox|env_mobile|env_safari|false|cap_html_filtering|cap_user_stylesheet)"
+									"match": "(adguard_app_windows|adguard_app_mac|adguard_app_android|adguard_app_ios|adguard_ext_chromium|adguard_ext_firefox|adguard_ext_edge|adguard_ext_safari|adguard_ext_opera|adguard_ext_android_cb|adguard|ext_abp|ext_ublock|env_chromium|env_edge|env_firefox|env_mobile|env_safari|false|cap_html_filtering|cap_user_stylesheet|env_legacy)"
 								},
 								{
 									"name": "keyword.control.characters",
@@ -179,8 +182,8 @@
 					}
 				},
 				{
-					"match": "^!#.+$",
-					"name": "invalid.preprocessor"
+					"match": "^!#(?!#).+$",
+					"name": "invalid.illegal.preprocessor"
 				}
 			]
 		},
@@ -446,6 +449,32 @@
 				}
 			]
 		},
+		"basicRulesRegex": {
+			"patterns": [
+				{
+					"match": "^(\\\/[^\\\/\\\\]*(?:\\\\.[^\\\/\\\\]*)*\\\/[dgimsuy]*)(?:(\\$)(.+))?$",
+					"captures": {
+						"1": {
+							"patterns": [
+								{
+									"include": "#regularExpression"
+								}
+							]
+						},
+						"2": {
+							"name": "keyword.control.adblock"
+						},
+						"3": {
+							"patterns": [
+								{
+									"include": "#basicRulesOptions"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
 		"basicRules": {
 			"patterns": [
 				{
@@ -469,6 +498,34 @@
 							]
 						}
 					}
+				}
+			]
+		},
+		"regularExpression": {
+			"patterns": [
+				{
+					"begin": "(/)",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.other.regex.begin"
+						}
+					},
+					"end": "((?<!\\\\)/)([dgimsuy]*)?",
+					"endCaptures": {
+						"1": {
+							"name": "keyword.other.regex.end"
+						},
+						"2": {
+							"name": "keyword.other.regex"
+						}
+					},
+					"contentName": "string.regexp",
+					"patterns": [
+						{
+							"match": "(?<!\\\\)([/\\^\\$\\|])",
+							"name": "keyword.control.regex"
+						}
+					]
 				}
 			]
 		},
@@ -836,7 +893,7 @@
 		"scriptletFunctionUBO": {
 			"patterns": [
 				{
-					"match": "([^,]+)(,\\s*)?",
+					"match": "([^,]*)(,\\s*)?",
 					"captures": {
 						"1": {
 							"name": "string.quoted.adblock"
@@ -896,7 +953,7 @@
 		"domainListCommaSeparated": {
 			"patterns": [
 				{
-					"match": "(~?)([a-zA-Z0-9.*-]+)(,?)",
+					"match": "(~?)([^,]+)(,?)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"
@@ -918,7 +975,7 @@
 		"domainListPipeSeparated": {
 			"patterns": [
 				{
-					"match": "(~?)([a-zA-Z0-9.*-]+)(\\|?)",
+					"match": "(~?)([^|]+)(\\|?)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.adblock"

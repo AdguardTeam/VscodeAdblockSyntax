@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.0.28
+
+- Fix `!##`-like comments: #54
+- Add support for optional arguments in uBO scriptlets: #53
+- Add support for `env_legacy` condition: #52
+- Improve regex detection: #51
+- Permissive domain names: #10
+
 ## 0.0.27
 
 - Added support for adblock agents
