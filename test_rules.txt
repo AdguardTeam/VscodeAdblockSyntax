@@ -337,3 +337,7 @@ $removeheader=location,domain=zannn.top|innal.top
 
 ! https://github.com/ameshkov/VscodeAdblockSyntax/issues/10
 한글코딩.org##div
+
+! https://github.com/ameshkov/VscodeAdblockSyntax/issues/56
+rootblog.pl#$#@media all and (min-width: 1200px) { a[href*="news.google.com/publications/"] { visibility: hidden !important; } }
+rootblog.pl#$#@media (min-width: 1200px) { a[href*="news.google.com/publications/"] { visibility: hidden !important; } }

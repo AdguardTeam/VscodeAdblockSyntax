@@ -920,6 +920,32 @@
 		"cssStyle": {
 			"patterns": [
 				{
+					"match": "(@media[\\s]+[^\\{]*)(\\{)([\\s]*[^\\{]*)(\\{)([\\s]*[^\\}]*)(\\})[\\s]*(\\})",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.adblock"
+						},
+						"2": {
+							"name": "punctuation.section.adblock"
+						},
+						"3": {
+							"name": "entity.name.function.adblock"
+						},
+						"4": {
+							"name": "punctuation.section.adblock"
+						},
+						"5": {
+							"name": "string.quoted.adblock"
+						},
+						"6": {
+							"name": "punctuation.section.adblock"
+						},
+						"7": {
+							"name": "punctuation.section.adblock"
+						}
+					}
+				},
+				{
 					"match": "([^{}]+)\\s*((\\{)(.+?)(\\}))",
 					"captures": {
 						"1": {
