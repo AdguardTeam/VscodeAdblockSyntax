@@ -2,11 +2,12 @@
     "name": "adblock",
     "displayName": "Adblock/AdGuard/uBlock filters grammar",
     "description": "VS code extension that adds support for ad blocking rules syntax.",
-    "version": "0.0.28",
+    "version": "0.0.29",
     "publisher": "adguard",
-    "icon": "images/icon.png",
+    "icon": "https://cdn.adguard.com/website/github.com/AGLint/aglint_128x128.png",
+    "main": "./client/out/extension",
     "engines": {
-        "vscode": "^1.18.0"
+        "vscode": "^1.74.0"
     },
     "categories": [
         "Programming Languages"
@@ -41,5 +42,35 @@
                 "path": "./syntaxes/adblock.tmLanguage.json"
             }
         ]
+    },
+    "scripts": {
+        "clean": "rimraf client/out && rimraf server/out",
+        "compile": "rollup --config ./rollup.config.ts --configPlugin typescript",
+        "watch": "rollup --watch --config ./rollup.config.ts --configPlugin typescript",
+        "lint": "eslint . --ext .ts"
+    },
+    "devDependencies": {
+        "@rollup/plugin-alias": "^4.0.3",
+        "@rollup/plugin-commonjs": "^24.0.1",
+        "@rollup/plugin-json": "^6.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.1",
+        "@rollup/plugin-terser": "^0.4.0",
+        "@rollup/plugin-typescript": "^11.0.0",
+        "@types/node": "^18.11.18",
+        "@typescript-eslint/eslint-plugin": "^5.50.0",
+        "@typescript-eslint/parser": "^5.50.0",
+        "eslint": "^8.33.0",
+        "eslint-config-airbnb-typescript": "^17.0.0",
+        "eslint-config-prettier": "^8.6.0",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-jsdoc": "^39.7.5",
+        "eslint-plugin-prettier": "^4.2.1",
+        "jsdoc": "^4.0.0",
+        "prettier": "^2.8.3",
+        "prettier-eslint": "^15.0.1",
+        "rimraf": "^4.1.2",
+        "rollup": "^3.14.0",
+        "rollup-plugin-node-externals": "^5.1.2",
+        "typescript": "^4.9.5"
     }
 }

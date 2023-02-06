@@ -1,0 +1,14 @@
+{
+    "name": "aglint-client",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "AdGuard Software Ltd.",
+    "description": "Integrates AGLint into VSCode",
+    "private": true,
+    "dependencies": {
+        "vscode-languageclient": "^8.0.2"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.74.0"
+    }
+}
