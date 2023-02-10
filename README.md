@@ -16,10 +16,11 @@ Table of Contents:
 - [Introduction](#introduction)
   - [Features](#features)
     - [Syntax highlighting](#syntax-highlighting)
+    - [Adblock rule linter](#adblock-rule-linter)
     - [GitHub Linguist support](#github-linguist-support)
-    - [Linter](#linter)
   - [Ideas \& Questions](#ideas--questions)
   - [Reporting Issues](#reporting-issues)
+  - [Development](#development)
   - [License](#license)
   - [References](#references)
 
@@ -44,6 +45,12 @@ In this section we will describe the main features of this extension.
 ### Syntax highlighting
 
 Syntax highlighting is available for AdGuard, uBlock Origin and Adblock Plus syntaxes. Nowadays it is unimaginable to work with code without highlighting, which helps you to distinguish different parts of the code and makes it easier to read.
+
+### Adblock rule linter
+
+We integrated [AGLint](https://github.com/AdguardTeam/AGLint) into this extension, that makes it able to check your rules for various issues, such as invalid syntax, invalid domains, invalid / incompatible CSS selectors, unknown / incompatible scriptlets, bad practices, etc. For more information about AGLint, please refer to its [repository](https://github.com/AdguardTeam/AGLint).
+
+> :warning: Please note that the linter is under active development, so it may not work properly for some rules. If you find any issues, please report them [here](https://github.com/AdguardTeam/AGLint/issues). We look forward to your feedback, your help is very important to us!
 
 ### GitHub Linguist support
 
@@ -77,12 +84,6 @@ will be rendered as:
 example.org##.banner
 ```
 
-### Linter
-
-We integrated [AGLint](https://github.com/AdguardTeam/AGLint) into this extension, that makes it able to check your rules for various issues, such as invalid syntax, invalid domains, invalid / incompatible CSS selectors, unknown / incompatible scriptlets, bad practices, etc. For more information about AGLint, please refer to its [repository](https://github.com/AdguardTeam/AGLint).
-
-> :warning: Please note that the linter is under active development, so it may not work properly for some rules. If you find any issues, please report them [here](https://github.com/AdguardTeam/AGLint/issues). We look forward to your feedback, your help is very important to us!
-
 ## Ideas & Questions
 
 If you have any questions or ideas for new features, please open an issue or a discussion. We will be happy to discuss it with you.
@@ -92,6 +93,24 @@ If you have any questions or ideas for new features, please open an issue or a d
 If you found a bug or have a feature request, please report it [here](https://github.com/ameshkov/VscodeAdblockSyntax/issues). Please make sure to include as much information as possible, including screenshots or example rules.
 
 Please note that the highlighter issues on GitHub will not be fixed immediately when we update the TMLanguage in this repository. GitHub's highlighter is only updated after Linguist releases. This process happens roughly every quarter. Before release, Linguist maintainers will update all integrated TMLanguage to the latest version. You can find more information about Linguist's release process [here](https://github.com/github/linguist/blob/master/docs/releasing.md).
+
+## Development
+
+Here is a quick guide on how to build and run the extension from source.
+
+1. As prerequisites, you need to have the following tools installed on your machine:
+   - [Node.js](https://nodejs.org/en/),
+   - [Yarn](https://yarnpkg.com/),
+   - [Git](https://git-scm.com/) and
+   - [Visual Studio Code](https://code.visualstudio.com/).
+2. Clone this repository from [ameshkov/VscodeAdblockSyntax](https://github.com/ameshkov/VscodeAdblockSyntax) by running `git clone`.
+3. Install dependencies by running `yarn install` in the following directories:
+   - repository root directory (common dependencies, build tools, etc.);
+   - `client` directory (VSCode extension dependencies);
+   - `server` directory (language server dependencies).
+4. Open the repository root directory in Visual Studio Code.
+5. Press `F5` to start the extension in debug mode. This builds the extension and opens a new VSCode window with the extension installed (but it is not installed in the main VSCode window, which you use for development).
+6. If you want to build the extension, run `yarn compile` in the root directory of the repository. This will build things to the `client/out` and `server/out` directories.
 
 ## License
 
