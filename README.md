@@ -1,15 +1,15 @@
 &nbsp;
 <p align="center">
-    <img alt="AGLint" src="https://cdn.adguard.com/website/github.com/AGLint/aglint.svg" width="128px">
+    <img alt="AGLint" src="https://cdn.adguard.com/website/github.com/AGLint/aglint_128x128.png" width="128px">
 </p>
 <h3 align="center">Adblock Language support for VSCode.</h3>
 <p align="center">
     Supported syntaxes:
 </p>
 <p align="center">
-    <a href="https://adguard.com/"><img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo.svg" width="14px"> AdGuard</a> |
-    <a href="https://github.com/gorhill/uBlock"><img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo.svg" width="14px"> uBlock Origin</a> |
-    <a href="https://adblockplus.org/"><img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo.svg" width="14px"> Adblock Plus</a>
+    <a href="https://adguard.com/"><img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> AdGuard</a> |
+    <a href="https://github.com/gorhill/uBlock"><img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px"> uBlock Origin</a> |
+    <a href="https://adblockplus.org/"><img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px"> Adblock Plus</a>
 </p>
 
 Table of Contents:

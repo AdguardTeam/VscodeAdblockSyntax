@@ -1,5 +1,16 @@
 .vscode/**
+**/*.ts
+**/*.map
+**/tsconfig.json
+**/tsconfig.base.json
 .vscode-test/**
 .gitignore
 vsc-extension-quickstart.md
 test_rules.txt
+client/node_modules/**
+!client/node_modules/vscode-jsonrpc/**
+!client/node_modules/vscode-languageclient/**
+!client/node_modules/vscode-languageserver-protocol/**
+!client/node_modules/vscode-languageserver-types/**
+!client/node_modules/{minimatch,brace-expansion,concat-map,balanced-match}/**
+!client/node_modules/{semver,lru-cache,yallist}/**
