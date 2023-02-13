@@ -27,6 +27,11 @@ const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
+/**
+ * URL to the AGLint repository
+ */
+const AGLINT_URL = "https://github.com/AdguardTeam/AGLint";
+
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 
@@ -172,7 +177,17 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
             },
 
             message: problem.message,
+
+            source: "aglint",
         };
+
+        // Add permalink to the rule documentation
+        if (problem.rule) {
+            diagnostic.code = problem.rule;
+            diagnostic.codeDescription = {
+                href: `${AGLINT_URL}#${problem.rule}`,
+            };
+        }
 
         diagnostics.push(diagnostic);
     }
