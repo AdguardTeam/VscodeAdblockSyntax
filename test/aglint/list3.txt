@@ -1,0 +1,20 @@
+! By default, AGLint should show a warning for multiple selectors in a single rule
+example.com##.ad1, .ad2
+
+! But not if the rule is disabled:
+
+! aglint-disable-next-line single-selector
+example.com##.ad1, .ad2
+
+! Syntax error:
+example.com###.a
+example.com#%#//scriptlet("aaa",
+
+! Test disabling and enabling
+
+! aglint-disable
+! This rule should not be reported
+example.com##...
+! aglint-enable
+! This rule should be reported
+example.com##...

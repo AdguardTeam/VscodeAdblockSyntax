@@ -1,0 +1,3 @@
+rules:
+  # Change linter rule severity
+  single-selector: error

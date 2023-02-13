@@ -1,0 +1,7 @@
+! Every rule is valid in this file
+
+example.com##.ad
+example.com##section + div
+||example.org^$third-party
+||example.net^$third-party,domain=example.com
+/ad-*.js$domain=example.com

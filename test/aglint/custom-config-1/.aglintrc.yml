@@ -1,0 +1,3 @@
+rules:
+  # Disable linter rule
+  single-selector: off
