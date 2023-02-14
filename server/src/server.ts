@@ -198,6 +198,11 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
 
 // Called when any of monitored file paths change
 connection.onDidChangeWatchedFiles(async () => {
+    // Reset current file diagnostics
+    documents.all().forEach((document) => {
+        connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
+    });
+
     // Re-scan the workspace
     await cachePaths();
 
