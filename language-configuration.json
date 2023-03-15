@@ -4,5 +4,11 @@
     },
     "brackets": [],
     "autoClosingPairs": [],
-    "surroundingPairs": []
+    "surroundingPairs": [],
+    "folding": {
+        "markers": {
+            "start": "^\\s*!#if\\s.+$",
+            "end": "^\\s*!#endif\\s*$"
+        }
+    }
 }
