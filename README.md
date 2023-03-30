@@ -104,10 +104,7 @@ Here is a quick guide on how to build and run the extension from source.
    - [Git](https://git-scm.com/) and
    - [Visual Studio Code](https://code.visualstudio.com/).
 2. Clone this repository from [ameshkov/VscodeAdblockSyntax](https://github.com/ameshkov/VscodeAdblockSyntax) by running `git clone`.
-3. Install dependencies by running `yarn install` in the following directories:
-   - repository root directory (common dependencies, build tools, etc.);
-   - `client` directory (VSCode extension dependencies);
-   - `server` directory (language server dependencies).
+3. Install dependencies by running `yarn install` in the root folder. Using a postinstall, this will automatically install the depencencies in both the client and server folders.
 4. Open the repository root directory in Visual Studio Code.
 5. Press `F5` to start the extension in debug mode. This builds the extension and opens a new VSCode window with the extension installed (but it is not installed in the main VSCode window, which you use for development).
 6. If you want to build the extension, run `yarn compile` in the root directory of the repository. This will build things to the `client/out` and `server/out` directories.
