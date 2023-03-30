@@ -47,7 +47,8 @@
         "clean": "rimraf client/out && rimraf server/out",
         "compile": "rollup --config ./rollup.config.ts --configPlugin typescript",
         "watch": "rollup --watch --config ./rollup.config.ts --configPlugin typescript",
-        "lint": "eslint . --ext .ts"
+        "lint": "eslint . --ext .ts",
+        "postinstall": "cd client && yarn && cd ../server && yarn && cd .."
     },
     "devDependencies": {
         "@rollup/plugin-alias": "^4.0.3",
