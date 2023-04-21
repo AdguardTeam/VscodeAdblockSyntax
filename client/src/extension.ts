@@ -1,5 +1,7 @@
 import { join } from "path";
-import { workspace, ExtensionContext, window } from "vscode";
+import { ThemeColor, commands } from "vscode";
+import { StatusBarAlignment } from "vscode";
+import { workspace, ExtensionContext, window, StatusBarItem } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
 
 const SERVER_PATH = join("server", "out", "server.js");
@@ -33,6 +35,8 @@ const IGNORE_FILE_NAME = ".aglintignore";
  * Language client instance
  */
 let client: LanguageClient;
+
+let statusBarItem: StatusBarItem;
 
 /**
  * Function called when the extension is activated
@@ -73,14 +77,36 @@ export function activate(context: ExtensionContext) {
     // Create the language client and start the client.
     client = new LanguageClient(CLIENT_ID, CLIENT_NAME, serverOptions, clientOptions);
 
-    // Handle notifications from the server
-    client.onNotification("aglint/caching-paths-failed", ({ error }) => {
-        window.showErrorMessage(
-            // eslint-disable-next-line max-len
-            "Failed to scan the workspace. This usually indicates a misconfigured AGLint setup. Error: " +
-                JSON.stringify(error)
-        );
+    // Add status bar
+    statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 100);
+
+    commands.registerCommand("aglint.showOutputChannel", () => {
+        client.outputChannel.show();
     });
+
+    statusBarItem.name = "AGLint";
+    statusBarItem.text = "AGLint";
+    statusBarItem.tooltip = "Show AGLint output channel to see more information";
+
+    // Add command to show AGLint debug console
+    statusBarItem.command = { title: "Open AGLint Output", command: "aglint.showOutputChannel" };
+
+    // Show the status bar item
+    statusBarItem.show();
+
+    // Handle notifications from the server
+    client.onNotification("aglint/caching", (params) => {
+        if (params?.error) {
+            // We have an error, so change the status bar background to red
+            statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
+        } else {
+            // Everything is fine, so change the status bar background to the default color
+            // In this case, params is null
+            statusBarItem.backgroundColor = undefined;
+        }
+    });
+
+    client.outputChannel.appendLine("AGLint extension client activated");
 
     // Start the client. This will also launch the server.
     client.start();
