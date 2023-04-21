@@ -12,6 +12,6 @@
         "vscode-languageserver-textdocument": "^1.0.8"
     },
     "devDependencies": {
-        "@adguard/aglint": "1.0.10"
+        "@adguard/aglint": "1.0.11"
     }
 }
