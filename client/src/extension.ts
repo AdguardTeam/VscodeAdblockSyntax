@@ -1,35 +1,37 @@
-import { join } from "path";
-import { ThemeColor, commands } from "vscode";
-import { StatusBarAlignment } from "vscode";
-import { workspace, ExtensionContext, window, StatusBarItem } from "vscode";
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
+import { join } from 'path';
+import {
+    ThemeColor, commands, StatusBarAlignment, workspace, ExtensionContext, window, StatusBarItem,
+} from 'vscode';
+import {
+    LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
+} from 'vscode-languageclient/node';
 
-const SERVER_PATH = join("server", "out", "server.js");
-const DOCUMENT_SCHEME = "file";
-const LANGUAGE_ID = "adblock";
-const CLIENT_ID = "aglint";
-const CLIENT_NAME = "AGLint";
+const SERVER_PATH = join('server', 'out', 'server.js');
+const DOCUMENT_SCHEME = 'file';
+const LANGUAGE_ID = 'adblock';
+const CLIENT_ID = 'aglint';
+const CLIENT_NAME = 'AGLint';
 
 /**
  * Possible names of the config file
  */
 const CONFIG_FILE_NAMES = [
     // aglint.config stuff
-    "aglint.config.json",
-    "aglint.config.yaml",
-    "aglint.config.yml",
+    'aglint.config.json',
+    'aglint.config.yaml',
+    'aglint.config.yml',
 
     // .aglintrc stuff
-    ".aglintrc",
-    ".aglintrc.json",
-    ".aglintrc.yaml",
-    ".aglintrc.yml",
+    '.aglintrc',
+    '.aglintrc.json',
+    '.aglintrc.yaml',
+    '.aglintrc.yml',
 ];
 
 /**
  * Name of the ignore file
  */
-const IGNORE_FILE_NAME = ".aglintignore";
+const IGNORE_FILE_NAME = '.aglintignore';
 
 /**
  * Language client instance
@@ -66,7 +68,7 @@ export function activate(context: ExtensionContext) {
             // Notify the server if the configuration has changed (such as .aglintrc, .aglintignore, etc.)
             // We define these files as glob patterns here
             fileEvents: [
-                workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(",")}}`),
+                workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(',')}}`),
                 workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
             ],
         },
@@ -80,25 +82,25 @@ export function activate(context: ExtensionContext) {
     // Add status bar
     statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 100);
 
-    commands.registerCommand("aglint.showOutputChannel", () => {
+    commands.registerCommand('aglint.showOutputChannel', () => {
         client.outputChannel.show();
     });
 
-    statusBarItem.name = "AGLint";
-    statusBarItem.text = "AGLint";
-    statusBarItem.tooltip = "Show AGLint output channel to see more information";
+    statusBarItem.name = 'AGLint';
+    statusBarItem.text = 'AGLint';
+    statusBarItem.tooltip = 'Show AGLint output channel to see more information';
 
     // Add command to show AGLint debug console
-    statusBarItem.command = { title: "Open AGLint Output", command: "aglint.showOutputChannel" };
+    statusBarItem.command = { title: 'Open AGLint Output', command: 'aglint.showOutputChannel' };
 
     // Show the status bar item
     statusBarItem.show();
 
     // Handle notifications from the server
-    client.onNotification("aglint/caching", (params) => {
+    client.onNotification('aglint/caching', (params) => {
         if (params?.error) {
             // We have an error, so change the status bar background to red
-            statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
+            statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
         } else {
             // Everything is fine, so change the status bar background to the default color
             // In this case, params is null
@@ -106,7 +108,7 @@ export function activate(context: ExtensionContext) {
         }
     });
 
-    client.outputChannel.appendLine("AGLint extension client activated");
+    client.outputChannel.appendLine('AGLint extension client activated');
 
     // Start the client. This will also launch the server.
     client.start();

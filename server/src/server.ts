@@ -11,14 +11,16 @@ import {
     InitializeParams,
     DidChangeConfigurationNotification,
     InitializeResult,
-} from "vscode-languageserver/node";
+} from 'vscode-languageserver/node';
 
-import { TextDocument } from "vscode-languageserver-textdocument";
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { LinterConfig, scan, walk, Linter, buildConfigForDirectory } from "@adguard/aglint";
-import { ParsedPath, join as joinPath } from "path";
-import { fileURLToPath } from "url";
+import {
+    LinterConfig, scan, walk, Linter, buildConfigForDirectory,
+} from '@adguard/aglint';
+import { ParsedPath, join as joinPath } from 'path';
+import { fileURLToPath } from 'url';
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -30,7 +32,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 /**
  * URL to the AGLint repository
  */
-const AGLINT_URL = "https://github.com/AdguardTeam/AGLint";
+const AGLINT_URL = 'https://github.com/AdguardTeam/AGLint';
 
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
@@ -38,14 +40,14 @@ let hasWorkspaceFolderCapability = false;
 /**
  * Root folder of the VSCode workspace
  */
-let workspaceRoot: string | undefined = undefined;
+let workspaceRoot: string | undefined;
 
 type CachedPaths = { [key: string]: LinterConfig };
 
 /**
  * Cache of the scanned workspace
  */
-let cachedPaths: CachedPaths | undefined = undefined;
+let cachedPaths: CachedPaths | undefined;
 
 /**
  * Scan the workspace and cache the result.
@@ -72,16 +74,16 @@ async function cachePaths(): Promise<boolean> {
                         newCache[filePath] = { ...config };
                     },
                 },
-                rootConfig
+                rootConfig,
             );
 
             // Update the whole cache
             cachedPaths = { ...newCache };
 
-            connection.console.info("AGLint successfully scanned and cached the workspace: " + workspaceRoot);
+            connection.console.info(`AGLint successfully scanned and cached the workspace: ${workspaceRoot}`);
 
             // Notify the client that the caching succeeded
-            await connection.sendNotification("aglint/caching");
+            await connection.sendNotification('aglint/caching');
 
             return true;
         } catch (error: unknown) {
@@ -89,7 +91,7 @@ async function cachePaths(): Promise<boolean> {
             cachedPaths = undefined;
 
             // Log the error
-            connection.console.error("AGLint failed to scan and cache the workspace: " + workspaceRoot);
+            connection.console.error(`AGLint failed to scan and cache the workspace: ${workspaceRoot}`);
 
             if (error instanceof Error) {
                 connection.console.error(error.toString());
@@ -98,7 +100,7 @@ async function cachePaths(): Promise<boolean> {
             }
 
             // Notify the client that the caching failed
-            await connection.sendNotification("aglint/caching", { error });
+            await connection.sendNotification('aglint/caching', { error });
 
             return false;
         }
@@ -108,7 +110,7 @@ async function cachePaths(): Promise<boolean> {
 }
 
 connection.onInitialize(async (params: InitializeParams) => {
-    const capabilities = params.capabilities;
+    const { capabilities } = params;
 
     // Does the client support the `workspace/configuration` request?
     // If not, we fall back using global settings.
@@ -132,7 +134,7 @@ connection.onInitialize(async (params: InitializeParams) => {
     // TODO: Better way to get the workspace root
     workspaceRoot = params.workspaceFolders ? fileURLToPath(params.workspaceFolders[0].uri) : undefined;
 
-    connection.console.info("AGLint Language Server initialized in workspace: " + workspaceRoot);
+    connection.console.info(`AGLint Language Server initialized in workspace: ${workspaceRoot}`);
 
     return result;
 });
@@ -145,7 +147,7 @@ connection.onInitialized(async () => {
 
     if (hasWorkspaceFolderCapability) {
         connection.workspace.onDidChangeWorkspaceFolders(() => {
-            connection.console.log("Workspace folder change event received.");
+            connection.console.log('Workspace folder change event received.');
         });
     }
 
@@ -187,10 +189,9 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
     const diagnostics: Diagnostic[] = [];
 
     for (const problem of problems) {
-        const severity =
-            problem.severity === "warn" || problem.severity === 1
-                ? DiagnosticSeverity.Warning
-                : DiagnosticSeverity.Error;
+        const severity = problem.severity === 'warn' || problem.severity === 1
+            ? DiagnosticSeverity.Warning
+            : DiagnosticSeverity.Error;
 
         const diagnostic: Diagnostic = {
             severity,
@@ -209,7 +210,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
 
             message: problem.message,
 
-            source: "aglint",
+            source: 'aglint',
         };
 
         // Add permalink to the rule documentation
