@@ -155,22 +155,6 @@ connection.onInitialize(async (params: InitializeParams) => {
     return result;
 });
 
-connection.onInitialized(async () => {
-    if (hasConfigurationCapability) {
-        // Register for all configuration changes.
-        connection.client.register(DidChangeConfigurationNotification.type, undefined);
-    }
-
-    if (hasWorkspaceFolderCapability) {
-        connection.workspace.onDidChangeWorkspaceFolders(() => {
-            connection.console.log('Workspace folder change event received.');
-        });
-    }
-
-    // Scan the workspace and cache the result
-    await cachePaths();
-});
-
 /**
  * Lint the document and send the diagnostics to VSCode. It handles the
  * ignore & config files, since it uses the cached scan result, which
@@ -262,6 +246,25 @@ connection.onDidChangeWatchedFiles(async () => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
     lintFile(change.document);
+});
+
+connection.onInitialized(async () => {
+    if (hasConfigurationCapability) {
+        // Register for all configuration changes.
+        connection.client.register(DidChangeConfigurationNotification.type, undefined);
+    }
+
+    if (hasWorkspaceFolderCapability) {
+        connection.workspace.onDidChangeWorkspaceFolders(() => {
+            connection.console.log('Workspace folder change event received.');
+        });
+    }
+
+    // Scan the workspace and cache the result
+    await cachePaths();
+
+    // Lint all open documents when the server starts
+    documents.all().forEach(lintFile);
 });
 
 // Make the text document manager listen on the connection
