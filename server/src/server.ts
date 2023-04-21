@@ -94,7 +94,23 @@ async function cachePaths(): Promise<boolean> {
             connection.console.error(`AGLint failed to scan and cache the workspace: ${workspaceRoot}`);
 
             if (error instanceof Error) {
-                connection.console.error(error.toString());
+                if (error.name === 'NoConfigError') {
+                    /* eslint-disable max-len */
+                    connection.console.error([
+                        'AGLint couldn\'t find the config file. To set up a configuration file for this project, please run:',
+                        '',
+                        '    If you use NPM:\tnpx aglint init',
+                        '    If you use Yarn:\tyarn aglint init',
+                        '',
+                        'IMPORTANT: The init command creates a root config file, so be sure to run it in the root directory of your project!',
+                        '',
+                        'AGLint will try to find the config file in the current directory (cwd), but if the config file is not found',
+                        'there, it will try to find it in the parent directory, and so on until it reaches your OS root directory.',
+                    ].join('\n'));
+                    /* eslint-enable max-len */
+                } else {
+                    connection.console.error(error.toString());
+                }
             } else {
                 connection.console.error(JSON.stringify(error));
             }
