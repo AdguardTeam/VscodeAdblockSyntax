@@ -86,7 +86,7 @@ async function cachePaths(): Promise<boolean> {
         connection.console.info(`AGLint successfully scanned and cached the workspace: ${workspaceRoot}`);
 
         // Notify the client that the caching succeeded
-        await connection.sendNotification('aglint/caching');
+        await connection.sendNotification('aglint/status');
 
         return true;
     } catch (error: unknown) {
@@ -119,7 +119,7 @@ async function cachePaths(): Promise<boolean> {
         }
 
         // Notify the client that the caching failed
-        await connection.sendNotification('aglint/caching', { error });
+        await connection.sendNotification('aglint/status', { error });
 
         return false;
     }
@@ -163,69 +163,88 @@ connection.onInitialize(async (params: InitializeParams) => {
  * @param textDocument Document to lint
  */
 async function lintFile(textDocument: TextDocument): Promise<void> {
-    const documentPath = fileURLToPath(textDocument.uri);
+    try {
+        const documentPath = fileURLToPath(textDocument.uri);
 
-    // If the file is not present in the cached path map, it means that it is
-    // not lintable or it is marked as ignored in some .aglintignore file.
-    // In this case, we should not lint it.
-    // If the file is present in the cached path map, it means that it is
-    // lintable and it has a config associated with it, at least the default one
-    // (this is the natural behavior of the AGLint CLI's scan/walk functions).
-    const config = cachedPaths !== undefined ? cachedPaths[documentPath] : undefined;
+        // If the file is not present in the cached path map, it means that it is
+        // not lintable or it is marked as ignored in some .aglintignore file.
+        // In this case, we should not lint it.
+        // If the file is present in the cached path map, it means that it is
+        // lintable and it has a config associated with it, at least the default one
+        // (this is the natural behavior of the AGLint CLI's scan/walk functions).
+        const config = cachedPaths !== undefined ? cachedPaths[documentPath] : undefined;
 
-    // Skip linting if the file is not present in the cached path map
-    if (config === undefined) {
-        return;
-    }
-
-    // This is the actual content of the file in the editor
-    const text = textDocument.getText();
-
-    // Create the linter instance and lint the document text
-    const linter = new Linter(true, config);
-    const { problems } = linter.lint(text);
-
-    // Convert problems to VSCode diagnostics
-    const diagnostics: Diagnostic[] = [];
-
-    for (const problem of problems) {
-        const severity = problem.severity === 'warn' || problem.severity === 1
-            ? DiagnosticSeverity.Warning
-            : DiagnosticSeverity.Error;
-
-        const diagnostic: Diagnostic = {
-            severity,
-
-            // Linting problems using 1-based line numbers, but VSCode uses 0-based line numbers
-            range: {
-                start: {
-                    line: problem.position.startLine - 1,
-                    character: problem.position.startColumn !== undefined ? problem.position.startColumn : 0,
-                },
-                end: {
-                    line: problem.position.endLine - 1,
-                    character: problem.position.endColumn !== undefined ? problem.position.endColumn : 0,
-                },
-            },
-
-            message: problem.message,
-
-            source: 'aglint',
-        };
-
-        // Add permalink to the rule documentation
-        if (problem.rule) {
-            diagnostic.code = problem.rule;
-            diagnostic.codeDescription = {
-                href: `${AGLINT_URL}#${problem.rule}`,
-            };
+        // Skip linting if the file is not present in the cached path map
+        if (config === undefined) {
+            return;
         }
 
-        diagnostics.push(diagnostic);
-    }
+        // This is the actual content of the file in the editor
+        const text = textDocument.getText();
 
-    // Send the computed diagnostics to VSCode.
-    connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        // Create the linter instance and lint the document text
+        const linter = new Linter(true, config);
+        const { problems } = linter.lint(text);
+
+        // Convert problems to VSCode diagnostics
+        const diagnostics: Diagnostic[] = [];
+
+        for (const problem of problems) {
+            const severity = problem.severity === 'warn' || problem.severity === 1
+                ? DiagnosticSeverity.Warning
+                : DiagnosticSeverity.Error;
+
+            const diagnostic: Diagnostic = {
+                severity,
+
+                // Linting problems using 1-based line numbers, but VSCode uses 0-based line numbers
+                range: {
+                    start: {
+                        line: problem.position.startLine - 1,
+                        character: problem.position.startColumn !== undefined ? problem.position.startColumn : 0,
+                    },
+                    end: {
+                        line: problem.position.endLine - 1,
+                        character: problem.position.endColumn !== undefined ? problem.position.endColumn : 0,
+                    },
+                },
+
+                message: problem.message,
+
+                source: 'aglint',
+            };
+
+            // Add permalink to the rule documentation
+            if (problem.rule) {
+                diagnostic.code = problem.rule;
+                diagnostic.codeDescription = {
+                    href: `${AGLINT_URL}#${problem.rule}`,
+                };
+            }
+
+            diagnostics.push(diagnostic);
+
+            // Notify the client that the linting succeeded
+            await connection.sendNotification('aglint/status');
+        }
+
+        // Send the computed diagnostics to VSCode.
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+    } catch (error: unknown) {
+        connection.console.error(`AGLint failed to lint the document: ${textDocument.uri}`);
+
+        if (error instanceof Error) {
+            connection.console.error(error.toString());
+        } else {
+            connection.console.error(JSON.stringify(error));
+        }
+
+        // Reset the diagnostics for the document
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
+
+        // Notify the client that the linting failed
+        await connection.sendNotification('aglint/status', { error });
+    }
 }
 
 // Called when any of monitored file paths change

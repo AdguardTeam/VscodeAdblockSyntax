@@ -97,7 +97,7 @@ export function activate(context: ExtensionContext) {
     statusBarItem.show();
 
     // Handle notifications from the server
-    client.onNotification('aglint/caching', (params) => {
+    client.onNotification('aglint/status', (params) => {
         if (params?.error) {
             // We have an error, so change the status bar background to red
             statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
