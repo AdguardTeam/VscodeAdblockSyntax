@@ -3,7 +3,7 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "compile",
+            "script": "esbuild",
             "group": "build",
             "presentation": {
                 "panel": "dedicated",
@@ -15,7 +15,7 @@
         },
         {
             "type": "npm",
-            "script": "watch",
+            "script": "esbuild-watch",
             "isBackground": true,
             "group": {
                 "kind": "build",

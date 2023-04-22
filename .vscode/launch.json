@@ -19,10 +19,7 @@
                 "!**/node_modules/**"
             ],
             "autoAttachChildProcesses": true,
-            "preLaunchTask": {
-                "type": "npm",
-                "script": "compile"
-            }
+            "preLaunchTask": "npm: esbuild"
         }
     ]
 }
