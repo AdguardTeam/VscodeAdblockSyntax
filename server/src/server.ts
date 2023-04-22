@@ -54,75 +54,75 @@ let cachedPaths: CachedPaths | undefined;
  */
 async function cachePaths(): Promise<boolean> {
     // Cache the scan result
-    if (workspaceRoot) {
-        try {
-            // Get the config for the cwd, should exist
-            const rootConfig = await buildConfigForDirectory(workspaceRoot);
-
-            const scanResult = await scan(workspaceRoot);
-
-            // Create a map of paths to configs
-            const newCache: CachedPaths = {};
-
-            await walk(
-                scanResult,
-                {
-                    file: async (path: ParsedPath, config: LinterConfig) => {
-                        const filePath = joinPath(path.dir, path.base);
-
-                        // Add the file path to the new cache map with the resolved config
-                        newCache[filePath] = { ...config };
-                    },
-                },
-                rootConfig,
-            );
-
-            // Update the whole cache
-            cachedPaths = { ...newCache };
-
-            connection.console.info(`AGLint successfully scanned and cached the workspace: ${workspaceRoot}`);
-
-            // Notify the client that the caching succeeded
-            await connection.sendNotification('aglint/caching');
-
-            return true;
-        } catch (error: unknown) {
-            // Clear the cache
-            cachedPaths = undefined;
-
-            // Log the error
-            connection.console.error(`AGLint failed to scan and cache the workspace: ${workspaceRoot}`);
-
-            if (error instanceof Error) {
-                if (error.name === 'NoConfigError') {
-                    /* eslint-disable max-len */
-                    connection.console.error([
-                        'AGLint couldn\'t find the config file. To set up a configuration file for this project, please run:',
-                        '',
-                        '    If you use NPM:\tnpx aglint init',
-                        '    If you use Yarn:\tyarn aglint init',
-                        '',
-                        'IMPORTANT: The init command creates a root config file, so be sure to run it in the root directory of your project!',
-                        '',
-                        'AGLint will try to find the config file in the current directory (cwd), but if the config file is not found',
-                        'there, it will try to find it in the parent directory, and so on until it reaches your OS root directory.',
-                    ].join('\n'));
-                    /* eslint-enable max-len */
-                } else {
-                    connection.console.error(error.toString());
-                }
-            } else {
-                connection.console.error(JSON.stringify(error));
-            }
-
-            // Notify the client that the caching failed
-            await connection.sendNotification('aglint/caching', { error });
-
-            return false;
+    try {
+        if (!workspaceRoot) {
+            throw new Error('Couldn\'t determine the workspace root of the VSCode instance');
         }
-    }
 
-    return false;
+        // Get the config for the cwd, should exist
+        const rootConfig = await buildConfigForDirectory(workspaceRoot);
+
+        const scanResult = await scan(workspaceRoot);
+
+        // Create a map of paths to configs
+        const newCache: CachedPaths = {};
+
+        await walk(
+            scanResult,
+            {
+                file: async (path: ParsedPath, config: LinterConfig) => {
+                    const filePath = joinPath(path.dir, path.base);
+
+                    // Add the file path to the new cache map with the resolved config
+                    newCache[filePath] = { ...config };
+                },
+            },
+            rootConfig,
+        );
+
+        // Update the whole cache
+        cachedPaths = { ...newCache };
+
+        connection.console.info(`AGLint successfully scanned and cached the workspace: ${workspaceRoot}`);
+
+        // Notify the client that the caching succeeded
+        await connection.sendNotification('aglint/caching');
+
+        return true;
+    } catch (error: unknown) {
+        // Clear the cache
+        cachedPaths = undefined;
+
+        // Log the error
+        connection.console.error(`AGLint failed to scan and cache the workspace: ${workspaceRoot}`);
+
+        if (error instanceof Error) {
+            if (error.name === 'NoConfigError') {
+                /* eslint-disable max-len */
+                connection.console.error([
+                    'AGLint couldn\'t find the config file. To set up a configuration file for this project, please run:',
+                    '',
+                    '    If you use NPM:\tnpx aglint init',
+                    '    If you use Yarn:\tyarn aglint init',
+                    '',
+                    'IMPORTANT: The init command creates a root config file, so be sure to run it in the root directory of your project!',
+                    '',
+                    'AGLint will try to find the config file in the current directory (cwd), but if the config file is not found',
+                    'there, it will try to find it in the parent directory, and so on until it reaches your OS root directory.',
+                ].join('\n'));
+                /* eslint-enable max-len */
+            } else {
+                connection.console.error(error.toString());
+            }
+        } else {
+            connection.console.error(JSON.stringify(error));
+        }
+
+        // Notify the client that the caching failed
+        await connection.sendNotification('aglint/caching', { error });
+
+        return false;
+    }
 }
 
 connection.onInitialize(async (params: InitializeParams) => {
