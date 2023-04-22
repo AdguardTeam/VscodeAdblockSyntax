@@ -21,6 +21,16 @@
     "bugs": {
         "url": "https://github.com/ameshkov/VscodeAdblockSyntax/issues"
     },
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": "limited",
+            "description": "Only syntax highlighting supported."
+        },
+        "virtualWorkspaces": {
+            "supported": "limited",
+            "description": "Only syntax highlighting supported. Linter uses Node.js filesystem API, which is not supported in virtual workspaces."
+        }
+    },
     "contributes": {
         "languages": [
             {

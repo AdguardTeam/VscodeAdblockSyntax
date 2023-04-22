@@ -46,7 +46,30 @@ let statusBarItem: StatusBarItem;
  * @param context VSCode extension context
  */
 export function activate(context: ExtensionContext) {
-    // The server is implemented in Node, so we need to launch it as a separate process
+    // Check if the workspace is a virtual workspace. If yes, then we can't use the Node.js FS API,
+    // so we need to abort the activation process.
+    //
+    // Detection of virtual workspaces is done by checking if all workspace folders have the file scheme.
+    // More info:
+    // https://code.visualstudio.com/api/extension-guides/virtual-workspaces#detect-virtual-workspaces-programmatically
+    // TODO: Implement a workaround for virtual workspaces
+    const isVirtualWorkspace = workspace.workspaceFolders
+        && workspace.workspaceFolders.every((f) => f.uri.scheme !== 'file');
+
+    if (isVirtualWorkspace) {
+        // Show a warning message
+        window.showWarningMessage(
+            // eslint-disable-next-line max-len
+            'AGLint doesn\'t support virtual workspaces, since it requires access to the filesystem via Node.js FS API. Only syntax highlighting will be available here.',
+        );
+
+        // Abort the activation
+        return;
+    }
+
+    // Otherwise, continue the activation process
+
+    // Server is implemented in Node, so we need to launch it as a separate process
     const serverModule = context.asAbsolutePath(join(SERVER_PATH));
 
     // If the extension is launched in debug mode then the debug server options are used
