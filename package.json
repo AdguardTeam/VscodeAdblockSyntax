@@ -10,7 +10,8 @@
         "vscode": "^1.74.0"
     },
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Linters"
     ],
     "license": "MIT",
     "repository": {
