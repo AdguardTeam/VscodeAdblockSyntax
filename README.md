@@ -106,7 +106,7 @@ Please note that the highlighter issues on GitHub will not be fixed immediately 
 
 ## Contributing
 
-If you want to contribute to this project, please read the [CONTRIBUTING](CONTRIBUTING.md) file.
+If you want to contribute to this project, please read the [CONTRIBUTING](https://github.com/ameshkov/VscodeAdblockSyntax/blob/master/CONTRIBUTING.md) file.
 
 ## License
 
