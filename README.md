@@ -9,7 +9,17 @@
 <p align="center">
     <a href="https://adguard.com/"><img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> AdGuard</a> |
     <a href="https://github.com/gorhill/uBlock"><img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px"> uBlock Origin</a> |
+    <a href="https://getadblock.com"><img src="https://cdn.adguard.com/website/github.com/AGLint/ab_logo_128x128.png" width="14px"> AdBlock</a> |
     <a href="https://adblockplus.org/"><img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px"> Adblock Plus</a>
+</p>
+
+<p align="center">
+    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/v/adguard.adblock" alt="VSCode Marketplace Version" /></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/d/adguard.adblock" alt="VSCode Marketplace Downloads" /></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/r/adguard.adblock" alt="VSCode Marketplace Rating" /></a>
+    <a href="https://github.com/ameshkov/VscodeAdblockSyntax/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/ameshkov/VscodeAdblockSyntax" alt="License" /></a>
+    <a href="https://github.com/ameshkov/VscodeAdblockSyntax/issues"><img src="https://img.shields.io/github/issues/ameshkov/VscodeAdblockSyntax" alt="Open GitHub Issues" /></a>
+    <a href="https://github.com/ameshkov/VscodeAdblockSyntax/pulls"><img src="https://img.shields.io/github/issues-pr/ameshkov/VscodeAdblockSyntax" alt="Open GitHub Pull Requests" /></a>
 </p>
 
 Table of Contents:
@@ -20,7 +30,7 @@ Table of Contents:
     - [GitHub Linguist support](#github-linguist-support)
   - [Ideas \& Questions](#ideas--questions)
   - [Reporting Issues](#reporting-issues)
-  - [Development](#development)
+  - [Contributing](#contributing)
   - [License](#license)
   - [References](#references)
 
@@ -94,20 +104,9 @@ If you found a bug or have a feature request, please report it [here](https://gi
 
 Please note that the highlighter issues on GitHub will not be fixed immediately when we update the TMLanguage in this repository. GitHub's highlighter is only updated after Linguist releases. This process happens roughly every quarter. Before release, Linguist maintainers will update all integrated TMLanguage to the latest version. You can find more information about Linguist's release process [here](https://github.com/github/linguist/blob/master/docs/releasing.md).
 
-## Development
+## Contributing
 
-Here is a quick guide on how to build and run the extension from source.
-
-1. As prerequisites, you need to have the following tools installed on your machine:
-   - [Node.js](https://nodejs.org/en/),
-   - [Yarn](https://yarnpkg.com/),
-   - [Git](https://git-scm.com/) and
-   - [Visual Studio Code](https://code.visualstudio.com/).
-2. Clone this repository from [ameshkov/VscodeAdblockSyntax](https://github.com/ameshkov/VscodeAdblockSyntax) by running `git clone`.
-3. Install dependencies by running `yarn install` in the root folder. Using a postinstall, this will automatically install the depencencies in both the client and server folders.
-4. Open the repository root directory in Visual Studio Code.
-5. Press `F5` to start the extension in debug mode. This builds the extension and opens a new VSCode window with the extension installed (but it is not installed in the main VSCode window, which you use for development).
-6. If you want to build the extension, run `yarn compile` in the root directory of the repository. This will build things to the `client/out` and `server/out` directories.
+If you want to contribute to this project, please read the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## License
 
@@ -117,7 +116,7 @@ This extension is licensed under the MIT License. See the [LICENSE](LICENSE.md) 
 
 Here are some useful links to help you write adblock rules. This list is not exhaustive, so if you know any other useful resources, please let us know.
 
-- Basic documentations for each syntax:
+- Basic documentations for each adblock syntax:
   - ADG _How to create your own ad filters_: https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters
   - uBO _Static filter syntax_: https://github.com/gorhill/uBlock/wiki/Static-filter-syntax
   - ABP _How to write filters_: https://help.eyeo.com/adblockplus/how-to-write-filters
