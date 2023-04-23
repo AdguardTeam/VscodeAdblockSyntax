@@ -1,6 +1,6 @@
 &nbsp;
 <p align="center">
-    <img alt="AGLint" src="https://cdn.adguard.com/website/github.com/AGLint/aglint_128x128.png" width="128px">
+    <img alt="AGLint" src="https://cdn.adguard.com/website/github.com/AGLint/aglint_512x512.png" width="128px">
 </p>
 <h3 align="center">Adblock Language support for VSCode.</h3>
 <p align="center">
