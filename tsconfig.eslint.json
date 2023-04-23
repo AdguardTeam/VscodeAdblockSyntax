@@ -2,8 +2,6 @@
     "extends": "./tsconfig.json",
     "include": [
       "client/**/*.ts",
-      "server/**/*.ts",
-      ".eslintrc",
-      "rollup.config.ts"
+      "server/**/*.ts"
     ]
 }
