@@ -10,6 +10,7 @@
 .vscode-test/**
 .vscode/**
 .yarnrc
+CONTRIBUTING.md
 client/node_modules/**
 server/node_modules/**
 tsconfig.eslint.json
