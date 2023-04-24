@@ -1,0 +1,65 @@
+name: Release to VSCode Marketplace and GitHub Releases
+
+on:
+  push:
+    tags:
+      - v*
+
+# Workflow need write access to the repository to create a release
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+
+      - name: Install dependencies
+        run: |
+          # Install VSCE globally
+          yarn global add @vscode/vsce
+
+          # Install dependencies in the root directory
+          yarn install --ignore-scripts --frozen-lockfile
+
+          # Install dependencies in the client directory
+          cd client
+          yarn install --ignore-scripts --frozen-lockfile
+
+          # Install dependencies in the server directory
+          cd ../server
+          yarn install --ignore-scripts --frozen-lockfile
+
+      # ESBuild ignores type checking, so we need to run it separately
+      # before running ESBuild
+      - name: Check TypeScript types
+        run: yarn test-compile
+
+      - name: Run ESLint
+        run: yarn lint
+
+      # Run ESBuild & generate VSIX file
+      - name: Pack files with VSCE
+        run: yarn generate-vsix
+
+      - name: Publish to VSCode Marketplace
+        run: vsce publish -p ${{ secrets.VSCE_TOKEN }} -i vscode-adblock.vsix
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            vscode-adblock.vsix
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
