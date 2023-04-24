@@ -1,0 +1,2 @@
+! Should ignore this rule, because the whole folder is ignored
+example.com##+js(

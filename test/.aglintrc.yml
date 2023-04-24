@@ -1,0 +1,5 @@
+root: true
+extends:
+  - aglint:recommended
+rules:
+  single-selector: warn

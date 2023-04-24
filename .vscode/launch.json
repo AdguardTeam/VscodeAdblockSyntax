@@ -1,13 +1,25 @@
 // A launch configuration that launches the extension inside a new window
 {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "configurations": [
         {
-            "name": "Extension",
             "type": "extensionHost",
             "request": "launch",
+            "name": "Launch Client",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}" ]
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "outFiles": [
+                "${workspaceRoot}/client/out/**/*.js"
+            ],
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceRoot}/**",
+                "!**/node_modules/**"
+            ],
+            "autoAttachChildProcesses": true,
+            "preLaunchTask": "npm: esbuild"
         }
     ]
 }

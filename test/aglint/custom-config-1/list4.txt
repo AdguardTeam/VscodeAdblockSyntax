@@ -1,0 +1,4 @@
+! By default, AGLint warns about multiple selectors in a single rule, 
+! but in this folder we disabled this rule in the config file, so
+! it should not warn about it. 
+example.com##.ad1, .ad2
