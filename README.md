@@ -46,7 +46,8 @@ also provides a linter to check your rules for errors.
 is available on [VSCode Marketplace][vscodemarket].
 
 <a href="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png">
-    <img src="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png?mw=800" />
+    <img src="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png"
+         style="max-width: 600px" />
 </a>
 
 GitHub Linguist support is also available, so you can highlight your adblock
