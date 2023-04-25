@@ -1,5 +1,8 @@
 name: Release to VSCode Marketplace and GitHub Releases
 
+env:
+  NODE_VERSION: 18
+
 on:
   push:
     tags:
@@ -19,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org
           cache: yarn
 
