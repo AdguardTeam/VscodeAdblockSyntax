@@ -53,6 +53,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            syntaxes/out/adblock.plist
             vscode-adblock.vsix
           draft: false
           prerelease: false
