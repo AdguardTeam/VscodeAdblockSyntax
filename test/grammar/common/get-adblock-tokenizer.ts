@@ -2,13 +2,16 @@
  * @file Gets the adblock tokenizer function from the loaded grammar
  */
 
-import * as vsctm from 'vscode-textmate';
+import { IToken, INITIAL } from 'vscode-textmate';
 import { loadAdblockGrammar } from './adblock-grammar-loader';
 
 /**
  * A function that tokenizes source code.
+ *
+ * @param source The source code to tokenize.
+ * @returns Array of tokens / scopes.
  */
-export type AdblockTokenizer = (source: string) => vsctm.IToken[];
+export type AdblockTokenizer = (source: string) => IToken[];
 
 /**
  * Loads the adblock grammar and returns a tokenizer function
@@ -25,5 +28,5 @@ export async function getAdblockTokenizer(): Promise<AdblockTokenizer> {
         throw new Error('Couldn\'t load the adblock grammar');
     }
 
-    return (source: string) => result.tokenizeLine(source, vsctm.INITIAL).tokens;
+    return (source: string) => result.tokenizeLine(source, INITIAL).tokens;
 }
