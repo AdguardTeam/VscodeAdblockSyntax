@@ -13,5 +13,6 @@
 CONTRIBUTING.md
 client/node_modules/**
 server/node_modules/**
+syntaxes/*.yaml-tmlanguage
 tsconfig.eslint.json
 vsc-extension-quickstart.md
