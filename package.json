@@ -79,7 +79,8 @@
         "postinstall": "cd client && yarn && cd ../server && yarn && cd ..",
         "generate-vsix": "yarn grammar:build && yarn esbuild-prod && vsce package --yarn --out vscode-adblock.vsix",
         "test": "jest",
-        "grammar:build": "ts-node tools/grammar-builder.ts"
+        "grammar:build": "ts-node tools/grammar-builder.ts",
+        "prepare": "husky install"
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.1",
@@ -95,6 +96,7 @@
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-jsdoc": "^39.7.5",
         "fs-extra": "^11.1.1",
+        "husky": "^8.0.3",
         "jest": "^29.5.0",
         "jsdoc": "^4.0.0",
         "plist": "^3.0.6",
