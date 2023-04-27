@@ -2,6 +2,9 @@
     "extends": "./tsconfig.json",
     "include": [
       "client/**/*.ts",
-      "server/**/*.ts"
+      "jest.config.ts",
+      "server/**/*.ts",
+      "test/**/*.ts",
+      "tools/**/*.ts"
     ]
 }
