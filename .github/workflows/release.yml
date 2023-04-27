@@ -31,16 +31,8 @@ jobs:
           # Install VSCE globally
           yarn global add @vscode/vsce
 
-          # Install dependencies in the root directory
-          yarn install --ignore-scripts --frozen-lockfile
-
-          # Install dependencies in the client directory
-          cd client
-          yarn install --ignore-scripts --frozen-lockfile
-
-          # Install dependencies in the server directory
-          cd ../server
-          yarn install --ignore-scripts --frozen-lockfile
+          # Install dependencies
+          yarn install --frozen-lockfile
 
       # ESBuild ignores type checking, so we need to run it separately
       # before running ESBuild
