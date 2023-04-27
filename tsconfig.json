@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "esnext",
+        "module": "CommonJS",
         "target": "es2020",
         "lib": [
             "es2020"
@@ -9,6 +9,7 @@
         "rootDir": "src",
         "sourceMap": true,
         "baseUrl": ".",
+        "esModuleInterop": true
     },
     "include": [
         "src"
