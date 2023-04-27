@@ -36,3 +36,4 @@ rules:
   jsdoc/require-returns-type: off
   arrow-body-style: off
   no-await-in-loop: off
+  import/no-extraneous-dependencies: off
