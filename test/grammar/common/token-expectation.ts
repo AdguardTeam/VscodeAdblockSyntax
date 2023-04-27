@@ -1,5 +1,5 @@
 import { AdblockTokenizer } from './get-adblock-tokenizer';
-import { isArraysEqual } from './utilt';
+import { isArraysEqual } from './utils';
 
 /**
  * Represents a token that is expected to be found in the source code.
