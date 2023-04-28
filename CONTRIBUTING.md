@@ -119,10 +119,11 @@ plugin. This process needs to be performed by maintainers only.
 - Commit changes as `Bump version to vX.X.X`.
 - Create a new tag with the version number (e.g. `vX.X.X`) to trigger the
   release workflow. The release workflow will automatically publish the new
-  version to the npm registry.
+  version to the [VSCode Marketplace][vscode-marketplace].
 
 [keep-a-changelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/
+[vscode-marketplace]: https://marketplace.visualstudio.com/items?itemName=adguard.adblock
 
 ## References
 
