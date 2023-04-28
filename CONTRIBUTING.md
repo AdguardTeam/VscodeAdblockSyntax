@@ -118,10 +118,12 @@ plugin. This process needs to be performed by maintainers only.
   [semver][semver] rules.
 - Commit changes as `Bump version to vX.X.X`.
 - Create a new tag with the version number (e.g. `vX.X.X`) to trigger the
-  release workflow. The release workflow will automatically publish the new
-  version to the [VSCode Marketplace][vscode-marketplace].
+  [release workflow][release-workflow]. The release workflow will automatically
+  publish the new version to the [VSCode Marketplace][vscode-marketplace] and
+  create a new release on GitHub with the changelog and the generated assets.
 
 [keep-a-changelog]: https://keepachangelog.com/en/1.0.0/
+[release-workflow]: https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/.github/workflows/release.yml
 [semver]: https://semver.org/
 [vscode-marketplace]: https://marketplace.visualstudio.com/items?itemName=adguard.adblock
 
