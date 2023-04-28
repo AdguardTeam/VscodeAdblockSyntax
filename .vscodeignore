@@ -6,7 +6,9 @@
 **/yarn.lock
 .eslintignore
 .eslintrc.yaml
+.github/**
 .gitignore
+.husky/**
 .vscode-test/**
 .vscode/**
 .yarnrc
