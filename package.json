@@ -50,7 +50,10 @@
             {
                 "language": "adblock",
                 "scopeName": "text.adblock",
-                "path": "./syntaxes/out/adblock.plist"
+                "path": "./syntaxes/out/adblock.plist",
+                "embeddedLanguages": {
+                    "source.js": "javascript"
+                }
             }
         ]
     },
