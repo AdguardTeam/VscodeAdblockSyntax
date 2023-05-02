@@ -1,4 +1,6 @@
+*.log
 *.vsix
 .DS_Store
+coverage
 node_modules
 out
