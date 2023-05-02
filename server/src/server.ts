@@ -1,5 +1,5 @@
 /**
- * AGLint Language Server for VSCode
+ * @file AGLint Language Server for VSCode (Node.js)
  */
 
 import {
@@ -12,15 +12,31 @@ import {
     DidChangeConfigurationNotification,
     InitializeResult,
 } from 'vscode-languageserver/node';
-
 import { TextDocument } from 'vscode-languageserver-textdocument';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {
-    LinterConfig, scan, walk, Linter, buildConfigForDirectory,
-} from '@adguard/aglint';
 import { ParsedPath, join as joinPath } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
+// TODO: Implement minimum version check
+// import { satisfies } from 'semver';
+// Import type definitions from the AGLint package
+import type * as AGLint from '@adguard/aglint';
+import cloneDeep from 'clone-deep';
+import { resolveAglintModulePath } from './utils/aglint-resolver';
+import { AGLINT_PACKAGE_NAME, AGLINT_REPO_URL, LF } from './common/constants';
+import { defaultSettings, ExtensionSettings } from './settings';
+import { NPM, PackageManager, getInstallationCommand } from './utils/package-managers';
+
+// Store AGLint module here
+let AGLintModule: typeof AGLint;
+
+// TODO: Implement minimum version check
+// const MIN_AGLINT_VERSION = '1.0.12';
+
+/**
+ * Path to the bundled AGLint module, relative to the server bundle.
+ * Development done in TypeScript, but here we should think as if
+ * the bundles would already be built.
+ */
+const BUNDLED_AGLINT_PATH = './aglint.js';
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -28,11 +44,6 @@ const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-
-/**
- * URL to the AGLint repository
- */
-const AGLINT_URL = 'https://github.com/AdguardTeam/AGLint';
 
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
@@ -42,12 +53,17 @@ let hasWorkspaceFolderCapability = false;
  */
 let workspaceRoot: string | undefined;
 
-type CachedPaths = { [key: string]: LinterConfig };
+type CachedPaths = { [key: string]: AGLint.LinterConfig };
 
 /**
  * Cache of the scanned workspace
  */
 let cachedPaths: CachedPaths | undefined;
+
+/**
+ * Actual settings for the extension (always synced)
+ */
+let settings: ExtensionSettings = defaultSettings;
 
 /**
  * Scan the workspace and cache the result.
@@ -60,17 +76,22 @@ async function cachePaths(): Promise<boolean> {
         }
 
         // Get the config for the cwd, should exist
-        const rootConfig = await buildConfigForDirectory(workspaceRoot);
+        const rootConfig = await AGLintModule.buildConfigForDirectory(workspaceRoot);
 
-        const scanResult = await scan(workspaceRoot);
+        const scanResult = await AGLintModule.scan(workspaceRoot);
 
         // Create a map of paths to configs
         const newCache: CachedPaths = {};
 
-        await walk(
+        if (!settings.enableAglint) {
+            // If AGLint is disabled, we should ignore the scan
+            return false;
+        }
+
+        await AGLintModule.walk(
             scanResult,
             {
-                file: async (path: ParsedPath, config: LinterConfig) => {
+                file: async (path: ParsedPath, config: AGLint.LinterConfig) => {
                     const filePath = joinPath(path.dir, path.base);
 
                     // Add the file path to the new cache map with the resolved config
@@ -102,14 +123,13 @@ async function cachePaths(): Promise<boolean> {
                 connection.console.error([
                     'AGLint couldn\'t find the config file. To set up a configuration file for this project, please run:',
                     '',
-                    '    If you use NPM:\tnpx aglint init',
-                    '    If you use Yarn:\tyarn aglint init',
+                    `    ${getInstallationCommand(settings.packageManager, AGLINT_PACKAGE_NAME)} init`,
                     '',
                     'IMPORTANT: The init command creates a root config file, so be sure to run it in the root directory of your project!',
                     '',
                     'AGLint will try to find the config file in the current directory (cwd), but if the config file is not found',
                     'there, it will try to find it in the parent directory, and so on until it reaches your OS root directory.',
-                ].join('\n'));
+                ].join(LF));
                 /* eslint-enable max-len */
             } else {
                 connection.console.error(error.toString());
@@ -123,6 +143,74 @@ async function cachePaths(): Promise<boolean> {
 
         return false;
     }
+}
+
+/**
+ * Load the installed AGLint module. If the module is not found, it will
+ * fallback to the bundled version.
+ *
+ * @param dir Workspace root path
+ * @param searchExternal Search for external AGLint installations (default: true)
+ * @param packageManagers Package managers to use when searching for external AGLint installations (default: NPM).
+ * It is only relevant if `searchExternal` is set to `true`. Technically, multiple package managers can be used,
+ * but in practice, we only use one.
+ */
+async function loadAglintModule(
+    dir: string,
+    searchExternal = true,
+    packageManagers: PackageManager[] = [NPM],
+): Promise<void> {
+    // Initially, we assume that the AGLint module is not installed
+    let externalAglintPath: string | undefined;
+
+    if (searchExternal) {
+        connection.console.info(`Searching for external AGLint installations from: ${dir}`);
+
+        externalAglintPath = await resolveAglintModulePath(
+            dir,
+            (message: string, verbose?: string | undefined) => {
+                connection.tracer.log(message, verbose);
+            },
+            packageManagers,
+        );
+
+        if (!externalAglintPath) {
+            connection.console.info([
+                /* eslint-disable max-len */
+                'It seems that the AGLint package is not installed either locally or globally. Falling back to the bundled version.',
+                `You can install AGLint by running: ${getInstallationCommand(settings.packageManager, AGLINT_PACKAGE_NAME)}`,
+                /* eslint-enable max-len */
+            ].join(LF));
+        } else {
+            connection.console.info(`Using AGlint from: ${externalAglintPath}`);
+        }
+    } else {
+        connection.console.info(
+            'Searching for external AGLint installations disabled, falling back to the bundled version.',
+        );
+    }
+
+    // Convert external path to a file URL, otherwise the module will fail to load
+    if (externalAglintPath) {
+        externalAglintPath = pathToFileURL(externalAglintPath).toString();
+    }
+
+    // Import corresponding AGLint module
+    AGLintModule = await import(externalAglintPath || BUNDLED_AGLINT_PATH);
+
+    // TODO: Another way to import the module, since we use CJS bundles
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    // AGLintModule = require(externalAglintPath || bundledAglintPath);
+
+    // TODO: Implement minimum version check
+    // TODO: Version should be exported from AGLint to do this simply
+    // if (!satisfies(AGLint.version, `>=${MIN_AGLINT_VERSION}`)) {
+    //     throw new Error([
+    //         `The installed AGLint module is too old: ${version}`,
+    //         `The minimum required version is: ${MIN_AGLINT_VERSION}`,
+    //         `Please update the AGLint module: ${workspaceRoot}`,
+    //     ].join(LF));
+    // }
 }
 
 connection.onInitialize(async (params: InitializeParams) => {
@@ -147,10 +235,8 @@ connection.onInitialize(async (params: InitializeParams) => {
         };
     }
 
-    // TODO: Better way to get the workspace root
+    // TODO: Checks for better way to get the workspace root
     workspaceRoot = params.workspaceFolders ? fileURLToPath(params.workspaceFolders[0].uri) : undefined;
-
-    connection.console.info(`AGLint Language Server initialized in workspace: ${workspaceRoot}`);
 
     return result;
 });
@@ -165,6 +251,14 @@ connection.onInitialize(async (params: InitializeParams) => {
 async function lintFile(textDocument: TextDocument): Promise<void> {
     try {
         const documentPath = fileURLToPath(textDocument.uri);
+
+        // If AGLint is disabled, report no diagnostics
+        if (!settings.enableAglint) {
+            // Reset the diagnostics for the document
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
+
+            return;
+        }
 
         // If the file is not present in the cached path map, it means that it is
         // not lintable or it is marked as ignored in some .aglintignore file.
@@ -183,7 +277,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         const text = textDocument.getText();
 
         // Create the linter instance and lint the document text
-        const linter = new Linter(true, config);
+        const linter = new AGLintModule.Linter(true, config);
         const { problems } = linter.lint(text);
 
         // Convert problems to VSCode diagnostics
@@ -218,7 +312,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
             if (problem.rule) {
                 diagnostic.code = problem.rule;
                 diagnostic.codeDescription = {
-                    href: `${AGLINT_URL}#${problem.rule}`,
+                    href: `${AGLINT_REPO_URL}#${problem.rule}`,
                 };
             }
 
@@ -247,18 +341,100 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
     }
 }
 
-// Called when any of monitored file paths change
-connection.onDidChangeWatchedFiles(async () => {
-    // Reset current file diagnostics
+/**
+ * Remove all diagnostics from all open text documents.
+ */
+function removeAllDiagnostics() {
     documents.all().forEach((document) => {
         connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
     });
+}
 
-    // Re-scan the workspace
+/**
+ * Rebuild the cached paths and revalidate any open text documents.
+ */
+async function refreshLinter() {
+    if (!settings.enableAglint || !workspaceRoot) {
+        removeAllDiagnostics();
+        return;
+    }
+
+    // Revalidate the cached paths
     await cachePaths();
 
     // Revalidate any open text documents
     documents.all().forEach(lintFile);
+}
+
+/**
+ * Pull the settings from VSCode and update the settings variable. It also
+ * re-builts the cached paths and revalidates any open text documents.
+ *
+ * "In this model the clients simply sends an empty change event to signal that the settings have
+ * changed and must be reread"
+ *
+ * @param initial If true, it means that this is the first time we pull the settings
+ * @see https://github.com/microsoft/vscode-languageserver-node/issues/380#issuecomment-414691493
+ */
+async function pullSettings(initial = false) {
+    // Store old settings
+    const oldSettings = cloneDeep(settings);
+
+    if (hasConfigurationCapability) {
+        // Get settings from VSCode
+        const receivedSettings = (await connection.workspace.getConfiguration('adblock')) as ExtensionSettings;
+
+        // Update the settings. No need to validate them, VSCode does this for us based on the schema
+        // specified in the package.json
+        // If we didn't receive any settings, use the default ones
+        settings = receivedSettings || defaultSettings;
+    } else {
+        settings = defaultSettings;
+    }
+
+    // If initial is true, it means that this is the first time we pull the settings
+    // In this case, we should load the AGLint module
+    // If module related settings changed, we also need to reload the AGLint module
+    if (
+        initial
+        || oldSettings.useExternalAglintPackages !== settings.useExternalAglintPackages
+        || oldSettings.packageManager !== settings.packageManager
+    ) {
+        // Workspace root should be defined at this point
+        if (!workspaceRoot) {
+            connection.console.error('Workspace root is not defined');
+            removeAllDiagnostics();
+            return;
+        }
+
+        await loadAglintModule(workspaceRoot, settings.useExternalAglintPackages, [settings.packageManager]);
+    }
+
+    // If AGLint is disabled, remove status bar problems
+    connection.sendNotification('aglint/status', { aglintEnabled: settings.enableAglint });
+
+    if (!settings.enableAglint) {
+        removeAllDiagnostics();
+        connection.console.info('AGLint is disabled');
+        return;
+    }
+
+    await refreshLinter();
+}
+
+connection.onDidChangeConfiguration(async () => {
+    connection.console.info('Configuration changed');
+
+    // Pull the settings from VSCode
+    await pullSettings();
+});
+
+// Called when any of monitored file paths change
+connection.onDidChangeWatchedFiles(async () => {
+    // Reset current file diagnostics
+    removeAllDiagnostics();
+
+    await refreshLinter();
 });
 
 // The content of a text document has changed. This event is emitted
@@ -279,11 +455,14 @@ connection.onInitialized(async () => {
         });
     }
 
-    // Scan the workspace and cache the result
-    await cachePaths();
+    if (!workspaceRoot) {
+        connection.console.error('Couldn\'t determine the workspace root of the VSCode instance');
+    } else {
+        // Pull the settings from VSCode (in initial mode)
+        await pullSettings(true);
 
-    // Lint all open documents when the server starts
-    documents.all().forEach(lintFile);
+        connection.console.info(`AGLint Language Server initialized in workspace: ${workspaceRoot}`);
+    }
 });
 
 // Make the text document manager listen on the connection
@@ -293,4 +472,4 @@ documents.listen(connection);
 // Listen on the connection
 connection.listen();
 
-connection.console.info(`AGLint server running in Node ${process.version}`);
+connection.console.info(`AGLint Node.js Language Server running in node ${process.version}`);
