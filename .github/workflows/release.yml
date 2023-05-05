@@ -42,7 +42,11 @@ jobs:
       - name: Run ESLint
         run: yarn lint
 
-      # Run ESBuild & generate VSIX file
+      # Convert grammar to PList format & Run ESBuild
+      - name: Create production build
+        run: yarn prod
+
+      # Generate VSIX file
       - name: Pack files with VSCE
         run: yarn generate-vsix
 
