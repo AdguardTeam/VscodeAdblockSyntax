@@ -3,7 +3,7 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "esbuild",
+            "script": "dev",
             "group": "build",
             "presentation": {
                 "panel": "dedicated",

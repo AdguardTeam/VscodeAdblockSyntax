@@ -19,7 +19,7 @@
                 "!**/node_modules/**"
             ],
             "autoAttachChildProcesses": true,
-            "preLaunchTask": "npm: build"
+            "preLaunchTask": "npm: dev"
         }
     ]
 }

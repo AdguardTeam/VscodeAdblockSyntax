@@ -91,6 +91,7 @@ export function activate(context: ExtensionContext) {
             // Notify the server if the configuration has changed (such as .aglintrc, .aglintignore, etc.)
             // We define these files as glob patterns here
             fileEvents: [
+                workspace.createFileSystemWatcher('**/*.{txt,adblock,ublock,adguard}', false, true, false),
                 workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(',')}}`),
                 workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
             ],
@@ -124,14 +125,27 @@ export function activate(context: ExtensionContext) {
         if (params?.error) {
             // We have an error, so change the status bar background to red
             statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
+
+            // Show warning icon
+            statusBarItem.text = '$(warning) AGLint';
         } else {
             // Everything is fine, so change the status bar background to the default color
             // In this case, params is null
             statusBarItem.backgroundColor = undefined;
+
+            if (params?.aglintEnabled === false) {
+                // Show a blocked icon if AGLint is disabled
+                statusBarItem.text = '$(debug-pause) AGLint';
+            } else {
+                // Reset the status bar text
+                statusBarItem.text = 'AGLint';
+            }
         }
     });
 
-    client.outputChannel.appendLine('AGLint extension client activated');
+    // Notify the user if the extension is activated. Show the version of the VSCode plugin,
+    // maybe it will be useful for debugging / support
+    client.info(`AGLint extension client activated. Extension version: ${context.extension.packageJSON.version}`);
 
     // Start the client. This will also launch the server.
     client.start();
@@ -147,6 +161,8 @@ export function deactivate(): Thenable<void> | undefined {
     if (!client) {
         return undefined;
     }
+
+    client.info('Deactivating AGLint extension client...');
 
     return client.stop();
 }
