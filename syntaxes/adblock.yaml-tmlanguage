@@ -6,6 +6,11 @@
 # GitHub Linguist can use this file directly, but during the build, we convert it to a .plist file,
 # so the VSCode extension can use it. Development is done in this .yaml-tmlanguage file.
 #
+# IMPORTANT: Colors are defined in your editor's color scheme, not here. This file only splits the
+# filter list into tokens and assigns a scope to each token. After that, your editor will colorize
+# the tokens according to the color scheme you have chosen. For more information, please visit:
+# https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide
+#
 # If you aren't familiar with TextMate Language Grammars, you can read the following documentations:
 # - https://macromates.com/manual/en/language_grammars
 # - https://www.sublimetext.com/docs/3/syntax.html
