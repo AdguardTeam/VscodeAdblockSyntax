@@ -1,4 +1,5 @@
 root: true
+syntax: ['AdGuard']
 extends:
   - aglint:recommended
 rules:
