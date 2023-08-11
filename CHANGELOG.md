@@ -8,19 +8,19 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ### Added
 
-- Support for detecting external AGLint installations: #90
-- Support for JS syntax embedding: #83
-- Information about the color scheme: #94
+- Support for detecting external AGLint installations: [#90]
+- Support for JS syntax embedding: [#83]
+- Information about the color scheme: [#94]
 
 ### Changed
 
-- JSON TM grammar is converted to YAML: #61
-- Improved contribution guidelines: #85
-- Various code and development improvements: #77, #80, #82, #104, #105, #107, #108
+- JSON TM grammar is converted to YAML: [#61]
+- Improved contribution guidelines: [#85]
+- Various code and development improvements: [#77], [#80], [#82], [#104], [#105], [#107], [#108]
 
 ### Fixed
 
-- Ignore files: #84
+- Ignore files: [#84]
 
 ## 1.0.1 - 2023-04-25
 
@@ -234,6 +234,19 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 - Initial release
 
+[#104]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/104
+[#105]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/105
+[#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107
+[#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
+[#61]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/61
+[#77]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/77
+[#80]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/80
+[#82]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/82
+[#83]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/83
+[#84]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/84
+[#85]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/85
+[#90]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/90
+[#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/83
 [aglint]: https://github.com/AdguardTeam/AGLint
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html
