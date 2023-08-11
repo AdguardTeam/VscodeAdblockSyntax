@@ -234,10 +234,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 - Initial release
 
-[#104]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/104
-[#105]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/105
-[#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107
-[#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
+[#1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/1
+[#3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/3
+[#6]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/6
+[#8]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/8
+[#9]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/9
 [#10]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/10
 [#11]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/11
 [#12]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/12
@@ -247,7 +248,6 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#16]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/16
 [#18]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/18
 [#19]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/19
-[#1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/1
 [#20]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/20
 [#21]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/21
 [#22]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/22
@@ -265,7 +265,6 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#37]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/37
 [#38]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/38
 [#39]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/39
-[#3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/3
 [#41]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/41
 [#42]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/42
 [#43]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/43
@@ -280,17 +279,18 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#56]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/56
 [#59]: https://github.com/AdguardTeam/VscodeAdblockSyntax/pull/59
 [#61]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/61
-[#6]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/6
 [#77]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/77
 [#80]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/80
 [#82]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/82
 [#83]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/83
 [#84]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/84
 [#85]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/85
-[#8]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/8
 [#90]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/90
 [#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/83
-[#9]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/9
+[#104]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/104
+[#105]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/105
+[#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107
+[#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
 [aglint]: https://github.com/AdguardTeam/AGLint
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html
