@@ -39,8 +39,11 @@ jobs:
       - name: Check TypeScript types
         run: yarn test-compile
 
+      - name: Run markdownlint
+        run: yarn lint:md
+
       - name: Run ESLint
-        run: yarn lint
+        run: yarn lint:ts
 
       # Convert grammar to PList format & Run ESBuild
       - name: Create production build
