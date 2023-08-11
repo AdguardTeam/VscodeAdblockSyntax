@@ -4,6 +4,7 @@
 **/tsconfig.base.json
 **/tsconfig.json
 **/yarn.lock
+.eslintcache
 .eslintignore
 .eslintrc.yaml
 .github/**
