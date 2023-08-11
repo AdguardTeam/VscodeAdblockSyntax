@@ -18,3 +18,6 @@ example.com##...
 ! aglint-enable
 ! This rule should be reported
 example.com##...
+
+! invalid modifier
+||example.com^$specifichide
