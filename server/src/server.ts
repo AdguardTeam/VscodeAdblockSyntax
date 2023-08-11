@@ -68,6 +68,8 @@ let settings: ExtensionSettings = defaultSettings;
 
 /**
  * Scan the workspace and cache the result.
+ *
+ * @returns True if the caching succeeded, false otherwise.
  */
 async function cachePaths(): Promise<boolean> {
     // Cache the scan result
