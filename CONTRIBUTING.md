@@ -85,7 +85,9 @@ Here is a general workflow for updating the integrated AGLint version in the VSC
    released yet on NPM.
 1. If there are some breaking changes in the AGLint API, update the server code accordingly and change the minimum
    supported AGLint version in the `server/index.ts` file (`MIN_AGLINT_VERSION` constant).
-1. Test the extension with the new AGLint version in the test project (see `test/static` folder).
+1. Build the extension, or run it in debug mode in the Extension Development Host window (VSCode menu: `Run > Start
+   Debugging` or just press the `F5` key).
+1. Test the builded extension with the new AGLint version by opening the test project (see `test/static` folder).
 1. If necessary, update the test project (eg. update the config file, add new example rules, etc.).
 
 ## Testing production version
