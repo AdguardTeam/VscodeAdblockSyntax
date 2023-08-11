@@ -5,6 +5,7 @@
 import { execSync } from 'child_process';
 import { isAbsolute } from 'path';
 import { Files } from 'vscode-languageserver/node';
+
 import { EMPTY } from '../common/constants';
 
 /**

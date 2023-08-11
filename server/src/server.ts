@@ -5,25 +5,26 @@
 import {
     createConnection,
     TextDocuments,
-    Diagnostic,
+    type Diagnostic,
     DiagnosticSeverity,
     ProposedFeatures,
-    InitializeParams,
+    type InitializeParams,
     DidChangeConfigurationNotification,
-    InitializeResult,
+    type InitializeResult,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { ParsedPath, join as joinPath } from 'path';
+import { type ParsedPath, join as joinPath } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 // TODO: Implement minimum version check
 // import { satisfies } from 'semver';
 // Import type definitions from the AGLint package
 import type * as AGLint from '@adguard/aglint';
 import cloneDeep from 'clone-deep';
+
 import { resolveAglintModulePath } from './utils/aglint-resolver';
 import { AGLINT_PACKAGE_NAME, AGLINT_REPO_URL, LF } from './common/constants';
-import { defaultSettings, ExtensionSettings } from './settings';
-import { NPM, PackageManager, getInstallationCommand } from './utils/package-managers';
+import { defaultSettings, type ExtensionSettings } from './settings';
+import { NPM, type PackageManager, getInstallationCommand } from './utils/package-managers';
 
 // Store AGLint module here
 let AGLintModule: typeof AGLint;

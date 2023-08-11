@@ -1,9 +1,18 @@
 import { join } from 'path';
 import {
-    ThemeColor, commands, StatusBarAlignment, workspace, ExtensionContext, window, StatusBarItem,
+    ThemeColor,
+    commands,
+    StatusBarAlignment,
+    workspace,
+    type ExtensionContext,
+    window,
+    type StatusBarItem,
 } from 'vscode';
 import {
-    LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
+    LanguageClient,
+    type LanguageClientOptions,
+    type ServerOptions,
+    TransportKind,
 } from 'vscode-languageclient/node';
 
 const SERVER_PATH = join('server', 'out', 'server.js');

@@ -1,4 +1,4 @@
-import { AdblockTokenizer } from './get-adblock-tokenizer';
+import { type AdblockTokenizer } from './get-adblock-tokenizer';
 import { isArraysEqual } from './utils';
 
 /**

@@ -2,7 +2,7 @@
  * @file Tests for the adblock agents
  */
 
-import { AdblockTokenizer, getAdblockTokenizer } from '../common/get-adblock-tokenizer';
+import { type AdblockTokenizer, getAdblockTokenizer } from '../common/get-adblock-tokenizer';
 import { expectTokens } from '../common/token-expectation';
 
 let tokenize: AdblockTokenizer;
