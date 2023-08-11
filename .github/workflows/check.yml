@@ -7,13 +7,9 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - "**.md"
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - "**.md"
 
 jobs:
   check_code:
@@ -35,8 +31,11 @@ jobs:
       - name: Check TypeScript types
         run: yarn test-compile
 
+      - name: Run markdownlint
+        run: yarn lint:md
+
       - name: Run ESLint
-        run: yarn lint
+        run: yarn lint:ts
 
       - name: Run Jest tests
         run: yarn test
