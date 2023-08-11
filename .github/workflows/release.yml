@@ -1,5 +1,8 @@
 name: Release to VSCode Marketplace and GitHub Releases
 
+env:
+  NODE_VERSION: 18
+
 on:
   push:
     tags:
@@ -19,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org
           cache: yarn
 
@@ -28,16 +31,8 @@ jobs:
           # Install VSCE globally
           yarn global add @vscode/vsce
 
-          # Install dependencies in the root directory
-          yarn install --ignore-scripts --frozen-lockfile
-
-          # Install dependencies in the client directory
-          cd client
-          yarn install --ignore-scripts --frozen-lockfile
-
-          # Install dependencies in the server directory
-          cd ../server
-          yarn install --ignore-scripts --frozen-lockfile
+          # Install dependencies
+          yarn install --frozen-lockfile
 
       # ESBuild ignores type checking, so we need to run it separately
       # before running ESBuild
@@ -47,7 +42,11 @@ jobs:
       - name: Run ESLint
         run: yarn lint
 
-      # Run ESBuild & generate VSIX file
+      # Convert grammar to PList format & Run ESBuild
+      - name: Create production build
+        run: yarn prod
+
+      # Generate VSIX file
       - name: Pack files with VSCE
         run: yarn generate-vsix
 
@@ -58,6 +57,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            syntaxes/out/adblock.plist
             vscode-adblock.vsix
           draft: false
           prerelease: false
