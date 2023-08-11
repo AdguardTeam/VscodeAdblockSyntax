@@ -2,7 +2,8 @@
  * @file Gets the adblock tokenizer function from the loaded grammar
  */
 
-import { IToken, INITIAL } from 'vscode-textmate';
+import { type IToken, INITIAL } from 'vscode-textmate';
+
 import { loadAdblockGrammar } from './adblock-grammar-loader';
 
 /**

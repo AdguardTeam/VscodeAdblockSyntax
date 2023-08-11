@@ -3,11 +3,12 @@
  */
 
 import { Files } from 'vscode-languageserver/node';
+
 import {
     NPM,
     PNPM,
-    PackageManager,
-    TraceFunction,
+    type PackageManager,
+    type TraceFunction,
     YARN,
     findGlobalPathForPackageManager,
 } from './package-managers';

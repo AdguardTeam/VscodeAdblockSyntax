@@ -10,7 +10,7 @@
  * 2. Implement the logic in the server.ts file
  */
 
-import { NPM, PackageManager } from './utils/package-managers';
+import { NPM, type PackageManager } from './utils/package-managers';
 
 /**
  * Represents the extension settings

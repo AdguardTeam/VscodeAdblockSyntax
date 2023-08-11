@@ -3,18 +3,28 @@
  */
 
 import {
-    exists, mkdir, readFile, writeFile,
+    exists,
+    mkdir,
+    readFile,
+    writeFile,
 } from 'fs-extra';
 import { join } from 'path';
+
 import { convertYamlToPlist } from './grammar-converter';
 
-/** Path to the source grammar file */
+/**
+ * Path to the source grammar file
+ */
 const SOURCE_GRAMMAR_FILE = 'syntaxes/adblock.yaml-tmlanguage';
 
-/** Path to the out folder */
+/**
+ * Path to the out folder
+ */
 const OUT_FOLDER = 'syntaxes/out';
 
-/** Path to the builded grammar file */
+/**
+ * Path to the builded grammar file
+ */
 const DEST_GRAMMAR_FILE = join(OUT_FOLDER, 'adblock.plist');
 
 /**

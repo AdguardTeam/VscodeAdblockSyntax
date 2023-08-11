@@ -4,20 +4,29 @@
 
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { IGrammar, Registry, parseRawGrammar } from 'vscode-textmate';
+import { type IGrammar, Registry, parseRawGrammar } from 'vscode-textmate';
 import { loadWASM, OnigScanner, OnigString } from 'vscode-oniguruma';
+
 import { convertYamlToPlist } from '../../../tools/grammar-converter';
 
-/** Source file path for the grammar */
+/**
+ * Source file path for the grammar
+ */
 const ADBLOCK_GRAMMAR_PATH = join(__dirname, '../../../', 'syntaxes/adblock.yaml-tmlanguage');
 
-/** Scope name for the adblock grammar */
+/**
+ * Scope name for the adblock grammar
+ */
 const ADBLOCK_GRAMMAR_SCOPE = 'text.adblock';
 
-/** Scope name for the JavaScript grammar */
+/**
+ * Scope name for the JavaScript grammar
+ */
 const JS_GRAMMAR_SCOPE = 'source.js';
 
-/** Dummy grammar for JavaScript (raw) */
+/**
+ * Dummy grammar for JavaScript (raw)
+ */
 const DUMMY_JS_GRAMMAR = `{
     "name": "JavaScript",
     "scopeName": "source.js",
@@ -25,7 +34,9 @@ const DUMMY_JS_GRAMMAR = `{
     "repository": {}
 }`;
 
-/** Fake file name for the dummy JavaScript grammar */
+/**
+ * Fake file name for the dummy JavaScript grammar
+ */
 const DUMMY_JS_GRAMMAR_FILE_NAME = 'dummy-js-grammar.json';
 
 /**
