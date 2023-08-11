@@ -8,6 +8,8 @@ Table of Contents:
 - [Contributing](#contributing)
     - [Development \& Contribution](#development--contribution)
         - [Available commands](#available-commands)
+    - [Updating integrated AGLint](#updating-integrated-aglint)
+    - [Testing production version](#testing-production-version)
     - [Releasing](#releasing)
     - [References](#references)
 
@@ -25,6 +27,7 @@ Here is a short guide on how to set up the development environment and how to su
 - Install dependencies with `yarn`. This will also install the dependencies for the client and server via `postinstall`
   scripts. After the installation is complete, it will also initializes [Husky][husky] Git hooks via the `prepare`
   script.
+- Install VSCE globally with `yarn global add @vscode/vsce`. This is needed to generate the `.vsix` file.
 - Create a new branch with `git checkout -b <branch-name>`. Example: `git checkout -b feature/add-some-feature`. Please
   add `feature/` or `fix/` prefix to your branch name, and refer to the issue number if there is one. Example: `fix/42`.
 - Open the project **root** folder in VSCode.
@@ -70,16 +73,45 @@ During development, you can use the following commands (listed in `package.json`
 - `yarn prepublish` - build the extension with [esbuild][esbuild] (both client and server) and minify the code.
 - `yarn test-compile` - check if the code compiles with [TypeScript][typescript].
 
+## Updating integrated AGLint
+
+Here is a general workflow for updating the integrated AGLint version in the VSCode extension.
+
+> **Note**: VSCode extension has its own "integrated" version of AGLint. Technically, this is a bundled version of
+> AGLint with the extension. This is done to avoid the need to install AGLint separately, but the extension is capable
+> of using the external AGLint version if it is installed by some package manager.
+
+1. Update the AGLint version in the `server/package.json` file. Or just link the local AGLint repository, if it doesn't
+   released yet on NPM.
+1. If there are some breaking changes in the AGLint API, update the server code accordingly and change the minimum
+   supported AGLint version in the `server/index.ts` file (`MIN_AGLINT_VERSION` constant).
+1. Build the extension, or run it in debug mode in the Extension Development Host window (VSCode menu: `Run > Start
+   Debugging` or just press the `F5` key).
+1. Test the builded extension with the new AGLint version by opening the test project (see `test/static` folder).
+1. If necessary, update the test project (eg. update the config file, add new example rules, etc.).
+
+## Testing production version
+
+Instead of running the extension in debug mode in the Extension Development Host window, you can test the production
+version of the extension.
+
+1. Build the extension with `yarn prod` command. This will generate a `vscode-adblock.vsix` file in the project root
+   folder.
+1. Install the extension in your VSCode by opening the command palette (`Ctrl + Shift + P`) and selecting the
+   "Extensions: Install from VSIX..." command. Then select the `vscode-adblock.vsix` file.
+1. Restart VSCode.
+1. Open the test project in VSCode (see `test/static` folder) and check if the extension works as expected.
+
 ## Releasing
 
 This section describes the release process for the new versions of the VSCode plugin. This process needs to be performed
 by maintainers only.
 
-- Fill the `CHANGELOG.md` file with the changes made since the last release by following the
+1. Fill the `CHANGELOG.md` file with the changes made since the last release by following the
   [Keep a Changelog][keep-a-changelog] rules.
-- Update the version number in the `package.json` file regarding the [semver][semver] rules.
-- Commit changes as `Bump version to vX.X.X`.
-- Create a new tag with the version number (e.g. `vX.X.X`) to trigger the [release workflow][release-workflow]. The
+1. Update the version number in the `package.json` file regarding the [semver][semver] rules.
+1. Commit changes as `Bump version to vX.X.X`.
+1. Create a new tag with the version number (e.g. `vX.X.X`) to trigger the [release workflow][release-workflow]. The
   release workflow will automatically publish the new version to the [VSCode Marketplace][vscode-marketplace] and
   create a new release on GitHub with the changelog and the generated assets.
 
