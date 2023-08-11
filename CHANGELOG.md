@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+## Unreleased
+
+### Added
+
+- Support for detecting external AGLint installations: #90
+- Support for JS syntax embedding: #83
+- Information about the color scheme: #94
+
+### Changed
+
+- JSON TM grammar is converted to YAML: #61
+- Improved contribution guidelines: #85
+- Various code and development improvements: #77, #80, #82, #104, #105, #107, #108
+
+### Fixed
+
+- Ignore files: #84
+
 ## 1.0.1 - 2023-04-25
 
 ### Added
