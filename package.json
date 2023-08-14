@@ -101,6 +101,7 @@
         "lint:md": "markdownlint .",
         "lint:ts": "eslint . --cache --ext .ts",
         "test": "jest",
+        "increment": "yarn version --patch --no-git-tag-version",
         "generate-vsix": "vsce package --yarn --out vscode-adblock.vsix",
         "postinstall": "cd client && yarn && cd ../server && yarn && cd ..",
         "prepare": "husky install"
