@@ -1,0 +1,76 @@
+---
+version: 2
+plan:
+  project-key: AJL
+  key: VSCODEADBLOCKSYNTAXTEST
+  name: vscode adblock syntax - tests
+variables:
+  dockerNode: adguard/node-ssh:18.13--0
+
+stages:
+  - Build:
+      manual: false
+      final: false
+      jobs:
+        - Build
+
+Build:
+  key: BUILD
+  docker:
+    image: "${bamboo.dockerNode}"
+    volumes:
+      ${system.YARN_DIR}: "${bamboo.cacheYarn}"
+  tasks:
+    - checkout:
+        force-clean-build: true
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -e
+            set -x
+
+            # Fix mixed logs
+            exec 2>&1
+
+            # swc core optional dependencies are needed for tests
+            # but `--ignore-optional` will not install them
+            # so we run `yarn install ${bamboo.varsYarn}` without `--ignore-optional`:
+            yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
+
+            # Check TypeScript types
+            yarn test-compile
+
+            # Run markdownlint
+            yarn lint:md
+
+            # Run ESLint
+            yarn lint:ts
+
+            # Run Jest tests
+            yarn test
+
+            rm -rf node_modules
+  final-tasks:
+    - clean
+  requirements:
+    - adg-docker: true
+
+branches:
+  create: for-pull-request
+  delete:
+    after-deleted-days: '1'
+    after-inactive-days: '5'
+  link-to-jira: true
+
+notifications:
+  - events:
+      - plan-status-changed
+    recipients:
+      - webhook:
+          name: Build webhook
+          url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
+
+labels: []
+other:
+  concurrent-build-plugin: system-default
