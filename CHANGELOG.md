@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
-## 1.1.0 - 2023-08-11
+## 1.1.0 - 2023-08-14
 
 ### Added
 
@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - JSON TM grammar is converted to YAML: [#61]
 - Improved contribution guidelines: [#85]
 - Various code and development improvements: [#77], [#80], [#82], [#104], [#105], [#107], [#108]
+- Update integrated AGLint to v2.0.1
 
 ### Fixed
 
