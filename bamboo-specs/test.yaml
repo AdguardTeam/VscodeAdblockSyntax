@@ -33,10 +33,21 @@ Build:
             # Fix mixed logs
             exec 2>&1
 
+            # Install common dependencies
             # swc core optional dependencies are needed for tests
             # but `--ignore-optional` will not install them
             # so we run `yarn install ${bamboo.varsYarn}` without `--ignore-optional`:
             yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
+
+            # Install dependencies in ./server
+            cd ./server
+            yarn install ${bamboo.varsYarn}
+            cd ..
+
+            # Install dependencies in ./client
+            cd ./client
+            yarn install ${bamboo.varsYarn}
+            cd ..
 
             # Check TypeScript types
             yarn test-compile
