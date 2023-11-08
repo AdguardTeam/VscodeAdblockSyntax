@@ -351,3 +351,8 @@ rootblog.pl#$#@media (min-width: 1200px) { a[href*="news.google.com/publications
 ||example.com^$document
 *$1p,strict3p,script,header=via:1.1 google,script
 ||red-shell.speedrun.com/*?upapi=true^$beacon
+
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/92
+[$url=||example.com/content/*]##div.textad
+[$url=||example.org^]###adblock
+[$url=/\[a-z\]+\\.example\\.com^/]##.textad

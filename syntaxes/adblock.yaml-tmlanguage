@@ -531,6 +531,14 @@ repository:
               "3":
                 patterns:
                   - include: "#appListPipeSeparated"
+          - match: "(url)(=)([^,]+)"
+            captures:
+              "1":
+                name: keyword.other.adblock
+              "2":
+                name: keyword.operator.adblock
+              "3":
+                name: string.unquoted.adblock
           - match: "\\$"
             name: keyword.control.adblock
           - match: ","

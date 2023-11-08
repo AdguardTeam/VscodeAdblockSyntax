@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Highlighting for `$referrerpolicy` modifier: [#93]
 - Highlighting for `$beacon`, `$header` and `$doc` modifiers: [#69]
 - Highlighting for `!#else` directive: [#115]
+- Highlighting for `$url` cosmetic rule modifier: [#92]
 
 ### Changed
 
@@ -321,6 +322,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#84]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/84
 [#85]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/85
 [#90]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/90
+[#92]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/92
 [#93]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/93
 [#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/94
 [#104]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/104
