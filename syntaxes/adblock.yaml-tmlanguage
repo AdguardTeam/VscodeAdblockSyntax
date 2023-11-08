@@ -110,6 +110,8 @@ repository:
             name: keyword.preprocessor.directive
           "2":
             name: string.unquoted
+      - match: "^!#else\\s*$"
+        name: keyword.preprocessor.directive
       - match: "^!#endif\\s*$"
         name: keyword.preprocessor.directive
       - match: "^(!#safari_cb_affinity)(.*)$"
@@ -385,7 +387,7 @@ repository:
           "3":
             patterns:
               - include: "#dnsClientsPipeSeparated"
-      - match: "(redirect|redirect-rule|csp|cookie)(=)(((\\\\,)|[^,])+)"
+      - match: "(redirect|redirect-rule|csp|cookie)(=)?(((\\\\,)|[^,])+)?"
         name: keyword.other.adblock
         captures:
           "1":
@@ -407,7 +409,7 @@ repository:
                 match: ";"
               - name: string.unquoted.adblock
                 match: "[^;]*"
-      - match: "(removeheader)(=)(((\\\\,)|[^,])+)"
+      - match: "(removeheader)(=)?(((\\\\,)|[^,])+)?"
         name: keyword.other.adblock
         captures:
           "1":
@@ -431,7 +433,7 @@ repository:
             name: keyword.other.adblock
           "4":
             name: string.unquoted.adblock
-      - match: "(removeparam|queryprune)(=)(~)?(((\\\\,)|[^,])+)"
+      - match: "(removeparam|queryprune)(=)?(~)?(((\\\\,)|[^,])+)?"
         name: keyword.other.adblock
         captures:
           "1":
@@ -456,10 +458,34 @@ repository:
                 name: keyword.operator.adblock
               - match: ".+"
                 name: invalid.illegal.method-value
-      - match: "(inline-script|inline-font|mp4|empty|badfilter|genericblock|generichide|network|popup|popunder|important|cookie|csp|replace|stealth|removeparam|queryprune)"
+      - match: "(referrerpolicy)(=)?((\\w|-)+)?"
+        captures:
+          "1":
+            name: keyword.other.adblock
+          "2":
+            name: keyword.operator.adblock
+          "3":
+            patterns:
+              - match: "(?i)(no-referrer|no-referrer-when-downgrade|origin|origin-when-cross-origin|same-origin|strict-origin|strict-origin-when-cross-origin|unsafe-url)"
+                name: string.unquoted.adblock
+              - match: "~|\\|.+"
+                name: invalid.illegal.referrerpolicy-value
+      - match: "(permissions)(=)?(((\\\\,)|[^,])+)?"
+        captures:
+          "1":
+            name: keyword.other.adblock
+          "2":
+            name: keyword.operator.adblock
+          "3":
+            name: string.unquoted.adblock
+      - match: "(inline-script|inline-font|mp4|empty|badfilter|genericblock|generichide|network|popup|popunder|important|replace|stealth)"
         name: keyword.other.adblock
-      - match: "(~?)(xhr|first-party|third-party|match-case|elemhide|content|jsinject|urlblock|document|image|stylesheet|script|object-subrequest|object|font|media|subdocument|xmlhttprequest|websocket|other|webrtc|ping|extension|all|1p|3p|css|frame|ghide|ehide|shide|specifichide)"
+      - match: "(~?)(first-party|third-party|match-case|elemhide|content|jsinject|urlblock|extension|all|1p|3p|css|frame|ghide|ehide|shide|specifichide)"
         name: keyword.other.adblock
+      - match: "(~)?(document|doc|font|image|media|object|other|ping|script|stylesheet|css|subdocument|frame|websocket|xmlhttprequest|xhr|webrtc)(,|$)"
+        name: keyword.other.adblock
+      - match: "(~)?(object-subrequest)"
+        name: invalid.illegal.removed.modifier
       - match: ","
         name: punctuation.definition.adblock
       - match: "\\$"

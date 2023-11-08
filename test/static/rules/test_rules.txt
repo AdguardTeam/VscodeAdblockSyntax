@@ -12,7 +12,9 @@
 ! Pre-processor directives and hints
 !
 !#if (adguard && !adguard_ext_safari)
-!#include https://example.org/
+!#include https://raw.example.org/test1.txt
+!#else
+!#include https://raw.example.org/test2.txt
 !#endif
 !+ NOT_OPTIMIZED PLATFORM(android)
 ||example.org^

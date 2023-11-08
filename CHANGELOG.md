@@ -4,18 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+
+## 1.1.3 - 2023-11-08
+
+### Added
+
+- Highlighting for `$permissions` and `$referrerpolicy` modifiers,
+  and `!#else` directive [#115](https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/115)
+
+### Changed
+
+- Updated integrated [AGLint] to v2.0.6
+
+
 ## 1.1.2 - 2023-09-07
 
 ### Changed
 
-- Update integrated AGLint to v2.0.5
+- Updated integrated [AGLint] to v2.0.5
 
 
 ## 1.1.1 - 2023-08-30
 
 ## Changed
 
-- Update integrated AGLint to v2.0.4
+- Updated integrated [AGLint] to v2.0.4
 
 
 ## 1.1.0 - 2023-08-14
@@ -31,7 +44,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - JSON TM grammar is converted to YAML: [#61]
 - Improved contribution guidelines: [#85]
 - Various code and development improvements: [#77], [#80], [#82], [#104], [#105], [#107], [#108]
-- Update integrated AGLint to v2.0.1
+- Update integrated [AGLint] to v2.0.1
 
 ### Fixed
 
@@ -42,7 +55,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 ### Added
 
 - Support for VSCode language server and client. This integrates
-  [AGLint][aglint] into this extension. [#24]
+  [AGLint] v1.0.11 into this extension. [#24]
 - Support for folding: [#59]
 
 ### Changed
@@ -306,6 +319,6 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#105]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/105
 [#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107
 [#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
-[aglint]: https://github.com/AdguardTeam/AGLint
+[AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html

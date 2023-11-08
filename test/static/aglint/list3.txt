@@ -21,3 +21,4 @@ example.com##...
 
 ! invalid modifier
 ||example.com^$specifichide
+||example.com^$referrerpolicy=~origin

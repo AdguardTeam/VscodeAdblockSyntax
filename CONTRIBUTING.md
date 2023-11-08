@@ -77,7 +77,8 @@ During development, you can use the following commands (listed in `package.json`
 
 Here is a general workflow for updating the integrated AGLint version in the VSCode extension.
 
-> **Note**: VSCode extension has its own "integrated" version of AGLint. Technically, this is a bundled version of
+> [!NOTE]
+> VSCode extension has its own "integrated" version of AGLint. Technically, this is a bundled version of
 > AGLint with the extension. This is done to avoid the need to install AGLint separately, but the extension is capable
 > of using the external AGLint version if it is installed by some package manager.
 

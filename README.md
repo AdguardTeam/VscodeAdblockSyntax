@@ -86,7 +86,8 @@ AGLint integration is done in the following way:
    extension itself. Usually, it is the latest version of AGLint. The advantage of this approach is that you don't need
    to install AGLint manually, and you can start using the extension immediately after installation.
 
-> :warning: Please note that the linter is under active development, so it may not work properly for some rules. If you
+> [!WARNING]
+> Please note that the linter is under active development, so it may not work properly for some rules. If you
 > find any issues, please report them [here][aglintissues]. We look forward to your feedback, your help is very
 > important to us!
 

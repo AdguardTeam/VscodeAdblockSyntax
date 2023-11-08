@@ -5,3 +5,11 @@ example.com##section + div
 ||example.org^$third-party
 ||example.net^$third-party,domain=example.com
 /ad-*.js$domain=example.com
+
+!#if (adguard_app_mac || adguard_app_windows || adguard_app_android)
+example.com##.ad1
+||example.com^$referrerpolicy=same-origin
+||example.org^$permissions=autoplay=()
+!#else
+example.com##.ad2
+!#endif
