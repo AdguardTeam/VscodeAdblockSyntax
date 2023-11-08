@@ -9,12 +9,18 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ### Added
 
-- Highlighting for `$permissions` and `$referrerpolicy` modifiers,
-  and `!#else` directive [#115](https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/115)
+- Highlighting for `$permissions` modifier: [#114]
+- Highlighting for `$referrerpolicy` modifier: [#93]
+- Highlighting for `$beacon`, `$header` and `$doc` modifiers: [#69]
+- Highlighting for `!#else` directive: [#115]
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.0.6
+
+### Fixed
+
+- Highlighting for `$strict1p` and `$strict3p` modifiers: [#69]
 
 
 ## 1.1.2 - 2023-09-07
@@ -307,6 +313,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#56]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/56
 [#59]: https://github.com/AdguardTeam/VscodeAdblockSyntax/pull/59
 [#61]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/61
+[#69]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/69
 [#77]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/77
 [#80]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/80
 [#82]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/82
@@ -314,11 +321,14 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#84]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/84
 [#85]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/85
 [#90]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/90
-[#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/83
+[#93]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/93
+[#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/94
 [#104]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/104
 [#105]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/105
 [#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107
 [#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
+[#114]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/114
+[#115]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/115
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html
