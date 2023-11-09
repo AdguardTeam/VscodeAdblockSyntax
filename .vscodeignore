@@ -1,21 +1,16 @@
-**/*.map
-**/*.ts
-**/test
-**/tsconfig.base.json
-**/tsconfig.json
-**/yarn.lock
-.eslintcache
-.eslintignore
-.eslintrc.yaml
-.github/**
-.gitignore
-.husky/**
-.vscode-test/**
-.vscode/**
-.yarnrc
-CONTRIBUTING.md
-client/node_modules/**
-server/node_modules/**
-syntaxes/*.yaml-tmlanguage
-tsconfig.eslint.json
-vsc-extension-quickstart.md
+# Ignore everything from the .vsix package
+*
+*/**
+
+# Except these files:
+!CHANGELOG.md
+!LICENSE.md
+!README.md
+!client/out/**/*.js
+!client/package.json
+!icons/*
+!language-configuration.json
+!package.json
+!server/out/**/*.js
+!server/package.json
+!syntaxes/out/adblock.plist
