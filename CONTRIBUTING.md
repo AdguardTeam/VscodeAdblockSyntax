@@ -1,3 +1,4 @@
+<!-- omit in toc -->
 # Contributing
 
 You can contribute to the project by opening a pull request. People who contribute to AdGuard projects can receive
@@ -5,13 +6,12 @@ various rewards, see [this page][contribute] for details.
 
 Table of Contents:
 
-- [Contributing](#contributing)
-    - [Development \& Contribution](#development--contribution)
-        - [Available commands](#available-commands)
-    - [Updating integrated AGLint](#updating-integrated-aglint)
-    - [Testing production version](#testing-production-version)
-    - [Releasing](#releasing)
-    - [References](#references)
+- [Development \& Contribution](#development--contribution)
+    - [Available commands](#available-commands)
+- [Updating integrated AGLint](#updating-integrated-aglint)
+- [Testing production version](#testing-production-version)
+- [Releasing](#releasing)
+- [References](#references)
 
 ## Development & Contribution
 
@@ -61,17 +61,20 @@ maintainers should clone the main repository instead of forking it.
 
 During development, you can use the following commands (listed in `package.json`):
 
-- `yarn clean` - remove the `out` folders.
-- `yarn coverage` - print test coverage report.
-- `yarn esbuild-watch` - build the extension with [esbuild][esbuild] (both client and server) and watch for changes.
-- `yarn esbuild` - build the extension with [esbuild][esbuild] (both client and server).
-- `yarn generate-vsix` - builds the extension and generates a `.vsix` file in the `dist` folder.
-- `yarn lint` - run all linters.
-- `yarn lint:md` - lint the markdown files with [markdownlint][markdownlint].
-- `yarn lint:ts` - lint the code with [ESLint][eslint].
-- `yarn test` - run tests with [Jest][jest].
-- `yarn prepublish` - build the extension with [esbuild][esbuild] (both client and server) and minify the code.
+- `yarn dev` - Create a development build of the extension.
+- `yarn dev-watch` - Create a development build of the extension and watch for changes.
+- `yarn prod` - Create a production build of the extension. This will also generate a `.vsix` file.
+- `yarn clean` - Clean output folders (build results).
 - `yarn test-compile` - check if the code compiles with [TypeScript][typescript].
+- `yarn lint` - Run all linters.
+- `yarn lint:md` - Lint the markdown files with [markdownlint][markdownlint].
+- `yarn lint:ts` - Lint the code with [ESLint][eslint].
+- `yarn test` - Run tests with [Jest][jest].
+- `yarn build-txt` - Creates a `build.txt` file in the `out` folder that includes the current version number.
+- `yarn increment` - Increment the patch version number of the extension in the `package.json` file.
+- `yarn generate-vsix` - Generate a `.vsix` file in the `out` folder.
+- `yarn postinstall` - Install dependencies for the client and server.
+- `yarn prepare` - Initialize [Husky][husky] Git hooks.
 
 ## Updating integrated AGLint
 
@@ -127,7 +130,6 @@ Here are some useful links for VSCode extension development:
 - [Online test page for TextMate grammars](https://novalightshow.netlify.app/)
 
 [contribute]: https://adguard.com/contribute.html
-[esbuild]: https://esbuild.github.io/
 [eslint]: https://eslint.org/
 [git]: https://git-scm.com/
 [husky]: https://typicode.github.io/husky

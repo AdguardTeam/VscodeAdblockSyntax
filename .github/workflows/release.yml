@@ -1,4 +1,4 @@
-name: Release to VSCode Marketplace and GitHub Releases
+name: Create GitHub Release
 
 env:
   NODE_VERSION: 18
@@ -27,17 +27,7 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: |
-          # Install VSCE globally
-          yarn global add @vscode/vsce
-
-          # Install dependencies
-          yarn install --frozen-lockfile
-
-      # ESBuild ignores type checking, so we need to run it separately
-      # before running ESBuild
-      - name: Check TypeScript types
-        run: yarn test-compile
+        run: yarn install --frozen-lockfile
 
       - name: Run markdownlint
         run: yarn lint:md
@@ -45,23 +35,16 @@ jobs:
       - name: Run ESLint
         run: yarn lint:ts
 
-      # Convert grammar to PList format & Run ESBuild
+      # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
       - name: Create production build
         run: yarn prod
-
-      # Generate VSIX file
-      - name: Pack files with VSCE
-        run: yarn generate-vsix
-
-      - name: Publish to VSCode Marketplace
-        run: vsce publish -p ${{ secrets.VSCE_TOKEN }} -i vscode-adblock.vsix
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             syntaxes/out/adblock.plist
-            vscode-adblock.vsix
+            out/vscode-adblock.vsix
           draft: false
           prerelease: false
           body: See [CHANGELOG.md](./CHANGELOG.md) for the list of changes.

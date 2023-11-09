@@ -6,3 +6,6 @@
 
 ---
 !include 'build.yaml'
+
+---
+!include 'deploy.yaml'

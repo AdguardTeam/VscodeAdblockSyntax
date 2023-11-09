@@ -39,9 +39,14 @@ Build:
             # so we run `yarn install ${bamboo.varsYarn}` without `--ignore-optional`:
             yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
 
-            yarn build-txt
+            # Create production build
+            yarn prod
 
+            # Cleanup
+            yarn clean
             rm -rf node_modules
+            rm -rf client/node_modules
+            rm -rf server/node_modules
     - inject-variables:
         file: out/build.txt
         scope: RESULT
@@ -51,6 +56,13 @@ Build:
         configuration:
           selectedRepository: defaultRepository
           tagName: v${bamboo.inject.version}
+  # Store the .vsix file as a build artifact
+  artifacts:
+    - name: vscode-adblock.vsix
+      location: out
+      pattern: vscode-adblock.vsix
+      shared: true
+      required: true
   requirements:
     - adg-docker: true
 

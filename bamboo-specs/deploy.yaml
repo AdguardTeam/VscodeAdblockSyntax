@@ -1,0 +1,80 @@
+---
+version: 2
+deployment:
+  name: VSCode Adblock Syntax - Deploy
+  source-plan: AJL-VSCODEADBLOCKSYNTAXBUILD
+release-naming: ${bamboo.userscriptMeta.version}
+environments:
+  - marketplace.visualstudio.com
+  - open-vsx.org
+marketplace.visualstudio.com:
+  triggers: []
+  tasks:
+    - clean
+    - checkout:
+        repository: bamboo-deploy-publisher
+        path: bamboo-deploy-publisher
+        force-clean-build: 'false'
+    - artifact-download:
+        artifacts:
+          - name: vscode-adblock.vsix
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+            ls -alt
+
+            # Fix mixed logs
+            exec 2>&1
+
+            # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publish-an-extension
+            yarn @vscode/vsce publish -p ${bamboo.vsceToken} -i vscode-adblock.vsix
+  final-tasks: []
+  variables: {}
+  requirements:
+    - adg-docker: 'true'
+  notifications:
+    - events:
+        - deployment-started-and-finished
+      recipients:
+        - webhook:
+            name: Deploy webhook
+            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo?channel=adguard-qa
+
+open-vsx.org:
+  triggers: []
+  tasks:
+    - clean
+    - checkout:
+        repository: bamboo-deploy-publisher
+        path: bamboo-deploy-publisher
+        force-clean-build: 'true'
+    - artifact-download:
+        artifacts:
+          - name: vscode-adblock.vsix
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+            ls -alt
+
+            # Fix mixed logs
+            exec 2>&1
+
+            # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions#5-package-and-upload
+            yarn ovsx publish vscode-adblock.vsix -p ${bamboo.openVsxToken}
+  final-tasks: []
+  variables: {}
+  requirements:
+    - adg-docker: 'true'
+  notifications:
+    - events:
+        - deployment-started-and-finished
+      recipients:
+        - webhook:
+            name: Deploy webhook
+            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo?channel=adguard-qa

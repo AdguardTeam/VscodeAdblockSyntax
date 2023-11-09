@@ -15,9 +15,8 @@
 </p>
 
 <p align="center">
-    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/v/adguard.adblock" alt="VSCode Marketplace Version" /></a>
-    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/d/adguard.adblock" alt="VSCode Marketplace Downloads" /></a>
-    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/r/adguard.adblock" alt="VSCode Marketplace Rating" /></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/v/adguard.adblock?label=VSCode%20Marketplace" alt="Visual Studio Marketplace Version (including pre-releases)"></a>
+    <a href="https://open-vsx.org/extension/adguard/adblock"><img src="https://img.shields.io/open-vsx/v/adguard/adblock?label=Open%20VSX" alt="Open VSX Version" ></a>
     <a href="https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/AdguardTeam/VscodeAdblockSyntax" alt="License" /></a>
     <a href="https://github.com/AdguardTeam/VscodeAdblockSyntax/issues"><img src="https://img.shields.io/github/issues/AdguardTeam/VscodeAdblockSyntax" alt="Open GitHub Issues" /></a>
     <a href="https://github.com/AdguardTeam/VscodeAdblockSyntax/pulls"><img src="https://img.shields.io/github/issues-pr/AdguardTeam/VscodeAdblockSyntax" alt="Open GitHub Pull Requests" /></a>
@@ -43,8 +42,14 @@ Table of Contents:
 This extension adds support for AdGuard, uBlock Origin and Adblock Plus syntaxes to Visual Studio Code, so you can write
 adblock rules in a convenient way. It also provides a linter to check your rules for errors.
 
-**We recommend using this extension if you are working with adblock rules.** It is available on
-[VSCode Marketplace][vscodemarket].
+**We recommend using this extension if you are working with adblock rules.**
+
+You can easily install the update from the Visual Studio Marketplace or the Open VSX Registry:
+
+- [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=adguard.adblock)
+- [Open VSX Registry](https://open-vsx.org/extension/adguard/adblock)
+
+Here is a screenshot of the extension in action:
 
 <a href="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png">
     <img src="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png"
@@ -211,4 +216,3 @@ resources, please let us know.
 [ubo-filters]: https://github.com/gorhill/uBlock/wiki/Static-filter-syntax
 [ubo-procedural]: https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters
 [ubo-scriptlets]: https://github.com/gorhill/uBlock/wiki/Resources-Library#available-general-purpose-scriptlets
-[vscodemarket]: https://marketplace.visualstudio.com/items?itemName=adguard.adblock
