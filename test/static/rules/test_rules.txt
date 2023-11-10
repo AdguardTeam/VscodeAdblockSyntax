@@ -356,3 +356,35 @@ rootblog.pl#$#@media (min-width: 1200px) { a[href*="news.google.com/publications
 [$url=||example.com/content/*]##div.textad
 [$url=||example.org^]###adblock
 [$url=/\[a-z\]+\\.example\\.com^/]##.textad
+
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/68
+! valid cases:
+!#if ext_devbuild
+example.com##.ads
+!#endif
+
+!#if !ext_devbuild
+example.com##.ads
+!#endif
+
+!#if (adguard_ext_safari || adguard_app_ios || adguard_ext_android_cb)
+example.com##.ads
+!#endif
+
+! invalid cases (the parameter variable for a directive should begin with
+! a letter and may only contain letters, underscores, and dashes):
+!#if _ext_devbuild
+example.com##.ads
+!#endif
+
+!#if $ext_devbuild
+example.com##.ads
+!#endif
+
+!#if $ext_devbuild
+example.com##.ads
+!#endif
+
+!#if 1ext_devbuild
+example.com##.ads
+!#endif

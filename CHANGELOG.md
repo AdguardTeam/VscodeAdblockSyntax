@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
 
+## Unreleased
+
+### Fixed
+
+- Highlighting for `!#if`'s variables: [#68]
+
+
 ## 1.1.3 - 2023-11-08
 
 ### Added
@@ -314,6 +321,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#56]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/56
 [#59]: https://github.com/AdguardTeam/VscodeAdblockSyntax/pull/59
 [#61]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/61
+[#68]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/68
 [#69]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/69
 [#77]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/77
 [#80]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/80
