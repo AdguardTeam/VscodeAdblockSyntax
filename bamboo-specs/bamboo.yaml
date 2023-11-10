@@ -9,3 +9,6 @@
 
 ---
 !include 'deploy.yaml'
+
+---
+!include 'permissions.yaml'
