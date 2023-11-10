@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
 
-## Unreleased
+## 1.1.4 - 2023-11-10
+
+### Added
+
+- Release for Open VSX: [#91]
 
 ### Fixed
 
@@ -334,6 +338,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#85]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/85
 [#90]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/90
 [#92]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/92
+[#91]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/91
 [#93]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/93
 [#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/94
 [#95]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/95
