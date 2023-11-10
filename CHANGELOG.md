@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Highlighting for uBO style comments: [#102]
 - Highlighting for `!#if`'s variables: [#68]
 - Highlighting for escaped commas in uBO scriptlets: [#95]
+- Highlighting for uBO and ABP exception scriptlet rules: [#119]
 
 
 ## 1.1.3 - 2023-11-08
@@ -343,6 +344,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
 [#114]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/114
 [#115]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/115
+[#119]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/119
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html

@@ -436,3 +436,7 @@ example.com##.ads
 !#if 1ext_devbuild
 example.com##.ads
 !#endif
+
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/119
+#@#+js(ubo-scriptlet0, arg0, arg1, arg2)
+example.com#@$#abp-snippet0 arg0 arg1 arg2
