@@ -357,6 +357,41 @@ rootblog.pl#$#@media (min-width: 1200px) { a[href*="news.google.com/publications
 [$url=||example.org^]###adblock
 [$url=/\[a-z\]+\\.example\\.com^/]##.textad
 
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/102
+
+! valid comments
+#---------------------------------------------------------------------------
+#-#
+#problematic
+# ok
+# comment
+#№41comment#
+# COMMENT #
+#@%
+
+! not a comments, but rules
+##rule
+#@%#
+##.selector
+#@#.selector
+#?#.selector:has(> .selector)
+#@?#.selector:has(> .selector)
+#$#@media screen and (max-width: 480px) { .selector { display: none; }}
+#@$#@media screen and (max-width: 480px) { .selector { display: none; }}
+#$#abp-snippet0 arg0 arg1 arg2; abp-snippet1
+#@$#abp-snippet0 arg0 arg1 arg2; abp-snippet1
+#$?#.selector:has(> .selector) { display: none; }
+#@$?#.selector:has(> .selector) { display: none; }
+#%#//scriptlet('adg-scriptlet0', 'arg0', 'arg1', 'arg2')
+#@%#//scriptlet('adg-scriptlet0', 'arg0', 'arg1', 'arg2')
+$$div
+$@$div
+##+js(ubo-scriptlet0, arg0, arg1, arg2)
+#@#+js(ubo-scriptlet0, arg0, arg1, arg2)
+##^div:has-text(ad)
+#@#^div:has-text(ad)
+
+
 ! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/68
 ! valid cases:
 !#if ext_devbuild

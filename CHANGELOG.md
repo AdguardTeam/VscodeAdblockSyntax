@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ### Fixed
 
+- Highlighting for uBO style comments: [#102]
 - Highlighting for `!#if`'s variables: [#68]
 
 
@@ -333,6 +334,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#92]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/92
 [#93]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/93
 [#94]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/94
+[#102]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/102
 [#104]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/104
 [#105]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/105
 [#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107

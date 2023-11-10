@@ -119,12 +119,14 @@ repository:
         name: invalid.illegal.preprocessor
   comments:
     patterns:
-      - name: comment.line
+      - name: comment.line.exclamation-sign
         match: "^!.*"
-      - name: comment.line.batch-style
-        match: "^# .*"
-      - name: comment.line.batch-style
-        match: "^#$"
+      - name: comment.line.hashtag-sign
+        # It's important to distinguish between hashmark based comments and general cosmetic rules, so we need to
+        # exclude valid cosmetic rule separators from the match. This way, for example ##.foo will not be incorrectly
+        # marked as a comment.
+        # TODO: If a new cosmetic rule separator is added, it should be added here too
+        match: "^#(?!(?:@?(?:\\$?\\?|\\$|%)?#)).*"
   elemhideRules:
     patterns:
       - match: "^(\\[.+?\\])?(.*?)(#@?\\??#\\^?)(.+)$"
