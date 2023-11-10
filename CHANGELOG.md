@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
 
-## 1.1.4 - 2023-11-10
+## 1.1.5 - 2023-11-10
 
 ### Added
 
