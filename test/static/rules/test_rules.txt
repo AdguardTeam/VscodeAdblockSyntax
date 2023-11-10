@@ -235,6 +235,19 @@ ze.tt##+js(addEventListener-defuser.js, /^(?:DOMContentLoaded|load)$/, =!0)
 lablue.*##+js(setTimeout-defuser.js, r(), 500)
 ! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/53
 example.com##+js(scriptlet, , arg1)
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/95
+##+js(trusted-set-cookie, gravitoData, {"NonTCFVendors":[{"id":1\,"name":"Facebook"\,"consent":true}\,{"id":3\,"name":"Google"\,"consent":true}\,{"id":9\,"name":"Twitter"\,"consent":true}]}, 1year)
+##+js(,)
+##+js(,,)
+##+js(, , ,)
+##+js(\,)
+##+js(\\,)
+##+js(\ ,)
+##+js(\)
+##+js(\,,\,)
+##+js(\,, \,)
+##+js(ubo-scriptlet0, /aaa\,bbb/)
+##+js(ubo-scriptlet0, aaa\,bbb)
 
 !
 ! ABP snippets

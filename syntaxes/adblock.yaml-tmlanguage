@@ -554,7 +554,7 @@ repository:
         match: ".*"
   scriptletFunctionUBO:
     patterns:
-      - match: "([^,]*)(,\\s*)?"
+      - match: "((?:[^\\\\,]+|\\\\.?)*)(,|$)"
         captures:
           "1":
             name: string.quoted.adblock
