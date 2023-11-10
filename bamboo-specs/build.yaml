@@ -33,11 +33,18 @@ Build:
             set -e
             ls -al
 
-            # Install common dependencies
+            # Install dependencies
             # swc core optional dependencies are needed for tests
             # but `--ignore-optional` will not install them
-            # so we run `yarn install ${bamboo.varsYarn}` without `--ignore-optional`:
+            # so we run `yarn install ${bamboo.varsYarn}` without `--ignore-optional`.
+            # We need to install dependencies separately for client and server separately
+            # because we use '--ignore-scripts' which prevents postinstall script from running.
             yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
+            cd client
+            yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
+            cd ../server
+            yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
+            cd ..
 
             # Create production build
             yarn prod
