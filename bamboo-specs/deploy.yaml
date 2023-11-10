@@ -39,7 +39,7 @@ marketplace.visualstudio.com:
             yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
 
             # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publish-an-extension
-            yarn @vscode/vsce publish -p ${bamboo.vsceToken} -i vscode-adblock.vsix
+            yarn vsce publish -p ${bamboo.vsceToken} -i vscode-adblock.vsix
 
             # Cleanup
             rm -rf node_modules
