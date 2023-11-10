@@ -5,7 +5,7 @@ plan:
   key: VSCODEADBLOCKSYNTAXTEST
   name: vscode adblock syntax - tests
 variables:
-  dockerNode: adguard/node-ssh:18.13--0
+  dockerNode: adguard/node-ssh:18.13--1
 
 stages:
   - Build:

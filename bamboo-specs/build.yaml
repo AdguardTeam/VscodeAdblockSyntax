@@ -5,7 +5,7 @@ plan:
   key: VSCODEADBLOCKSYNTAXBUILD
   name: vscode adblock syntax - build release
 variables:
-  dockerNode: adguard/node-ssh:18.13--0
+  dockerNode: adguard/node-ssh:18.13--1
 
 stages:
   - Build:
@@ -50,7 +50,6 @@ Build:
             yarn prod
 
             # Cleanup
-            yarn clean
             rm -rf node_modules
             rm -rf client/node_modules
             rm -rf server/node_modules

@@ -5,7 +5,7 @@ plan:
   key: VSCODEADBLOCKSYNTAXINCR
   name: vscode adblock syntax - increment
 variables:
-  dockerNode: adguard/node-ssh:18.13--0
+  dockerNode: adguard/node-ssh:18.13--1
 
 stages:
   - Increment:
