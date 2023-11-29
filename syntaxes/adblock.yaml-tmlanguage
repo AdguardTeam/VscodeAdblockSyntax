@@ -67,18 +67,35 @@ repository:
             name: constant.numeric.decimal
   preprocessor:
     patterns:
-      - match: "^(!#if) (.*)$"
+      - match: "^(!#if)(\\s)(.*)$"
         captures:
           "1":
             name: keyword.preprocessor.directive
           "2":
+            name: keyword.other.delimiter.whitespace
+          "3":
             patterns:
+              # variable names
               - name: constant.language.platform.name
                 match: "[A-Za-z]+[\\w_-]*"
-              - name: keyword.control.characters
-                match: "(&&|!|\\|\\|| )"
-              - name: keyword.control.characters
-                match: "(\\(|\\))"
+              # and (&&) operator
+              - name: keyword.operator.logical.and
+                match: "&&"
+              # or (||) operator
+              - name: keyword.operator.logical.or
+                match: "\\|\\|"
+              # not (!) operator
+              - name: keyword.operator.logical.not
+                match: "!"
+              # open and close parentheses
+              - name: keyword.control.characters.parenthesis.open
+                match: "\\("
+              - name: keyword.control.characters.parenthesis.close
+                match: "\\)"
+              # space, tab
+              - name: keyword.other.delimiter.whitespace
+                match: "\\s+"
+              # anything else is invalid
               - name: invalid.illegal
                 match: ".*"
       - match: "^(!#include) (.*)$"
@@ -87,10 +104,19 @@ repository:
             name: keyword.preprocessor.directive
           "2":
             name: string.unquoted
-      - match: "^!#else\\s*$"
-        name: keyword.preprocessor.directive
-      - match: "^!#endif\\s*$"
-        name: keyword.preprocessor.directive
+      # TODO: handle leading and trailing whitespace in the beginning, and not for every rule type
+      - match: "^(!#else)(\\s*)$"
+        captures:
+          "1":
+            name: keyword.preprocessor.directive
+          "2":
+            name: keyword.other.delimiter.whitespace
+      - match: "^(!#endif)(\\s*)$"
+        captures:
+          "1":
+            name: keyword.preprocessor.directive
+          "2":
+            name: keyword.other.delimiter.whitespace
       - match: "^(!#safari_cb_affinity)(.*)$"
         captures:
           "1":
