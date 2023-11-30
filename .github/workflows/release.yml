@@ -35,6 +35,16 @@ jobs:
       - name: Run ESLint
         run: yarn lint:ts
 
+      - name: Create build.txt with version
+        run: yarn build-txt
+
+      - name: Extract changelog
+        run: |
+          # Import version from out/build.txt
+          export VERSION=$(cat out/build.txt | cut -d '=' -f2)
+
+          yarn extract-changelog -e $VERSION
+
       # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
       - name: Create production build
         run: yarn prod
@@ -47,6 +57,6 @@ jobs:
             out/vscode-adblock.vsix
           draft: false
           prerelease: false
-          body: See [CHANGELOG.md](./CHANGELOG.md) for the list of changes.
+          body_path: ./out/TEMP_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

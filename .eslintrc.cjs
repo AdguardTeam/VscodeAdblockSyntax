@@ -67,6 +67,14 @@ module.exports = {
                 startLines: 1,
             },
         ],
+        'jsdoc/check-tag-names': [
+            'warn',
+            {
+                // Define additional tags
+                // https://github.com/gajus/eslint-plugin-jsdoc/blob/main/docs/rules/check-tag-names.md#definedtags
+                definedTags: ['note'],
+            },
+        ],
         'arrow-body-style': 'off',
         'no-await-in-loop': 'off',
         // Force proper import and export of types

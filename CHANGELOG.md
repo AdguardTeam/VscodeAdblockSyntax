@@ -47,7 +47,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## 1.1.1 - 2023-08-30
 
-## Changed
+### Changed
 
 - Updated integrated [AGLint] to v2.0.4
 
