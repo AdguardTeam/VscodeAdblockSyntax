@@ -4,21 +4,18 @@
 
 import { Files } from 'vscode-languageserver/node';
 
-import {
-    NPM,
-    PNPM,
-    type PackageManager,
-    type TraceFunction,
-    YARN,
-    findGlobalPathForPackageManager,
-} from './package-managers';
+import { type TraceFunction, findGlobalPathForPackageManager, PackageManager } from './package-managers';
 import { AGLINT_PACKAGE_NAME } from '../common/constants';
 
 /**
  * Priority of package managers. We will try to find global AGLint installation in
  * this order (first element has the highest priority).
  */
-export const PACKAGE_MANAGER_PRIORITY: PackageManager[] = [NPM, YARN, PNPM];
+export const PACKAGE_MANAGER_PRIORITY: PackageManager[] = [
+    PackageManager.NPM,
+    PackageManager.YARN,
+    PackageManager.PNPM,
+];
 
 /**
  * Resolve the path to the AGLint module. First, we try to find it in the current

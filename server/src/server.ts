@@ -24,7 +24,7 @@ import cloneDeep from 'clone-deep';
 import { resolveAglintModulePath } from './utils/aglint-resolver';
 import { AGLINT_PACKAGE_NAME, AGLINT_REPO_URL, LF } from './common/constants';
 import { defaultSettings, type ExtensionSettings } from './settings';
-import { NPM, type PackageManager, getInstallationCommand } from './utils/package-managers';
+import { PackageManager, getInstallationCommand } from './utils/package-managers';
 
 // Store AGLint module here
 let AGLintModule: typeof AGLint;
@@ -161,7 +161,7 @@ async function cachePaths(): Promise<boolean> {
 async function loadAglintModule(
     dir: string,
     searchExternal = true,
-    packageManagers: PackageManager[] = [NPM],
+    packageManagers: PackageManager[] = [PackageManager.NPM],
 ): Promise<void> {
     // Initially, we assume that the AGLint module is not installed
     let externalAglintPath: string | undefined;
