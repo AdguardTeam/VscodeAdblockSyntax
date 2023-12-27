@@ -50,7 +50,7 @@ Build:
             cd ..
 
             # Check TypeScript types
-            yarn test-compile
+            yarn test:compile
 
             # Run markdownlint
             yarn lint:md

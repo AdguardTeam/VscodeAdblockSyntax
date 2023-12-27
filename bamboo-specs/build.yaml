@@ -47,7 +47,10 @@ Build:
             cd ..
 
             # Create production build
-            yarn prod
+            yarn build:prod
+
+            # Create build.txt file with version
+            yarn build:txt
 
             # Cleanup
             rm -rf node_modules

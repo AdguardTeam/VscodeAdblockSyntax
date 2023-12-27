@@ -19,7 +19,8 @@
                 "!**/node_modules/**"
             ],
             "autoAttachChildProcesses": true,
-            "preLaunchTask": "npm: dev"
+            "preLaunchTask": "Extension dev build (watch)",
+            "postDebugTask": "Terminate All Tasks",
         }
     ]
 }
