@@ -201,6 +201,11 @@ async function loadAglintModule(
     // Import corresponding AGLint module
     AGLintModule = await import(externalAglintPath || BUNDLED_AGLINT_PATH);
 
+    // Module may have a default export
+    if ('default' in AGLintModule) {
+        AGLintModule = AGLintModule.default as typeof AGLint;
+    }
+
     // TODO: Another way to import the module, since we use CJS bundles
     // eslint-disable-next-line import/no-dynamic-require, global-require
     // AGLintModule = require(externalAglintPath || bundledAglintPath);
