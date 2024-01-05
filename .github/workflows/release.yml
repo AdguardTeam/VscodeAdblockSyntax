@@ -35,8 +35,12 @@ jobs:
       - name: Run ESLint
         run: yarn lint:ts
 
+      # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
+      - name: Create production build
+        run: yarn build:prod
+
       - name: Create build.txt with version
-        run: yarn build-txt
+        run: yarn build:txt
 
       - name: Extract changelog
         run: |
@@ -44,10 +48,6 @@ jobs:
           export VERSION=$(cat out/build.txt | cut -d '=' -f2)
 
           yarn extract-changelog -e $VERSION
-
-      # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
-      - name: Create production build
-        run: yarn build:prod
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
