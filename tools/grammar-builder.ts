@@ -9,23 +9,16 @@ import {
     writeFile,
 } from 'fs-extra';
 import { join } from 'path';
+import { YAMLParseError } from 'yaml';
 
 import { convertYamlToPlist } from './grammar-converter';
+import { getErrorMessage } from './utils/error';
 
-/**
- * Path to the source grammar file
- */
-const SOURCE_GRAMMAR_FILE = 'syntaxes/adblock.yaml-tmlanguage';
+const SOURCE_GRAMMAR_FILE = 'adblock.yaml-tmlanguage';
+const DEST_GRAMMAR_FILE = 'adblock.plist';
 
-/**
- * Path to the out folder
- */
-const OUT_FOLDER = 'syntaxes/out';
-
-/**
- * Path to the builded grammar file
- */
-const DEST_GRAMMAR_FILE = join(OUT_FOLDER, 'adblock.plist');
+const SYNTAXES_FOLDER = join(__dirname, '..', 'syntaxes');
+const OUT_FOLDER = join(SYNTAXES_FOLDER, 'out');
 
 /**
  * Creates the out folder if it doesn't exist
@@ -39,27 +32,51 @@ async function createOutFolder() {
 
 /**
  * Builds the source grammar file into a PList representation
+ *
+ * @throws If the source grammar file doesn't exist
+ * @throws If the source grammar file is not a valid YAML file
+ * @throws If cannot write the PList representation to the dist folder
  */
 async function buildGrammar() {
     // Read the raw YAML content from the grammar file
-    const rawYaml = await readFile(SOURCE_GRAMMAR_FILE, 'utf8');
+    const rawYaml = await readFile(join(SYNTAXES_FOLDER, SOURCE_GRAMMAR_FILE), 'utf8');
 
     // Convert the YAML content into a PList representation
     const plistGrammar = convertYamlToPlist(rawYaml);
 
     // Write the PList representation to the dist folder
-    await writeFile(DEST_GRAMMAR_FILE, plistGrammar);
+    await writeFile(join(OUT_FOLDER, DEST_GRAMMAR_FILE), plistGrammar);
 }
 
 /**
  * Main function that runs the script
  */
 async function main() {
-    await createOutFolder();
-    await buildGrammar();
+    // eslint-disable-next-line no-console
+    console.log('[grammar] build started');
+
+    try {
+        await createOutFolder();
+        await buildGrammar();
+
+        // eslint-disable-next-line no-console
+        console.log(`Grammar file written to ${join(OUT_FOLDER, DEST_GRAMMAR_FILE)}`);
+    } catch (error: unknown) {
+        // https://eemeli.org/yaml/#errors
+        if (error instanceof YAMLParseError) {
+            const severity = error.name === 'YAMLParseError' ? 'error' : 'warn';
+            const { line, col } = error.linePos![0];
+
+            // eslint-disable-next-line no-console
+            console.error(`[${severity}] ${SOURCE_GRAMMAR_FILE}:${line}:${col}: ${error.message}`);
+        } else {
+            // eslint-disable-next-line no-console
+            console.error(`[error] ${getErrorMessage(error)}`);
+        }
+    }
 
     // eslint-disable-next-line no-console
-    console.log(`Grammar built to ${DEST_GRAMMAR_FILE}`);
+    console.log('[grammar] build finished');
 }
 
 main();

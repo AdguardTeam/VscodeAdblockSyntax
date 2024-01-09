@@ -1,145 +1,179 @@
 <!-- omit in toc -->
-# Contributing
+# Contributing & Development Guide
 
-You can contribute to the project by opening a pull request. People who contribute to AdGuard projects can receive
-various rewards, see [this page][contribute] for details.
+Thank you for your interest in contributing to the VSCode Adblock Syntax project! This guide aims to provide essential
+information about the project and outlines steps to contribute effectively.
+
+Contributors to AdGuard projects can receive **various** rewards; please check [this page][contribute] for details.
 
 Table of Contents:
 
-- [Development \& Contribution](#development--contribution)
-    - [Available commands](#available-commands)
+- [Prerequisites](#prerequisites)
+- [Initial setup](#initial-setup)
+- [Project structure](#project-structure)
+- [Running the extension in development mode](#running-the-extension-in-development-mode)
+- [Creating a production build](#creating-a-production-build)
 - [Updating integrated AGLint](#updating-integrated-aglint)
-- [Testing production version](#testing-production-version)
-- [Releasing](#releasing)
-- [References](#references)
+- [Updating syntax highlighting](#updating-syntax-highlighting)
+- [Available commands](#available-commands)
+- [Useful links](#useful-links)
 
-## Development & Contribution
+## Prerequisites
 
-Here is a short guide on how to set up the development environment and how to submit your changes:
+Ensure that the following software is installed on your computer:
 
-- Pre-requisites: [Node.js][nodejs] (v14 or higher), [Yarn][yarn] (v2 or higher), [Git][git], [VSCode][vscode]. It is
-  important to use Yarn and not NPM, because the project is optimized for Yarn.
-- Fork the repository on GitHub. You will need to have a GitHub account for this. If you already have a fork, make sure
-  to update it with the latest changes from the main repository.
-- Clone *your forked repository* to your local machine with `git clone <repository-url>`. It is important to clone your
-  forked repository and not the main repository, because you will not be able to push your changes to the main
-  repository, since you do not have the permissions to do so.
-- Install dependencies with `yarn`. This will also install the dependencies for the client and server via `postinstall`
-  scripts. After the installation is complete, it will also initializes [Husky][husky] Git hooks via the `prepare`
-  script.
-- Install VSCE globally with `yarn global add @vscode/vsce`. This is needed to generate the `.vsix` file.
-- Create a new branch with `git checkout -b <branch-name>`. Example: `git checkout -b feature/add-some-feature`. Please
-  add `feature/` or `fix/` prefix to your branch name, and refer to the issue number if there is one. Example: `fix/42`.
-- Open the project **root** folder in VSCode.
-- Before you start developing, just try to run the extension in debug mode. To do this, simply press `F5` in VSCode.
-  This will build the extension and open a new VSCode window with the extension installed (but it is not installed in
-  the main VSCode window, which you use for development). The opened window is called *"Extension Development Host"*.
-- Make your changes and test them in the debug VSCode window.
-- Check code by running `yarn test-compile`, `yarn lint` and `yarn test` commands (Husky will run these commands
-  automatically before each commit).
-- Generate a `.vsix` file with `yarn generate-vsix` command. This will build the extension and generate a `.vsix` file
-  in the project root folder. You can install this file as an extension in your VSCode. Please always test your
-  changes by installing the `.vsix` file in a separate VSCode window before submitting a pull request.
-- If everything is OK, commit your changes and push them to your forked repository. Example:
-    - Add files to commit with `git add .`
-    - Commit files with `git commit -m "Add some feature"`.
-    - Push changes to your forked repository with `git push origin feature/add-some-feature`.
-- When you are ready to submit your changes, go to your forked repository on GitHub and create a pull request. Make sure
-  to select the correct branch. Example: `feature/add-some-feature` branch in your forked repository to `master` branch
-  in the main repository.
-- After you open a pull request, GitHub Actions will run the tests on your changes. If the tests fail, you can see the
-  error details in the "Checks" tab. If the tests pass, a green checkmark will appear in the "Checks" tab.
-- Finally, wait for the maintainers to review your changes. If there are any issues, you can fix them by pushing new
-  commits to your branch. If everything is OK, the maintainers will merge your pull request.
+- [Node.js][nodejs] (we recommend using the latest LTS version)
+- [Yarn][yarn]
+- [Git][git]
+- [VSCode][vscode]
 
-We would be happy to review your pull request and merge it if it is suitable for the project.
+## Initial setup
 
-*Note for maintainers:* Installation instructions for maintainers are the same as for contributors, except that
-maintainers should clone the main repository instead of forking it.
+After cloning the repository, follow these steps to initialize the project:
 
-### Available commands
+1. Install dependencies by calling `yarn`. This will also install client and server dependencies via `postinstall`
+   scripts. After installation, it will initialize [Husky Git hooks][husky] through the `prepare` script.
+1. Install recommended VSCode extensions (refer to the [`.vscode/extensions.json`][vscode-extensions-file] file).
+   **These extensions are REQUIRED for the development process.**
 
-During development, you can use the following commands (listed in `package.json`):
+## Project structure
 
-- `yarn dev` - Create a development build of the extension.
-- `yarn dev-watch` - Create a development build of the extension and watch for changes.
-- `yarn prod` - Create a production build of the extension. This will also generate a `.vsix` file.
-- `yarn clean` - Clean output folders (build results).
-- `yarn test-compile` - check if the code compiles with [TypeScript][typescript].
-- `yarn lint` - Run all linters.
-- `yarn lint:md` - Lint the markdown files with [markdownlint][markdownlint].
-- `yarn lint:ts` - Lint the code with [ESLint][eslint].
-- `yarn test` - Run tests with [Jest][jest].
-- `yarn build-txt` - Creates a `build.txt` file in the `out` folder that includes the current version number.
-- `yarn increment` - Increment the patch version number of the extension in the `package.json` file.
-- `yarn generate-vsix` - Generate a `.vsix` file in the `out` folder.
-- `yarn postinstall` - Install dependencies for the client and server.
-- `yarn prepare` - Initialize [Husky][husky] Git hooks.
+The most important folders in the project are:
+
+- [**client**][client-dir]: VSCode extension code which has access to all VS Code Namespace API.
+- [**server**][server-dir]: Language analysis tool running in a separate process.
+- [**syntaxes**][syntaxes-dir]: TextMate grammars for syntax highlighting.
+- [**test**][test-dir]: Various tests for the extension.
+    - [**grammar**][test-grammar-dir]: Unit tests for the TextMate grammar.
+    - [**static**][test-static-dir]: Static test files for testing the extension in development mode.
+        - [**aglint**][test-static-aglint-dir]: AGLint test project.
+        - [**rules**][test-static-rules-dir]: Rules for testing the syntax highlighting visually.
+
+> [!NOTE]
+> To learn more about the client-server architecture of VSCode extensions, refer to the [VSCode Language Server
+> Extension Guide][vscode-ls-extension-guide].
+
+## Running the extension in development mode
+
+If you've made changes to the extension code and want to test them, follow these steps:
+
+1. Open the project's **root** folder in VSCode.
+1. Select `Run > Start Debugging` menu item in VSCode (or just press the `F5` key). This starts the watch build process
+   in the background, opening a new VSCode window called "Extension Development Host" where you can test the extension.
+1. Watch build does not automatically update the extension in the "Extension Development Host" window. You'll need to
+   reload the window manually by pressing `Ctrl + R` or selecting `Developer: Reload Window` command in the command
+   palette (`Ctrl + Shift + P`).
+
+> [!IMPORTANT]
+> When you start the debugging, VSCode starts the watch build commands in separate terminals. To interpret the terminal
+> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs]. Since ESBuild is not supported by
+> VSCode by default, you need to install the [ESBuild Problem Matchers][esbuild-problem-matcher-extension] extension to
+> make able VSCode to parse its output.
+> Without this extension, VSCode cannot recognize when ESBuild completes its build or encounters errors. This results in
+> an endless run, preventing the opening of the Extension Development Host.
+
+## Creating a production build
+
+To create a production build of the extension:
+
+1. Run `yarn build:prod` command. This generates a production build and a `.vsix` file in the `out` folder.
+1. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
+   (`Ctrl + Shift + P`), select "Extensions: Install from VSIX...", and choose the `vscode-adblock.vsix` file.
 
 ## Updating integrated AGLint
 
-Here is a general workflow for updating the integrated AGLint version in the VSCode extension.
+> [!NOTE]
+> This extension includes an integrated AGLint. It's a bundled version, avoiding the need for a separate AGLint
+> installation. However, the extension can use an external AGLint version if installed by a package manager.
+
+1. Update AGLint in the `server/package.json` file. Alternatively, link the local AGLint repository if it hasn't been
+   released on NPM.
+1. If there are breaking changes in the AGLint API, update the server code accordingly, changing the minimum supported
+   AGLint version in `server/index.ts` (`MIN_AGLINT_VERSION` constant).
+1. Test the extension with the new AGLint version by running it in debug mode (see
+   [*Running the extension in development mode*](#running-the-extension-in-development-mode) section). In the
+   *"Extension Development Host"* window, you should open the test project (see `test/static` folder) and check if the
+   extension works as expected.
+1. If needed, update the test project (e.g., update the config file, add new example rules).
+
+## Updating syntax highlighting
+
+1. Update the TM grammar in the `syntaxes/adblock.yaml-tmLanguage` file.
+1. Create/modify example rules in the `test/static/rules` folder. Add link for GitHub issues to rules if related to some
+   issue.
+1. Create/modify unit tests in `test/grammar`. Ensure tests pass by running `yarn test`.
+
+> [!TIP]
+> Open the `test/static` folder in the "Extension Development Host" window and you can check the syntax highlighting
+> visually. This is useful when you want to check how the highlighting works with specific rules.
 
 > [!NOTE]
-> VSCode extension has its own "integrated" version of AGLint. Technically, this is a bundled version of
-> AGLint with the extension. This is done to avoid the need to install AGLint separately, but the extension is capable
-> of using the external AGLint version if it is installed by some package manager.
+> You can use the [Online test page for TextMate grammars][nova-light-show] to test the TM grammars.
 
-1. Update the AGLint version in the `server/package.json` file. Or just link the local AGLint repository, if it doesn't
-   released yet on NPM.
-1. If there are some breaking changes in the AGLint API, update the server code accordingly and change the minimum
-   supported AGLint version in the `server/index.ts` file (`MIN_AGLINT_VERSION` constant).
-1. Build the extension, or run it in debug mode in the Extension Development Host window (VSCode menu: `Run > Start
-   Debugging` or just press the `F5` key).
-1. Test the builded extension with the new AGLint version by opening the test project (see `test/static` folder).
-1. If necessary, update the test project (eg. update the config file, add new example rules, etc.).
+## Available commands
 
-## Testing production version
+During development, you can use the following commands (listed in `package.json`).
 
-Instead of running the extension in debug mode in the Extension Development Host window, you can test the production
-version of the extension.
+- `yarn build:grammar` - Builds a PList version of the TM grammar, because VSCode does not support YAML grammars
+  directly.
+- `yarn build:prod` - Create a production build of the extension. This will also generate a `.vsix` file in the `out`
+  folder.
+- `yarn build:txt` - Creates a `build.txt` file in the `out` folder that includes the current version number. Typically,
+  this is used by CI.
+- `yarn build:vsix` - Generate a `.vsix` file in the `out` folder. This file can be installed in VSCode as an extension.
+- `yarn clean` - Clean output folders (build results).
+- `yarn increment` - Increment the patch version number of the extension in the `package.json` file. Typically, this is
+  used by CI.
+- `yarn lint:md` - Lint the markdown files with [markdownlint][markdownlint].
+- `yarn lint:staged` - Run linters on staged files. Typically, this is used by Husky Git hooks.
+- `yarn lint:ts` - Lint the code with [ESLint][eslint].
+- `yarn lint` - Run all linters.
+- `yarn test:compile` - Check if the code compiles with [TypeScript][typescript].
+- `yarn test` - Run tests with [Jest][jest].
+- `yarn watch:client` - Watch for changes in the client code and create a development build automatically.
+- `yarn watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
+- `yarn watch:server` - Watch for changes in the server code and create a development build automatically.
 
-1. Build the extension with `yarn prod` command. This will generate a `vscode-adblock.vsix` file in the project root
-   folder.
-1. Install the extension in your VSCode by opening the command palette (`Ctrl + Shift + P`) and selecting the
-   "Extensions: Install from VSIX..." command. Then select the `vscode-adblock.vsix` file.
-1. Restart VSCode.
-1. Open the test project in VSCode (see `test/static` folder) and check if the extension works as expected.
+> [!NOTE]
+> Watch commands (e.g., `yarn watch:client`) are typically used by VSCode tasks (see
+> [`.vscode/tasks.json`][vscode-tasks-file] file and
+> [*Running the extension in development mode*](#running-the-extension-in-development-mode) section).
+> In most cases, you don't need to run them manually.
 
-## Releasing
+> [!NOTE]
+> Linting and testing commands are called automatically by Husky Git hooks and CI. You can run them manually if needed.
 
-This section describes the release process for the new versions of the VSCode plugin. This process needs to be performed
-by maintainers only.
+## Useful links
 
-1. Fill the `CHANGELOG.md` file with the changes made since the last release by following the
-  [Keep a Changelog][keep-a-changelog] rules.
-1. Update the version number in the `package.json` file regarding the [semver][semver] rules.
-1. Commit changes as `Bump version to vX.X.X`.
-1. Create a new tag with the version number (e.g. `vX.X.X`) to trigger the [release workflow][release-workflow]. The
-  release workflow will automatically publish the new version to the [VSCode Marketplace][vscode-marketplace] and
-  create a new release on GitHub with the changelog and the generated assets.
-
-## References
-
-Here are some useful links for VSCode extension development:
+Explore the following links for more information on development:
 
 - [TMLanguage](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide)
 - [VSCode API](https://code.visualstudio.com/api/references/vscode-api)
 - [VSCode Language Server Extension Guide](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
 - [VSCode Extension Samples](https://github.com/microsoft/vscode-extension-samples)
-- [Online test page for TextMate grammars](https://novalightshow.netlify.app/)
+- [Online test page for TextMate grammars][nova-light-show]
 
+[client-dir]: ./client
 [contribute]: https://adguard.com/contribute.html
+[esbuild-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers
 [eslint]: https://eslint.org/
 [git]: https://git-scm.com/
 [husky]: https://typicode.github.io/husky
 [jest]: https://jestjs.io/
-[keep-a-changelog]: https://keepachangelog.com/en/1.0.0/
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [nodejs]: https://nodejs.org/en/
-[release-workflow]: https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/.github/workflows/release.yml
-[semver]: https://semver.org/
+[nova-light-show]: https://novalightshow.netlify.app/
+[server-dir]: ./server
+[syntaxes-dir]: ./syntaxes
+[test-dir]: ./test
+[test-grammar-dir]: ./test/grammar
+[test-static-aglint-dir]: ./test/static/aglint
+[test-static-dir]: ./test/static
+[test-static-rules-dir]: ./test/static/rules
 [typescript]: https://www.typescriptlang.org/
-[vscode-marketplace]: https://marketplace.visualstudio.com/items?itemName=adguard.adblock
+[vscode-extensions-file]: ./.vscode/extensions.json
+[vscode-ls-extension-guide]: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
+[vscode-problem-matcher-docs]: https://code.visualstudio.com/docs/editor/tasks#_processing-task-output-with-problem-matchers
+[vscode-tasks-file]: ./.vscode/tasks.json
 [vscode]: https://code.visualstudio.com/
 [yarn]: https://yarnpkg.com/

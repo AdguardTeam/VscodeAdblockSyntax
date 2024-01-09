@@ -2,20 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Server dev build (watch)",
             "type": "npm",
-            "script": "dev",
-            "group": "build",
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "never"
-            },
-            "problemMatcher": [
-                "$tsc"
-            ]
-        },
-        {
-            "type": "npm",
-            "script": "esbuild-watch",
+            "script": "watch:server",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -23,11 +12,107 @@
             },
             "presentation": {
                 "panel": "dedicated",
-                "reveal": "never"
+                "reveal": "never",
+                "close": true
             },
-            "problemMatcher": [
-                "$tsc-watch"
-            ]
+            "problemMatcher": "$esbuild-watch",
+        },
+        {
+            "label": "Integrated AGLint dev build (watch)",
+            "type": "npm",
+            "script": "watch:aglint",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": "$esbuild-watch",
+        },
+        {
+            "label": "Client dev build (watch)",
+            "type": "npm",
+            "script": "watch:client",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": "$esbuild-watch",
+        },
+        {
+            "label": "Grammar dev build (watch)",
+            "type": "npm",
+            "script": "watch:grammar",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            // Custom problem matcher for the grammar builder
+            "problemMatcher": {
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/syntaxes"
+                ],
+                "pattern": {
+                    "regexp": "^\\[(warning|error)\\] ([^:]+):(\\d+):(\\d+): (.*$)",
+                    "file": 2,
+                    "line": 3,
+                    "column": 4,
+                    "severity": 1,
+                    "message": 5
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": "\\[grammar\\] build started"
+                    },
+                    "endsPattern": {
+                        "regexp": "\\[grammar\\] build finished"
+                    }
+                }
+            }
+        },
+        {
+            "label": "Extension dev build (watch)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Grammar dev build (watch)",
+                "Server dev build (watch)",
+                "Integrated AGLint dev build (watch)",
+                "Client dev build (watch)"
+            ],
+        },
+        // Terminate watch tasks after debugging
+        // https://github.com/microsoft/vscode/issues/90786#issuecomment-587415345
+        {
+            "label": "Terminate All Tasks",
+            "command": "echo ${input:terminateAllTasks}",
+            "type": "shell",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "terminateAllTasks",
+            "type": "command",
+            "command": "workbench.action.tasks.terminate",
+            "args": "terminateAll"
         }
     ]
 }

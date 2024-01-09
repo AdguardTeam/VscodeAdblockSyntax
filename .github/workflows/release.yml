@@ -35,8 +35,12 @@ jobs:
       - name: Run ESLint
         run: yarn lint:ts
 
+      # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
+      - name: Create production build
+        run: yarn build:prod
+
       - name: Create build.txt with version
-        run: yarn build-txt
+        run: yarn build:txt
 
       - name: Extract changelog
         run: |
@@ -44,10 +48,6 @@ jobs:
           export VERSION=$(cat out/build.txt | cut -d '=' -f2)
 
           yarn extract-changelog -e $VERSION
-
-      # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
-      - name: Create production build
-        run: yarn prod
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -60,3 +60,29 @@ jobs:
           body_path: ./out/TEMP_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+notify:
+    name: Send Slack notification
+    needs:
+      - release
+
+    if:
+      ${{ always() &&
+        (
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch'
+        )
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conclusion
+        uses: technote-space/workflow-conclusion-action@v3
+
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ env.WORKFLOW_CONCLUSION }}
+          fields: workflow, repo, message, commit, author, eventName, ref
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -14,3 +14,4 @@ export const AGLINT_REPO_URL = 'https://github.com/AdguardTeam/AGLint';
 
 export const LF = '\n';
 export const EMPTY = '';
+export const SPACE = ' ';

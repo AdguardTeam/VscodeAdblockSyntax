@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn test-compile
-yarn lint
+yarn test:compile
+yarn lint:staged
 yarn test

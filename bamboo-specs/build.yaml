@@ -29,25 +29,49 @@ Build:
         interpreter: SHELL
         scripts:
           - |-
-            set -x
             set -e
-            ls -al
+            set -x
 
-            # Install dependencies
-            # swc core optional dependencies are needed for tests
-            # but `--ignore-optional` will not install them
-            # so we run `yarn install ${bamboo.varsYarn}` without `--ignore-optional`.
-            # We need to install dependencies separately for client and server separately
-            # because we use '--ignore-scripts' which prevents postinstall script from running.
-            yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
-            cd client
-            yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
-            cd ../server
-            yarn install --silent --ignore-engines --ignore-platform --ignore-scripts
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -laht
+
+            # Exclude '--ignore-optional' from yarn arguments
+            # This is needed for installing swc core optional dependencies properly
+            originalYarnArgs="$bamboo_varsYarn"
+            modifiedYarnArgs=$(echo "$originalYarnArgs" | sed 's/--ignore-optional//g')
+
+            # Install common dependencies
+            yarn install ${modifiedYarnArgs}
+
+            # Install dependencies in ./server
+            cd ./server
+            yarn install ${modifiedYarnArgs}
             cd ..
 
+            # Install dependencies in ./client
+            cd ./client
+            yarn install ${modifiedYarnArgs}
+            cd ..
+
+            # Check TypeScript types
+            yarn test:compile
+
+            # Run markdownlint
+            yarn lint:md
+
+            # Run ESLint
+            yarn lint:ts
+
+            # Run Jest tests
+            yarn test
+
             # Create production build
-            yarn prod
+            yarn build:prod
+
+            # Create build.txt file with version
+            yarn build:txt
 
             # Cleanup
             rm -rf node_modules
