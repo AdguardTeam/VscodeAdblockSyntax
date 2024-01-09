@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
 
+## Unreleased
+
+### Added
+
+- Support for quick fixes: [#122]
+
 ## 1.1.6 - 2024-01-04
 
 ### Fixed
@@ -357,6 +363,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#114]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/114
 [#115]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/115
 [#119]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/119
+[#122]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/122
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html

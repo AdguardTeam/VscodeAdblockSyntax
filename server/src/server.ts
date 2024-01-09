@@ -1,5 +1,6 @@
 /**
  * @file AGLint Language Server for VSCode (Node.js)
+ * @todo Split this server into multiple files by creating a server context
  */
 
 import {
@@ -11,6 +12,15 @@ import {
     type InitializeParams,
     DidChangeConfigurationNotification,
     type InitializeResult,
+    CodeActionKind,
+    CodeAction,
+    Command,
+    TextDocumentSyncKind,
+    TextDocumentEdit,
+    TextEdit,
+    Position,
+    Range,
+    uinteger,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { type ParsedPath, join as joinPath } from 'path';
@@ -19,10 +29,18 @@ import { fileURLToPath, pathToFileURL } from 'url';
 // import { satisfies } from 'semver';
 // Import type definitions from the AGLint package
 import type * as AGLint from '@adguard/aglint';
+import { ConfigCommentRuleParser, type ConfigCommentRule, CommentMarker } from '@adguard/agtree';
 import cloneDeep from 'clone-deep';
 
+import { getErrorMessage } from './utils/error';
 import { resolveAglintModulePath } from './utils/aglint-resolver';
-import { AGLINT_PACKAGE_NAME, AGLINT_REPO_URL, LF } from './common/constants';
+import {
+    AGLINT_PACKAGE_NAME,
+    AGLINT_REPO_URL,
+    EMPTY,
+    LF,
+    SPACE,
+} from './common/constants';
 import { defaultSettings, type ExtensionSettings } from './settings';
 import { NPM, type PackageManager, getInstallationCommand } from './utils/package-managers';
 
@@ -67,6 +85,21 @@ let cachedPaths: CachedPaths | undefined;
 let settings: ExtensionSettings = defaultSettings;
 
 /**
+ * VSCode commands supported by the language server
+ */
+enum CommandId {
+    DisableLine = 'aglint.disable-line',
+    DisableRuleLine = 'aglint.disable-rule-line',
+}
+
+/**
+ * AGLint commands supported by the language server
+ */
+enum AglintCommand {
+    DisableNextLine = 'aglint-disable-next-line',
+}
+
+/**
  * Scan the workspace and cache the result.
  *
  * @returns True if the caching succeeded, false otherwise.
@@ -75,7 +108,7 @@ async function cachePaths(): Promise<boolean> {
     // Cache the scan result
     try {
         if (!workspaceRoot) {
-            throw new Error('Couldn\'t determine the workspace root of the VSCode instance');
+            throw new Error('Could not determine the workspace root of the VSCode instance');
         }
 
         // Get the config for the cwd, should exist
@@ -124,7 +157,7 @@ async function cachePaths(): Promise<boolean> {
             if (error.name === 'NoConfigError') {
                 /* eslint-disable max-len */
                 connection.console.error([
-                    'AGLint couldn\'t find the config file. To set up a configuration file for this project, please run:',
+                    'AGLint could not find the config file. To set up a configuration file for this project, please run:',
                     '',
                     `    ${getInstallationCommand(settings.packageManager, AGLINT_PACKAGE_NAME)} init`,
                     '',
@@ -232,7 +265,19 @@ connection.onInitialize(async (params: InitializeParams) => {
 
     // TODO: Define the capabilities of the language server here
     const result: InitializeResult = {
-        capabilities: {},
+        capabilities: {
+            codeActionProvider: true,
+            textDocumentSync: {
+                openClose: true,
+                change: TextDocumentSyncKind.Incremental,
+            },
+            executeCommandProvider: {
+                commands: [
+                    CommandId.DisableLine,
+                    CommandId.DisableRuleLine,
+                ],
+            },
+        },
     };
 
     if (hasWorkspaceFolderCapability) {
@@ -298,21 +343,12 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
 
             const diagnostic: Diagnostic = {
                 severity,
-
-                // Linting problems using 1-based line numbers, but VSCode uses 0-based line numbers
-                range: {
-                    start: {
-                        line: problem.position.startLine - 1,
-                        character: problem.position.startColumn !== undefined ? problem.position.startColumn : 0,
-                    },
-                    end: {
-                        line: problem.position.endLine - 1,
-                        character: problem.position.endColumn !== undefined ? problem.position.endColumn : 0,
-                    },
-                },
-
+                range: Range.create(
+                    // Note: linting problems using 1-based line numbers, but VSCode uses 0-based line numbers
+                    Position.create(problem.position.startLine - 1, problem.position.startColumn ?? 0),
+                    Position.create(problem.position.endLine - 1, problem.position.endColumn ?? 0),
+                ),
                 message: problem.message,
-
                 source: 'aglint',
             };
 
@@ -348,6 +384,260 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         await connection.sendNotification('aglint/status', { error });
     }
 }
+
+connection.onCodeAction((params) => {
+    const textDocument = documents.get(params.textDocument.uri);
+    if (textDocument === undefined) {
+        return undefined;
+    }
+
+    const { diagnostics } = params.context;
+    const actions = [];
+
+    for (const diagnostic of diagnostics) {
+        const { code, range } = diagnostic;
+
+        if (!code) {
+            // In this case we don't have a rule name, because some parsing error happened,
+            // and parsing errors have more priority than linting errors: if a rule cannot be parsed,
+            // it cannot be checked with linter rules.
+            // So we need to suggest disabling AGLint for the line completely as a quick fix.
+            const title = 'Disable AGLint for this line';
+            const action = CodeAction.create(
+                title,
+                Command.create(
+                    title,
+                    CommandId.DisableLine,
+                    // additional arguments for the command:
+                    textDocument.uri,
+                    range,
+                ),
+                CodeActionKind.QuickFix,
+            );
+            actions.push(action);
+        } else {
+            // In this case we have a linter rule name, so we need to suggest disabling this rule for the line
+            const title = `Disable AGLint rule '${code}' for this line`;
+            const action = CodeAction.create(
+                title,
+                Command.create(
+                    title,
+                    CommandId.DisableRuleLine,
+                    // additional arguments for the command:
+                    textDocument.uri,
+                    range,
+                    code,
+                ),
+                CodeActionKind.QuickFix,
+            );
+            actions.push(action);
+        }
+    }
+    return actions;
+});
+
+/**
+ * Parse AGLint config comment rule in a tolerant way (did not throw on parsing error).
+ *
+ * @param rule Rule to parse.
+ * @returns AGLint config comment rule node or null if parsing failed.
+ */
+const parseConfigCommentTolerant = (rule: string): ConfigCommentRule | null => {
+    try {
+        return ConfigCommentRuleParser.parse(rule);
+    } catch (error: unknown) {
+        connection.console.error(`'${rule}' is not a valid AGLint config comment rule: ${getErrorMessage(error)}`);
+        return null;
+    }
+};
+
+connection.onExecuteCommand(async (params) => {
+    /**
+     * Helper function to insert content into a document.
+     *
+     * @param textDocument The document to apply the edit to.
+     * @param position The position in the document to insert the edit.
+     * @param content The content to insert.
+     */
+    const insert = (textDocument: TextDocument, position: Position, content: string) => {
+        connection.workspace.applyEdit({
+            documentChanges: [
+                TextDocumentEdit.create({ uri: textDocument.uri, version: textDocument.version }, [
+                    TextEdit.insert(
+                        position,
+                        content,
+                    ),
+                ]),
+            ],
+        });
+    };
+
+    /**
+     * Helper function to replace content in a document.
+     *
+     * @param textDocument The document to apply the edit to.
+     * @param range The range in the document to replace the edit.
+     * @param content The content to replace.
+     */
+    const replace = (textDocument: TextDocument, range: Range, content: string) => {
+        connection.workspace.applyEdit({
+            documentChanges: [
+                TextDocumentEdit.create({ uri: textDocument.uri, version: textDocument.version }, [
+                    TextEdit.replace(
+                        range,
+                        content,
+                    ),
+                ]),
+            ],
+        });
+    };
+
+    if (params.command === CommandId.DisableLine || params.command === CommandId.DisableRuleLine) {
+        // Get common arguments for both commands
+        if (!params.arguments || params.arguments.length < 2) {
+            return;
+        }
+
+        const textDocument = documents.get(params.arguments[0]);
+        if (textDocument === undefined) {
+            return;
+        }
+
+        const range = params.arguments[1];
+        if (!Range.is(range)) {
+            return;
+        }
+
+        // Line number for the problematic line (adblock rule)
+        const lineNumber = range.start.line;
+
+        // Make '! aglint-disable-next-line' prefix
+        const aglintDisableNextLinePrefix = [
+            CommentMarker.Regular,
+            SPACE,
+            AglintCommand.DisableNextLine,
+        ].join(EMPTY);
+
+        if (params.command === CommandId.DisableLine) {
+            // If there are no previous lines, just insert the comment before the problematic line.
+            // Note: vscode uses 0-based line numbers
+            if (lineNumber === 0) {
+                insert(
+                    textDocument,
+                    Position.create(lineNumber, 0),
+                    `${aglintDisableNextLinePrefix}${LF}`,
+                );
+                return;
+            }
+
+            // If we have previous lines
+            if (lineNumber > 0) {
+                const prevLineNumber = lineNumber - 1;
+
+                // Get the previous line
+                const prevLine = textDocument.getText(
+                    Range.create(
+                        Position.create(prevLineNumber, 0),
+                        // Note: we do not know the length of the previous line, so we use the max value
+                        Position.create(prevLineNumber, uinteger.MAX_VALUE),
+                    ),
+                );
+
+                // If the previous line is '! aglint-disable-next-line some-rule-name', we need to replace it
+                // to '! aglint-disable-next-line' - because in this case we want to disable AGLint completely
+                // for the problematic line, not just some rule.
+                const commentNode = parseConfigCommentTolerant(prevLine.trim());
+
+                if (
+                    commentNode
+                    && commentNode.command.value === AglintCommand.DisableNextLine
+                    && commentNode.params
+                ) {
+                    delete commentNode.params;
+                    replace(
+                        textDocument,
+                        Range.create(
+                            Position.create(prevLineNumber, 0),
+                            Position.create(prevLineNumber, prevLine.length),
+                        ),
+                        ConfigCommentRuleParser.generate(commentNode),
+                    );
+                    return;
+                }
+
+                // Otherwise just insert the comment before the problematic line
+                insert(textDocument, Position.create(lineNumber, 0), `${aglintDisableNextLinePrefix}${LF}`);
+                return;
+            }
+        }
+
+        if (params.command === CommandId.DisableRuleLine) {
+            const ruleName = params.arguments[2];
+
+            if (!ruleName || typeof ruleName !== 'string') {
+                return;
+            }
+
+            // If there are no previous lines, just insert the comment before the problematic line.
+            // Note: vscode uses 0-based line numbers
+            if (lineNumber === 0) {
+                insert(
+                    textDocument,
+                    Position.create(lineNumber, 0),
+                    `${aglintDisableNextLinePrefix}${SPACE}${ruleName}${LF}`,
+                );
+                return;
+            }
+
+            // If we have previous lines
+            if (lineNumber > 0) {
+                const prevLineNumber = lineNumber - 1;
+
+                // If we have previous lines
+                const prevLine = textDocument.getText(
+                    Range.create(
+                        Position.create(prevLineNumber, 0),
+                        // Note: we do not know the length of the previous line, so we use the max value
+                        Position.create(prevLineNumber, uinteger.MAX_VALUE),
+                    ),
+                );
+
+                // If the previous line is '! aglint-disable-next-line some-rule-name', we need to replace it
+                // to '! aglint-disable-next-line some-rule-name, currently-problematic-rule-name'.
+                // In other words, we just need to add the new rule to the list of rules to disable.
+                const commentNode = parseConfigCommentTolerant(prevLine.trim());
+
+                if (
+                    commentNode
+                    && commentNode.command.value === AglintCommand.DisableNextLine
+                    && commentNode.params
+                    && commentNode.params.type === 'ParameterList'
+                ) {
+                    commentNode.params.children.push({
+                        type: 'Parameter',
+                        value: ruleName,
+                    });
+                    replace(
+                        textDocument,
+                        Range.create(
+                            Position.create(prevLineNumber, 0),
+                            Position.create(prevLineNumber, prevLine.length),
+                        ),
+                        ConfigCommentRuleParser.generate(commentNode),
+                    );
+                    return;
+                }
+
+                // Otherwise just insert the comment before the problematic line
+                insert(
+                    textDocument,
+                    Position.create(lineNumber, 0),
+                    `${aglintDisableNextLinePrefix}${SPACE}${ruleName}${LF}`,
+                );
+            }
+        }
+    }
+});
 
 /**
  * Remove all diagnostics from all open text documents.
@@ -464,7 +754,7 @@ connection.onInitialized(async () => {
     }
 
     if (!workspaceRoot) {
-        connection.console.error('Couldn\'t determine the workspace root of the VSCode instance');
+        connection.console.error('Could not determine the workspace root of the VSCode instance');
     } else {
         // Pull the settings from VSCode (in initial mode)
         await pullSettings(true);
