@@ -35,6 +35,8 @@ Build:
             # Fix mixed logs
             exec 2>&1
 
+            ls -laht
+
             # Exclude '--ignore-optional' from yarn arguments
             # This is needed for installing swc core optional dependencies properly
             originalYarnArgs="$bamboo_varsYarn"
