@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
 
-## Unreleased
+## 1.1.7 - 2024-01-10
 
 ### Added
 
 - Support for quick fixes: [#122]
 - Minimum version check for external AGLint installations: [#123]
+
+### Changed
+
+- Updated integrated [AGLint] to v2.0.8
+
 
 ## 1.1.6 - 2024-01-04
 
