@@ -25,8 +25,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { type ParsedPath, join as joinPath } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-// TODO: Implement minimum version check
-// import { satisfies } from 'semver';
+import { satisfies } from 'semver';
 // Import type definitions from the AGLint package
 import type * as AGLint from '@adguard/aglint';
 import { ConfigCommentRuleParser, type ConfigCommentRule, CommentMarker } from '@adguard/agtree';
@@ -47,8 +46,11 @@ import { NPM, type PackageManager, getInstallationCommand } from './utils/packag
 // Store AGLint module here
 let AGLintModule: typeof AGLint;
 
-// TODO: Implement minimum version check
-// const MIN_AGLINT_VERSION = '1.0.12';
+/**
+ * Minimum version of the external AGLint module that is supported by the VSCode extension.
+ * If the version is lower than this, the extension will fallback to the bundled version.
+ */
+const MIN_EXTERNAL_AGLINT_VERSION = '2.0.6';
 
 /**
  * Path to the bundled AGLint module, relative to the server bundle.
@@ -182,6 +184,24 @@ async function cachePaths(): Promise<boolean> {
 }
 
 /**
+ * Helper function to import the AGLint module dynamically.
+ *
+ * @param path Path to the AGLint module
+ * @returns Loaded AGLint module
+ * @throws If the module cannot be found
+ */
+const importAglint = async (path: string): Promise<typeof AGLint> => {
+    const aglintPkg = await import(path);
+
+    // Module may have a default export
+    if ('default' in aglintPkg) {
+        return aglintPkg.default as typeof AGLint;
+    }
+
+    return aglintPkg;
+};
+
+/**
  * Load the installed AGLint module. If the module is not found, it will
  * fallback to the bundled version.
  *
@@ -218,7 +238,7 @@ async function loadAglintModule(
                 /* eslint-enable max-len */
             ].join(LF));
         } else {
-            connection.console.info(`Using AGlint from: ${externalAglintPath}`);
+            connection.console.info(`Found external AGLint at: ${externalAglintPath}`);
         }
     } else {
         connection.console.info(
@@ -226,32 +246,45 @@ async function loadAglintModule(
         );
     }
 
-    // Convert external path to a file URL, otherwise the module will fail to load
     if (externalAglintPath) {
-        externalAglintPath = pathToFileURL(externalAglintPath).toString();
+        // Dynamic import requires a URL, not a path
+        const externalAglintUrlPath = pathToFileURL(externalAglintPath).toString();
+
+        connection.console.info(`Loading external AGLint module from: ${externalAglintPath}`);
+
+        try {
+            AGLintModule = await importAglint(externalAglintUrlPath);
+
+            connection.console.info('Successfully loaded external AGLint module');
+            connection.console.info('Checking the version of external AGLint module');
+
+            const suffix = `version: ${AGLintModule.version}, minimum required version: ${MIN_EXTERNAL_AGLINT_VERSION}`;
+
+            if (satisfies(AGLintModule.version, `>=${MIN_EXTERNAL_AGLINT_VERSION}`)) {
+                connection.console.info(
+                    `External AGLint module version is compatible with the VSCode extension (${suffix})`,
+                );
+                return;
+            }
+
+            connection.console.error(
+                `External AGLint module version is not compatible with the VSCode extension (${suffix})`,
+            );
+        } catch (error: unknown) {
+            connection.console.error(
+                // eslint-disable-next-line max-len
+                `Failed to load external AGLint module from: ${externalAglintPath}, because of the following error: ${getErrorMessage(error)}`,
+            );
+        }
+
+        connection.console.info('Falling back to the bundled version of AGLint');
     }
 
-    // Import corresponding AGLint module
-    AGLintModule = await import(externalAglintPath || BUNDLED_AGLINT_PATH);
+    connection.console.info('Loading bundled AGLint module');
 
-    // Module may have a default export
-    if ('default' in AGLintModule) {
-        AGLintModule = AGLintModule.default as typeof AGLint;
-    }
+    AGLintModule = await importAglint(BUNDLED_AGLINT_PATH);
 
-    // TODO: Another way to import the module, since we use CJS bundles
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    // AGLintModule = require(externalAglintPath || bundledAglintPath);
-
-    // TODO: Implement minimum version check
-    // TODO: Version should be exported from AGLint to do this simply
-    // if (!satisfies(AGLint.version, `>=${MIN_AGLINT_VERSION}`)) {
-    //     throw new Error([
-    //         `The installed AGLint module is too old: ${version}`,
-    //         `The minimum required version is: ${MIN_AGLINT_VERSION}`,
-    //         `Please update the AGLint module: ${workspaceRoot}`,
-    //     ].join(LF));
-    // }
+    connection.console.info(`Successfully loaded bundled AGLint module (version: ${AGLintModule.version})`);
 }
 
 connection.onInitialize(async (params: InitializeParams) => {
