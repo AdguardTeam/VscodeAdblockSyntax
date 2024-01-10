@@ -28,9 +28,9 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { satisfies } from 'semver';
 // Import type definitions from the AGLint package
 import type * as AGLint from '@adguard/aglint';
-import { ConfigCommentRuleParser, type ConfigCommentRule, CommentMarker } from '@adguard/agtree';
 import cloneDeep from 'clone-deep';
 
+import { ConfigCommentRuleParser, type ConfigCommentRule, CommentMarker } from './agtree';
 import { getErrorMessage } from './utils/error';
 import { resolveAglintModulePath } from './utils/aglint-resolver';
 import {
