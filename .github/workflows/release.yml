@@ -57,7 +57,7 @@ jobs:
             out/vscode-adblock.vsix
           draft: false
           prerelease: false
-          body_path: ./out/TEMP_CHANGELOG.md
+          body_path: ./out/TEMP_CHANGES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
