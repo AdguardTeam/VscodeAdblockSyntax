@@ -18,6 +18,22 @@
             "problemMatcher": "$esbuild-watch",
         },
         {
+            "label": "Integrated AGTree dev build (watch)",
+            "type": "npm",
+            "script": "watch:agtree",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": "$esbuild-watch",
+        },
+        {
             "label": "Integrated AGLint dev build (watch)",
             "type": "npm",
             "script": "watch:aglint",
@@ -94,6 +110,7 @@
             "dependsOn": [
                 "Grammar dev build (watch)",
                 "Server dev build (watch)",
+                "Integrated AGTree dev build (watch)",
                 "Integrated AGLint dev build (watch)",
                 "Client dev build (watch)"
             ],

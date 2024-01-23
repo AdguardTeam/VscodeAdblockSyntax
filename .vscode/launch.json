@@ -8,7 +8,9 @@
             "name": "Launch Client",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}"
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                // Open AGLint test project
+                "${workspaceRoot}/test/static/aglint"
             ],
             "outFiles": [
                 "${workspaceRoot}/client/out/**/*.js"
