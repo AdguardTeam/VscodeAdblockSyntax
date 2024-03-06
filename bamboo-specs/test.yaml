@@ -64,13 +64,31 @@ Build:
 
             # Run Jest tests
             yarn test
-
-            # Cleanup
-            rm -rf node_modules
-            rm -rf client/node_modules
-            rm -rf server/node_modules
   final-tasks:
-    - clean
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -la
+
+            echo "Size before cleanup:" && du -h | tail -n 1
+            
+            # cleanup root directory
+            rm -rf node_modules
+
+            # cleanup client directory
+            rm -rf client/node_modules
+
+            # cleanup server directory
+            rm -rf server/node_modules
+  
+            echo "Size after cleanup:" && du -h | tail -n 1
   requirements:
     - adg-docker: true
 
