@@ -157,7 +157,7 @@
         "tsx": "^4.7.0",
         "typescript": "^4.9.5",
         "unified": "^11.0.4",
-        "vscode-oniguruma": "^1.7.0",
+        "vscode-oniguruma": "^2.0.1",
         "vscode-textmate": "^9.0.0",
         "yaml": "^2.2.2"
     }

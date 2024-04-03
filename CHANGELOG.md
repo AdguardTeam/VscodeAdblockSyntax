@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+## 1.1.8 - 2024-04-03
+
+### Fixed
+
+- Highlighting for `#@%#//scriptlet()` like rules: [#132]
+
+[#132]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/132
+
 
 ## 1.1.7 - 2024-01-10
 

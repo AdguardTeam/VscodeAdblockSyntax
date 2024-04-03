@@ -48,6 +48,8 @@ describe('test comments', () => {
             '#$?#.selector:has(> .selector) { display: none; }',
             '#@$?#.selector:has(> .selector) { display: none; }',
             '#%#//scriptlet(\'adg-scriptlet0\', \'arg0\', \'arg1\', \'arg2\')',
+            "#@%#//scriptlet('adg-scriptlet0')",
+            '#@%#//scriptlet()',
             '#@%#//scriptlet(\'adg-scriptlet0\', \'arg0\', \'arg1\', \'arg2\')',
             '$$div',
             '$@$div',

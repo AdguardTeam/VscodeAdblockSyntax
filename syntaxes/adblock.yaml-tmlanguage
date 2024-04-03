@@ -213,7 +213,57 @@ repository:
               - include: "#contentAttributes"
   scriptletRules:
     patterns:
-      - match: "^(\\[.+?\\])?(.*?)(#@?%#)(\\/\\/scriptlet)(\\()(.+)(\\)\\s*)$"
+      - include: "#exceptionScriptletRules"
+      - include: "#blockingScriptletRules"
+  exceptionScriptletRules:
+    patterns:
+      - match: |-
+          (?x)
+            ^                   # Start of the line
+            \s*                 # Optional leading whitespace
+            (\[.+?\])?          # Group 1. AdGuard modifier list
+            (.*)?               # Group 2. Domain list
+            (\#@%\#)            # Group 3. Cosmetic rule marker
+            (\/\/scriptlet)     # Group 4. Scriptlet marker
+            (\()                # Group 5. Opening parenthesis
+            (.*)?               # Group 6. Arguments
+            (\))                # Group 7. Closing parenthesis
+            \s*                 # Optional trailing whitespace
+            $                   # End of the line
+        captures:
+          "1":
+            patterns:
+              - include: "#cosmeticRulesOptions"
+          "2":
+            patterns:
+              - include: "#domainListCommaSeparated"
+          "3":
+            name: keyword.control.adblock
+          "4":
+            name: entity.name.function.adblock
+          "5":
+            name: punctuation.section.adblock
+          "6":
+            patterns:
+              - include: "#emptyScriptletFunction"
+              - include: "#scriptletFunction"
+          "7":
+            name: punctuation.section.adblock
+  blockingScriptletRules:
+    patterns:
+      - match: |-
+          (?x)
+            ^                   # Start of the line
+            \s*                 # Optional leading whitespace
+            (\[.+?\])?          # Group 1. AdGuard modifier list
+            (.*)?               # Group 2. Domain list
+            (\#%\#)             # Group 3. Cosmetic rule marker
+            (\/\/scriptlet)     # Group 4. Scriptlet marker
+            (\()                # Group 5. Opening parenthesis
+            (.*\S.*)            # Group 6. Arguments. Note: we look for a parameter that contain at least one non-whitespace character
+            (\))                # Group 7. Closing parenthesis
+            \s*                 # Optional trailing whitespace
+            $                   # End of the line
         captures:
           "1":
             patterns:
@@ -568,6 +618,10 @@ repository:
             name: punctuation.section.adblock
       - name: invalid.illegal.adblock
         match: ".*"
+  emptyScriptletFunction:
+    patterns:
+      - match: \s*\z
+        name: entity.name.section.adblock.empty-scriptlet
   scriptletFunction:
     patterns:
       - match: ((['|"])(.*?)(?<!\\)(\2))(,\s*)?

@@ -440,3 +440,11 @@ example.com##.ads
 ! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/119
 #@#+js(ubo-scriptlet0, arg0, arg1, arg2)
 example.com#@$#abp-snippet0 arg0 arg1 arg2
+
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/132
+! empty blocking rule should be invalid
+#%#//scriptlet()
+#%#//scriptlet( )
+! empty exception rule should be valid
+#@%#//scriptlet()
+#@%#//scriptlet( )
