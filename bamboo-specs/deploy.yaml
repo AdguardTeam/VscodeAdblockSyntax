@@ -41,7 +41,7 @@ marketplace.visualstudio.com:
             yarn install ${modifiedYarnArgs}
 
             # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publish-an-extension
-            yarn vsce publish -p ${bamboo.vsceToken} -i vscode-adblock.vsix
+            yarn vsce publish -p ${bamboo.vsceTokenPassword} -i vscode-adblock.vsix
   final-tasks:
     - script:
         interpreter: SHELL
@@ -107,7 +107,7 @@ open-vsx.org:
             yarn install ${modifiedYarnArgs}
 
             # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions#5-package-and-upload
-            yarn ovsx publish vscode-adblock.vsix -p ${bamboo.openVsxToken}
+            yarn ovsx publish vscode-adblock.vsix -p ${bamboo.openVsxTokenPassword}
   final-tasks:
     - script:
         interpreter: SHELL
