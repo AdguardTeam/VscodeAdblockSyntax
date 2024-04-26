@@ -2,7 +2,7 @@
     "name": "adblock",
     "displayName": "Adblock/AdGuard/uBlock filters grammar",
     "description": "VS code extension that adds support for ad blocking rules syntax.",
-    "version": "1.1.9",
+    "version": "1.1.10",
     "publisher": "adguard",
     "icon": "icons/aglint_128x128.png",
     "main": "./client/out/extension",
