@@ -10,9 +10,9 @@ environments:
 
 marketplace.visualstudio.com:
   docker:
-    image: adguard/node-ssh:18.13--1
+    image: adguard/node-ssh:21.7--1
     volumes:
-      ${system.YARN_DIR}: "${bamboo.cacheYarn}"
+      ${system.YARN_DIR}: '${bamboo.cacheYarn}'
   triggers: []
   tasks:
     - checkout:
@@ -56,13 +56,13 @@ marketplace.visualstudio.com:
             ls -la
 
             echo "Size before cleanup:" && du -h | tail -n 1
-            
+
             # cleanup root directory
             # note: no need to clean client and server directories here, because we only installed
             #       dependencies in the root directory (for the vsce publish command above)
             # TODO: switch to yarn workspaces
             rm -rf node_modules
-  
+
             echo "Size after cleanup:" && du -h | tail -n 1
   requirements:
     - adg-docker: 'true'
@@ -78,7 +78,7 @@ open-vsx.org:
   docker:
     image: adguard/node-ssh:18.13--1
     volumes:
-      ${system.YARN_DIR}: "${bamboo.cacheYarn}"
+      ${system.YARN_DIR}: '${bamboo.cacheYarn}'
   triggers: []
   tasks:
     - checkout:
@@ -122,13 +122,13 @@ open-vsx.org:
             ls -la
 
             echo "Size before cleanup:" && du -h | tail -n 1
-            
+
             # cleanup root directory
             # note: no need to clean client and server directories here, because we only installed
             #       dependencies in the root directory (for the vsce publish command above)
             # TODO: switch to yarn workspaces
             rm -rf node_modules
-  
+
             echo "Size after cleanup:" && du -h | tail -n 1
   requirements:
     - adg-docker: 'true'
