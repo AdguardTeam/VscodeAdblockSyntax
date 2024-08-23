@@ -37,7 +37,7 @@ export function expectTokens(tokenize: AdblockTokenizer, source: string, expecte
     const mergedFragments = expectedTokens.map((token) => token.fragment).join('');
 
     if (mergedFragments !== source) {
-        throw new Error('The merged fragments don\'t match the source, so the expectation is invalid');
+        throw new Error('The merged fragments do not match the source, so the expectation is invalid');
     }
 
     // Tokenize the source

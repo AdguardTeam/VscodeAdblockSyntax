@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+## 1.1.11 - 2024-08-23
+
+### Added
+
+- Support of `advanced` value for `!#safari_cb_affinity` directive: [FiltersCompiler#226]
+
+[FiltersCompiler#226]: https://github.com/AdguardTeam/FiltersCompiler/issues/226
+
+
 ## 1.1.10 - 2024-04-26
 
 ### Changed
@@ -170,7 +179,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Support for `$stealth`: [#39]
 - Support for multiple DNS filtering modifiers: `$client`, `$ctag`, `$dnsrewrite`, `$dnstype`:
   [#38]
-- Support for `safari_cb_affinity` hint: [#43]
+- Support for `!#safari_cb_affinity` directive: [#43]
 
 ### Changed
 

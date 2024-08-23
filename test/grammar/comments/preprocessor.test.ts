@@ -140,5 +140,90 @@ describe('Preprocessor directive comments', () => {
         });
     });
 
-    // TODO: add tests for !#include, !#safari_cb_affinity and for unknown preprocessor directives
+    describe('!#safari_cb_affinity', () => {
+        test.each([
+            {
+                actual: '!#safari_cb_affinity(general)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'general', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ')', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                ],
+            },
+            {
+                actual: '!#safari_cb_affinity(general,privacy)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'general', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ',', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'privacy', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ')', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                ],
+            },
+            {
+                actual: '!#safari_cb_affinity(all)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'all', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ')', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                ],
+            },
+            {
+                actual: '!#safari_cb_affinity(advanced)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'advanced', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ')', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                ],
+            },
+            {
+                actual: '!#safari_cb_affinity(privacy,advanced)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'privacy', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ',', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'advanced', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ')', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                ],
+            },
+        ])("valid: '$actual'", ({ actual, expected }) => {
+            expectTokens(tokenize, actual, expected);
+        });
+
+        test.each([
+            {
+                actual: '!#safari_cb_affinity all',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: ' all', scopes: [BASE_SCOPE, 'invalid.illegal'] },
+                ],
+            },
+            {
+                actual: '!#safari_cb_affinity (all)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: ' (all)', scopes: [BASE_SCOPE, 'invalid.illegal'] },
+                ],
+            },
+            {
+                actual: '!#safari_cb_affinity(social, other)',
+                expected: [
+                    { fragment: '!#safari_cb_affinity', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: 'social', scopes: [BASE_SCOPE, 'constant.language.contentblocker.name'] },
+                    { fragment: ',', scopes: [BASE_SCOPE, 'keyword.control.characters'] },
+                    { fragment: ' other)', scopes: [BASE_SCOPE, 'invalid.illegal'] },
+                ],
+            },
+        ])("invalid case '$actual'", ({ actual, expected }) => {
+            expectTokens(tokenize, actual, expected);
+        });
+    });
+
+    // TODO: add tests for !#include and for other unknown preprocessor directives
 });

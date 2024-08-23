@@ -124,7 +124,7 @@ repository:
           "2":
             patterns:
               - name: constant.language.contentblocker.name
-                match: "(all|general|privacy|social|security|other|custom)"
+                match: "(all|general|privacy|social|security|other|custom|advanced)"
               - name: keyword.control.characters
                 match: "(\\(|\\)|,)"
               - name: invalid.illegal
