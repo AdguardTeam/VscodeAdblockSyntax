@@ -4,3 +4,8 @@ extends:
   - aglint:recommended
 rules:
   single-selector: warn
+  no-excluded-rules:
+    - error
+    - regexp-patterns:
+        # Do not forget to escape special regex characters
+        - example\.com\/bad\/query\/

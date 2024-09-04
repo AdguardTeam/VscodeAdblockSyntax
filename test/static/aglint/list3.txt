@@ -22,3 +22,6 @@ example.com##...
 ! invalid modifier
 ||example.com^$specifichide
 ||example.com^$referrerpolicy=~origin
+
+! excluded rule
+example.com/bad/query/
