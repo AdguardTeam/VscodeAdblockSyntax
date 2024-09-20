@@ -25,3 +25,6 @@ example.com##...
 
 ! excluded rule
 example.com/bad/query/
+
+! Invalid declaration
+#$#div { display: foo; color: bar; }

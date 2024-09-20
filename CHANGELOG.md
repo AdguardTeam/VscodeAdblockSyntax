@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+## 1.1.13 - 2024-09-20
+
+### Changed
+
+- Updated integrated [AGLint] to v2.1.0
+
 ## 1.1.12 - 2024-09-04
 
 ### Changed

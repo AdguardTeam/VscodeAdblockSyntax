@@ -647,7 +647,7 @@ connection.onExecuteCommand(async (params) => {
                     && commentNode.params.type === 'ParameterList'
                 ) {
                     commentNode.params.children.push({
-                        type: 'Parameter',
+                        type: 'Value',
                         value: ruleName,
                     });
                     replace(
