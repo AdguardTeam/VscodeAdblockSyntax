@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+## 1.1.14 - 2024-09-21
+
+### Added
+
+- Highlighting for `ext_chromium_mv3` platform name: [#138]
+
+### Changed
+
+- Updated integrated [AGLint] to v2.1.1
+
 ## 1.1.13 - 2024-09-20
 
 ### Changed
@@ -407,6 +417,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#119]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/119
 [#122]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/122
 [#123]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/123
+[#138]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/138
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html

@@ -138,7 +138,8 @@ repository:
               - name: keyword.control.hint.name
                 match: "(NOT_OPTIMIZED|OPTIMIZED|PLATFORM|NOT_PLATFORM)"
               - name: constant.language.platform.name
-                match: "(windows|mac|android|ios|ext_chromium|ext_ff|ext_edge|ext_opera|ext_ublock|ext_safari|ext_android_cb)"
+                # The basic regexp is greedy and stops once it finds a match, so 'ext_chromium_mv3' should be before 'ext_chromium'
+                match: "(windows|mac|android|ios|ext_chromium_mv3|ext_chromium|ext_ff|ext_edge|ext_opera|ext_ublock|ext_safari|ext_android_cb)"
               - name: keyword.control.characters
                 match: "(\\(|\\)|,)"
       - match: "^!#(?!#).+$"

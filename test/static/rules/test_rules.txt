@@ -18,6 +18,9 @@
 !#endif
 !+ NOT_OPTIMIZED PLATFORM(android)
 ||example.org^
+! https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/138
+!+ PLATFORM(ext_chromium_mv3)
+||example.com^
 !#invalidpreprocessor
 !#if (invalid_platform)
 !#safari_cb_affinity(general,privacy)
