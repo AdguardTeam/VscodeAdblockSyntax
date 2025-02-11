@@ -131,7 +131,7 @@
         "@vscode/vsce": "^2.22.0",
         "commander": "^11.1.0",
         "concurrently": "^8.0.1",
-        "esbuild": "^0.17.17",
+        "esbuild": "^0.25.0",
         "esbuild-register": "^3.5.0",
         "escape-string-regexp": "^5.0.0",
         "eslint": "^8.46.0",
