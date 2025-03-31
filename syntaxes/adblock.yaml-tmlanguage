@@ -136,7 +136,7 @@ repository:
           "2":
             patterns:
               - name: keyword.control.hint.name
-                match: "(NOT_OPTIMIZED|OPTIMIZED|PLATFORM|NOT_PLATFORM)"
+                match: "(NOT_OPTIMIZED|OPTIMIZED|PLATFORM|NOT_PLATFORM|NOT_VALIDATE)"
               - name: constant.language.platform.name
                 # The basic regexp is greedy and stops once it finds a match, so 'ext_chromium_mv3' should be before 'ext_chromium'
                 match: "(windows|mac|android|ios|ext_chromium_mv3|ext_chromium|ext_ff|ext_edge|ext_opera|ext_ublock|ext_safari|ext_android_cb)"

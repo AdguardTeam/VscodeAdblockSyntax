@@ -4,9 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+## 1.1.16 - 2025-03-31
+
+### Added
+
+- Support for `NOT_VALIDATE` hint: [#147]
+
+### Changed
+
+- Updated integrated [AGLint] to v2.1.4
+
 ## 1.1.15 - 2024-12-20
 
-## Changed
+### Changed
 
 - Updated integrated [AGLint] to v2.1.3
 
@@ -424,6 +434,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [#122]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/122
 [#123]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/123
 [#138]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/138
+[#147]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/147
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 [keepachangelog]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html
