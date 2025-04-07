@@ -22,18 +22,24 @@ Table of Contents:
 
 Ensure that the following software is installed on your computer:
 
-- [Node.js][nodejs] (we recommend using the latest LTS version)
-- [Yarn][yarn]
-- [Git][git]
+- [Node.js][nodejs]: v22 (you can install multiple versions using [nvm][nvm])
+- [pnpm][pnpm]: v10
 - [VSCode][vscode]
+- [Git][git]
+
+[git]: https://git-scm.com/
+[nodejs]: https://nodejs.org/en/download
+[nvm]: https://github.com/nvm-sh/nvm
+[pnpm]: https://pnpm.io/installation
 
 ## Initial setup
 
 After cloning the repository, follow these steps to initialize the project:
 
-1. Install dependencies by calling `yarn`. This will also install client and server dependencies via `postinstall`
-   scripts. After installation, it will initialize [Husky Git hooks][husky] through the `prepare` script.
-1. Install recommended VSCode extensions (refer to the [`.vscode/extensions.json`][vscode-extensions-file] file).
+1. Install dependencies by calling `pnpm install`.
+   This will also install client and server dependencies via `postinstall` scripts.
+   After installation, it will initialize [Husky Git hooks][husky] through the `prepare` script.
+2. Install recommended VSCode extensions (refer to the [`.vscode/extensions.json`][vscode-extensions-file] file).
    **These extensions are REQUIRED for the development process.**
 
 ## Project structure
@@ -76,7 +82,7 @@ If you've made changes to the extension code and want to test them, follow these
 
 To create a production build of the extension:
 
-1. Run `yarn build:prod` command. This generates a production build and a `.vsix` file in the `out` folder.
+1. Run `pnpm build:prod` command. This generates a production build and a `.vsix` file in the `out` folder.
 1. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
    (`Ctrl + Shift + P`), select "Extensions: Install from VSIX...", and choose the `vscode-adblock.vsix` file.
 
@@ -101,7 +107,7 @@ To create a production build of the extension:
 1. Update the TM grammar in the `syntaxes/adblock.yaml-tmLanguage` file.
 1. Create/modify example rules in the `test/static/rules` folder. Add link for GitHub issues to rules if related to some
    issue.
-1. Create/modify unit tests in `test/grammar`. Ensure tests pass by running `yarn test`.
+1. Create/modify unit tests in `test/grammar`. Ensure tests pass by running `pnpm test`.
 
 > [!TIP]
 > Open the `test/static` folder in the "Extension Development Host" window and you can check the syntax highlighting
@@ -114,39 +120,39 @@ To create a production build of the extension:
 
 During development, you can use the following commands (listed in `package.json`).
 
-- `yarn build:grammar` - Compiles the TextMate (TM) grammar into a PList format, since VSCode does not natively support
+- `pnpm build:grammar` - Compiles the TextMate (TM) grammar into a PList format, since VSCode does not natively support
   YAML grammars.
-- `yarn build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
+- `pnpm build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
   VSCode installation.
-- `yarn build:txt` - Creates a `build.txt` file in the out directory containing the current version number, primarily
+- `pnpm build:txt` - Creates a `build.txt` file in the out directory containing the current version number, primarily
   for Continuous Integration (CI) purposes.
-- `yarn build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
-- `yarn clean` - Removes all generated files in the output directories, cleaning up the build results.
-- `yarn esbuild:aglint` - Base ESBuild command for building integrated AGLint with the common options.
-- `yarn esbuild:agtree` - Base ESBuild command for building integrated AGTree with the common options.
+- `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
+- `pnpm clean` - Removes all generated files in the output directories, cleaning up the build results.
+- `pnpm esbuild:aglint` - Base ESBuild command for building integrated AGLint with the common options.
+- `pnpm esbuild:agtree` - Base ESBuild command for building integrated AGTree with the common options.
   Integrated AGTree comes with the integrated AGLint, this command just helps to bundle it to a separate file.
   This is needed because AGTree is also used by the server, and by bundling it to a separate file, we can avoid
   double-bundling AGTree.
-- `yarn esbuild:server` - Base ESBuild command for building the server with the common options.
-- `yarn esbuild:client` - Base ESBuild command for building the client with the common options.
-- `yarn extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically, this is used by
+- `pnpm esbuild:server` - Base ESBuild command for building the server with the common options.
+- `pnpm esbuild:client` - Base ESBuild command for building the client with the common options.
+- `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically, this is used by
   CI.
-- `yarn increment` - Increment the patch version number of the extension in the `package.json` file. Typically, this is
+- `pnpm increment` - Increment the patch version number of the extension in the `package.json` file. Typically, this is
   used by CI.
-- `yarn lint:md` - Lint the markdown files with [markdownlint][markdownlint].
-- `yarn lint:staged` - Run linters on staged files. Typically, this is used by Husky Git hooks.
-- `yarn lint:ts` - Lint the code with [ESLint][eslint].
-- `yarn lint` - Run all linters.
-- `yarn test:compile` - Check if the code compiles with [TypeScript][typescript].
-- `yarn test` - Run tests with [Jest][jest].
-- `yarn watch:aglint` - Watch for changes in the AGLint code and create a development build automatically.
-- `yarn watch:agtree` - Watch for changes in the AGTree code and create a development build automatically.
-- `yarn watch:client` - Watch for changes in the client code and create a development build automatically.
-- `yarn watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
-- `yarn watch:server` - Watch for changes in the server code and create a development build automatically.
+- `pnpm lint:md` - Lint the markdown files with [markdownlint][markdownlint].
+- `pnpm lint:staged` - Run linters on staged files. Typically, this is used by Husky Git hooks.
+- `pnpm lint:ts` - Lint the code with [ESLint][eslint].
+- `pnpm lint` - Run all linters.
+- `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
+- `pnpm test` - Run tests with [Jest][jest].
+- `pnpm watch:aglint` - Watch for changes in the AGLint code and create a development build automatically.
+- `pnpm watch:agtree` - Watch for changes in the AGTree code and create a development build automatically.
+- `pnpm watch:client` - Watch for changes in the client code and create a development build automatically.
+- `pnpm watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
+- `pnpm watch:server` - Watch for changes in the server code and create a development build automatically.
 
 > [!NOTE]
-> Watch commands (e.g., `yarn watch:client`) are typically used by VSCode tasks (see
+> Watch commands (e.g., `pnpm watch:client`) are typically used by VSCode tasks (see
 > [`.vscode/tasks.json`][vscode-tasks-file] file and
 > [*Running the extension in development mode*](#running-the-extension-in-development-mode) section).
 > In most cases, you don't need to run them manually.
@@ -168,11 +174,9 @@ Explore the following links for more information on development:
 [contribute]: https://adguard.com/contribute.html
 [esbuild-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers
 [eslint]: https://eslint.org/
-[git]: https://git-scm.com/
 [husky]: https://typicode.github.io/husky
 [jest]: https://jestjs.io/
 [markdownlint]: https://github.com/DavidAnson/markdownlint
-[nodejs]: https://nodejs.org/en/
 [nova-light-show]: https://novalightshow.netlify.app/
 [server-dir]: ./server
 [syntaxes-dir]: ./syntaxes
@@ -187,4 +191,3 @@ Explore the following links for more information on development:
 [vscode-problem-matcher-docs]: https://code.visualstudio.com/docs/editor/tasks#_processing-task-output-with-problem-matchers
 [vscode-tasks-file]: ./.vscode/tasks.json
 [vscode]: https://code.visualstudio.com/
-[yarn]: https://yarnpkg.com/

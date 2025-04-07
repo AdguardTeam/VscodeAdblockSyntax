@@ -13,6 +13,8 @@
     },
     "devDependencies": {
         "@adguard/aglint": "2.1.4",
+        "@adguard/agtree": "^2.3.0",
+        "@adguard/ecss-tree": "^1.1.0",
         "@types/clone-deep": "^4.0.1",
         "@types/semver": "^7.5.0",
         "clone-deep": "^4.0.1",

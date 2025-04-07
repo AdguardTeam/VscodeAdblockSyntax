@@ -6,6 +6,7 @@
       "jest.config.ts",
       "server/**/*.ts",
       "test/**/*.ts",
-      "tools/**/*.ts"
+      "tools/**/*.ts",
+      "tools/**/*.mjs"
     ]
 }

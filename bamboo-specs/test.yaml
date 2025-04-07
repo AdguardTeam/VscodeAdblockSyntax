@@ -5,7 +5,7 @@ plan:
   key: VSCODEADBLOCKSYNTAXTEST
   name: vscode adblock syntax - tests
 variables:
-  dockerNode: adguard/node-ssh:21.7--1
+  dockerNode: adguard/node-ssh:22.14--0
 
 stages:
   - Build:
@@ -19,7 +19,7 @@ Build:
   docker:
     image: '${bamboo.dockerNode}'
     volumes:
-      ${system.YARN_DIR}: '${bamboo.cacheYarn}'
+      ${system.PNPM_DIR}: "${bamboo.cachePnpm}"
   tasks:
     - checkout:
         force-clean-build: true
@@ -35,35 +35,23 @@ Build:
 
             ls -laht
 
-            # Exclude '--ignore-optional' from yarn arguments
-            # This is needed for installing swc core optional dependencies properly
-            originalYarnArgs="$bamboo_varsYarn"
-            modifiedYarnArgs=$(echo "$originalYarnArgs" | sed 's/--ignore-optional//g')
+            # Set cache directory
+            pnpm config set store-dir ${bamboo.cachePnpm}
 
-            # Install common dependencies
-            yarn install ${modifiedYarnArgs}
-
-            # Install dependencies in ./server
-            cd ./server
-            yarn install ${modifiedYarnArgs}
-            cd ..
-
-            # Install dependencies in ./client
-            cd ./client
-            yarn install ${modifiedYarnArgs}
-            cd ..
+            # Install dependencies
+            pnpm install
 
             # Check TypeScript types
-            yarn test:compile
+            pnpm test:compile
 
             # Run markdownlint
-            yarn lint:md
+            pnpm lint:md
 
             # Run ESLint
-            yarn lint:ts
+            pnpm lint:ts
 
             # Run Jest tests
-            yarn test
+            pnpm test
   final-tasks:
     - script:
         interpreter: SHELL
@@ -79,14 +67,8 @@ Build:
 
             echo "Size before cleanup:" && du -h | tail -n 1
 
-            # cleanup root directory
-            rm -rf node_modules
-
-            # cleanup client directory
-            rm -rf client/node_modules
-
-            # cleanup server directory
-            rm -rf server/node_modules
+            # Cleanup
+            pnpm clean
 
             echo "Size after cleanup:" && du -h | tail -n 1
   requirements:

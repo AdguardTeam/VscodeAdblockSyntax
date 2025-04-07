@@ -5,7 +5,7 @@ plan:
   key: VSCODEADBLOCKSYNTAXINCR
   name: vscode adblock syntax - increment
 variables:
-  dockerNode: adguard/node-ssh:21.7--1
+  dockerNode: adguard/node-ssh:22.14--0
 
 stages:
   - Increment:
@@ -19,7 +19,7 @@ Increment:
   docker:
     image: '${bamboo.dockerNode}'
     volumes:
-      ${system.YARN_DIR}: '${bamboo.cacheYarn}'
+      ${system.PNPM_DIR}: "${bamboo.cachePnpm}"
   other:
     clean-working-dir: true
   tasks:
@@ -37,7 +37,7 @@ Increment:
 
             ls -laht
 
-            yarn increment
+            pnpm increment
     - any-task:
         plugin-key: com.atlassian.bamboo.plugins.vcs:task.vcs.commit
         configuration:
