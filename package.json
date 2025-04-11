@@ -104,7 +104,7 @@
         "esbuild:client": "esbuild ./client/src/extension.ts --bundle --outfile=client/out/extension.js --format=cjs --platform=node --external:vscode",
         "esbuild:server": "esbuild ./server/src/server.ts --bundle --outfile=server/out/server.js --format=cjs --platform=node --external:vscode --external:./agtree --external:./ecss-tree",
         "extract-changelog": "node -r esbuild-register tools/changelog-extractor.ts",
-        "increment": "pnpm version --patch --no-git-tag-version",
+        "increment": "pnpm version patch --no-git-tag-version",
         "lint": "pnpm lint:ts && pnpm lint:mjs && pnpm lint:md",
         "lint:md": "markdownlint .",
         "lint:staged": "lint-staged",
