@@ -34,6 +34,16 @@ describe('Preprocessor directive comments', () => {
                     { fragment: 'adguard', scopes: [BASE_SCOPE, 'constant.language.platform.name'] },
                 ],
             },
+            {
+                actual: '!#if (adguard_app_cli)',
+                expected: [
+                    { fragment: '!#if', scopes: [BASE_SCOPE, 'keyword.preprocessor.directive'] },
+                    { fragment: ' ', scopes: [BASE_SCOPE, 'keyword.other.delimiter.whitespace'] },
+                    { fragment: '(', scopes: [BASE_SCOPE, 'keyword.control.characters.parenthesis.open'] },
+                    { fragment: 'adguard_app_cli', scopes: [BASE_SCOPE, 'constant.language.platform.name'] },
+                    { fragment: ')', scopes: [BASE_SCOPE, 'keyword.control.characters.parenthesis.close'] },
+                ],
+            },
             // complicated case
             {
                 actual: '!#if (adguard && !adguard_ext_safari)',

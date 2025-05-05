@@ -53,7 +53,9 @@ Here is a screenshot of the extension in action:
 
 <a href="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png">
     <img src="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png"
-         style="max-width: 600px" />
+        style="max-width: 600px"
+        alt="Adblock Syntax in action"
+    />
 </a>
 
 GitHub Linguist support is also available, so you can highlight your adblock rules in GitHub repositories. See
@@ -177,21 +179,21 @@ resources, please let us know.
 
 <!--markdownlint-disable MD013-->
 - Syntax documentation:
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> [AdGuard: *How to create your own ad filters*][adg-filters]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px"> [uBlock Origin: *Static filter syntax*][ubo-filters]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px"> [Adblock Plus: *How to write filters*][abp-filters]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard: *How to create your own ad filters*][adg-filters]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin logo"> [uBlock Origin: *Static filter syntax*][ubo-filters]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus logo"> [Adblock Plus: *How to write filters*][abp-filters]
 - Extended CSS documentation:
     - [MDN: *CSS selectors*][mdn-css-selectors]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> [AdGuard: *Extended CSS capabilities*][adg-ext-css]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px"> [uBlock Origin: *Procedural cosmetic filters*][ubo-procedural]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px"> [Adblock Plus: *Extended CSS selectors*][abp-ext-css]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard: *Extended CSS capabilities*][adg-ext-css]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin logo"> [uBlock Origin: *Procedural cosmetic filters*][ubo-procedural]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus logo"> [Adblock Plus: *Extended CSS selectors*][abp-ext-css]
 - Scriptlets:
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> [AdGuard scriptlets][adg-scriptlets]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px"> [uBlock Origin scriptlets][ubo-scriptlets]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px"> [Adblock Plus snippets][abp-snippets]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard scriptlets][adg-scriptlets]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin logo"> [uBlock Origin scriptlets][ubo-scriptlets]
+    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus logo"> [Adblock Plus snippets][abp-snippets]
 - Third party libraries:
     - [CSSTree docs][css-tree-docs]
-- <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> [AdGuard's compatibility table][adg-compatibility-table]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard's compatibility table][adg-compatibility-table]
 <!--markdownlint-enable MD013-->
 
 [abp-ext-css]: https://help.eyeo.com/adblockplus/how-to-write-filters#elemhide-emulation

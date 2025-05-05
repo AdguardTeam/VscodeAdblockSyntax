@@ -141,7 +141,7 @@ During development, you can use the following commands (listed in `package.json`
   used by CI.
 - `pnpm lint:md` - Lint the markdown files with [markdownlint][markdownlint].
 - `pnpm lint:staged` - Run linters on staged files. Typically, this is used by Husky Git hooks.
-- `pnpm lint:ts` - Lint the code with [ESLint][eslint].
+- `pnpm lint:ts` - Lint the *ts* code with [ESLint][eslint].
 - `pnpm lint` - Run all linters.
 - `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
 - `pnpm test` - Run tests with [Jest][jest].
