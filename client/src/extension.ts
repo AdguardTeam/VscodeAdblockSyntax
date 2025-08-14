@@ -9,6 +9,7 @@ import {
     type StatusBarItem,
     type TextDocument,
     type WorkspaceFolder,
+    RelativePattern,
 } from 'vscode';
 import {
     LanguageClient,
@@ -18,7 +19,7 @@ import {
 } from 'vscode-languageclient/node';
 import * as v from 'valibot';
 
-import { getOuterMostWorkspaceFolder } from './workspace-folders';
+import { fileInFolder, getOuterMostWorkspaceFolder } from './workspace-folders';
 
 /**
  * Schemes for file documents.
@@ -85,12 +86,67 @@ let statusBarItem: StatusBarItem;
 
 /**
  * Schema for the server notification parameters.
+ * Allow undefined / null payloads to act as "neutral" updates.
  */
 // TODO (AG-45205): Improve notification schema
 const notificationSchema = v.object({
     error: v.optional(v.unknown()),
     aglintEnabled: v.optional(v.boolean()),
 });
+
+type AglintStatus = v.InferInput<typeof notificationSchema>;
+
+/**
+ * Map of last-known status per OUTERMOST folder.
+ * For example, if `project-1` is added to the workspace, but
+ * `project-1/sub-project-1` is also added, then `project-1` is the OUTERMOST folder.
+ *
+ * Keys are the URI of the OUTERMOST folder.
+ * Values are the last-known status for that folder.
+ */
+const folderStatus = new Map<string, AglintStatus>();
+
+/**
+ * Render the status bar from a stored status (or reset if none).
+ *
+ * @param status Status to render.
+ */
+function renderStatus(status: AglintStatus | undefined) {
+    if (!status) {
+        statusBarItem.backgroundColor = undefined;
+        statusBarItem.text = 'AGLint';
+        return;
+    }
+
+    if (status.error) {
+        statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
+        statusBarItem.text = '$(warning) AGLint';
+        return;
+    }
+
+    statusBarItem.backgroundColor = undefined;
+    statusBarItem.text = status.aglintEnabled === false
+        ? '$(debug-pause) AGLint'
+        : 'AGLint';
+}
+
+/**
+ * Parse incoming server params; tolerate undefined/null.
+ *
+ * @param params Params to parse.
+ *
+ * @returns Parsed status.
+ */
+function parseStatusParams(params: unknown): AglintStatus {
+    const schema = v.union([notificationSchema, v.undefined(), v.null()]);
+    const parsed = v.safeParse(schema, params);
+
+    if (!parsed.success) {
+        return {};
+    }
+
+    return (parsed.output ?? {});
+}
 
 /**
  * We show the status bar based on the active editor's folder client status.
@@ -99,40 +155,31 @@ const notificationSchema = v.object({
  * @param params Parameters from the server notification, which may include error status or AGLint enabled state.
  */
 function updateStatusBarForFolder(folder: WorkspaceFolder, params: unknown) {
-    const active = Window.activeTextEditor?.document?.uri;
-    if (!active) {
+    const status = parseStatusParams(params);
+
+    // Store last-known status for the OUTERMOST folder of this client
+    const outer = getOuterMostWorkspaceFolder(folder);
+    const key = outer.uri.toString();
+    folderStatus.set(key, status);
+
+    // If active editor belongs to the same OUTERMOST folder, render immediately
+    const activeUri = Window.activeTextEditor?.document?.uri;
+    if (!activeUri) {
         return;
     }
 
-    const activeFolder = Workspace.getWorkspaceFolder(active);
+    const activeFolder = Workspace.getWorkspaceFolder(activeUri);
     if (!activeFolder) {
         return;
     }
 
-    // Only update the status bar if the active editor's folder matches the one we are updating
-    // This prevents unnecessary updates when switching between folders in the workspace
-    if (activeFolder.uri.toString() !== folder.uri.toString()) {
+    const activeOuter = getOuterMostWorkspaceFolder(activeFolder);
+    if (activeOuter.uri.toString() !== key) {
+        // different folder: keep it stored for later
         return;
     }
 
-    const parseResult = v.safeParse(notificationSchema, params);
-    if (!parseResult.success) {
-        return;
-    }
-
-    const parsedData = parseResult.output;
-
-    if (parsedData.error) {
-        statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
-        statusBarItem.text = '$(warning) AGLint';
-    } else {
-        statusBarItem.backgroundColor = undefined;
-        if (parsedData.aglintEnabled === false) {
-            statusBarItem.text = '$(debug-pause) AGLint';
-        } else {
-            statusBarItem.text = 'AGLint';
-        }
-    }
+    renderStatus(status);
 }
 
 /**
@@ -149,31 +196,82 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
         debug: { module: serverModule, transport: TransportKind.ipc },
     };
 
+    const rootFs = folder.uri.fsPath;
+
     const clientOptions: LanguageClientOptions = {
-        // Its important to limit the document selector to the specific folder
-        // to avoid conflicts with other clients in the workspace.
-        documentSelector: [
-            {
-                scheme: DOCUMENT_SCHEME,
-                language: LANGUAGE_ID,
-                pattern: `${folder.uri.fsPath}/**/*`,
-            },
-        ],
+        documentSelector: [{ scheme: DOCUMENT_SCHEME, language: LANGUAGE_ID }],
+
         workspaceFolder: folder,
+        initializationOptions: {
+            workspaceFolder: { uri: folder.uri.toString(), name: folder.name },
+        },
+
         synchronize: {
             fileEvents: [
+                Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, `**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}}`),
+                    false,
+                    true,
+                    false,
+                ),
                 // eslint-disable-next-line max-len
-                Workspace.createFileSystemWatcher(`**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}}`, false, true, false),
-                Workspace.createFileSystemWatcher(`**/{${Array.from(CONFIG_FILE_NAMES).join(',')}}`),
-                Workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, `**/{${Array.from(CONFIG_FILE_NAMES).join(',')}}`)),
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, `**/${IGNORE_FILE_NAME}`)),
             ],
         },
+
+        middleware: {
+            didOpen: (doc, next) => {
+                if (fileInFolder(doc.uri.fsPath, rootFs)) {
+                    return next(doc);
+                }
+
+                return Promise.resolve();
+            },
+            didChange: (change, next) => {
+                if (fileInFolder(change.document.uri.fsPath, rootFs)) {
+                    return next(change);
+                }
+
+                return Promise.resolve();
+            },
+            willSave: (e, next) => {
+                if (fileInFolder(e.document.uri.fsPath, rootFs)) {
+                    return next(e);
+                }
+
+                return Promise.resolve();
+            },
+            willSaveWaitUntil: async (e, next) => {
+                if (fileInFolder(e.document.uri.fsPath, rootFs)) {
+                    return next(e);
+                }
+
+                return Promise.resolve([]);
+            },
+            didSave: (doc, next) => {
+                if (fileInFolder(doc.uri.fsPath, rootFs)) {
+                    return next(doc);
+                }
+
+                return Promise.resolve();
+            },
+            didClose: (doc, next) => {
+                if (fileInFolder(doc.uri.fsPath, rootFs)) {
+                    return next(doc);
+                }
+
+                return Promise.resolve();
+            },
+        },
+
         progressOnInitialization: true,
     };
 
-    const client = new LanguageClient(CLIENT_ID, CLIENT_NAME, serverOptions, clientOptions);
+    const id = `${CLIENT_ID}:${folder.uri.toString()}`;
+    const name = `${CLIENT_NAME} (${folder.name})`;
+    const client = new LanguageClient(id, name, serverOptions, clientOptions);
 
-    // Update the status bar item per folder based on server notifications
     client.onNotification('aglint/status', (params: unknown) => {
         updateStatusBarForFolder(folder, params);
     });
@@ -201,7 +299,13 @@ function ensureDefaultClient(serverModule: string) {
         progressOnInitialization: true,
     };
 
-    defaultClient = new LanguageClient(CLIENT_ID, CLIENT_NAME, serverOptions, clientOptions);
+    // Give the untitled client a unique ID too
+    defaultClient = new LanguageClient(
+        `${CLIENT_ID}:untitled`,
+        `${CLIENT_NAME} (untitled)`,
+        serverOptions,
+        clientOptions,
+    );
     defaultClient.start();
 }
 
@@ -237,7 +341,6 @@ function didOpenTextDocument(document: TextDocument, serverModule: string): void
 
     if (!clients.has(key)) {
         const client = createClientForFolder(mostOuterWorkspaceFolder, serverModule);
-
         client.start();
         clients.set(key, client);
     }
@@ -245,25 +348,46 @@ function didOpenTextDocument(document: TextDocument, serverModule: string): void
 
 /**
  * Attaches listeners to workspace folder changes to manage clients.
+ *
+ * @param context Extension context.
  */
-function attachWorkspaceFolderListeners() {
-    Workspace.onDidChangeWorkspaceFolders((event) => {
-        for (const folder of event.removed) {
-            const key = folder.uri.toString();
-            const client = clients.get(key);
+function attachWorkspaceFolderListeners(context: ExtensionContext) {
+    // Remove clients AND their stored status when folders are removed
+    context.subscriptions.push(
+        Workspace.onDidChangeWorkspaceFolders((event) => {
+            for (const folder of event.removed) {
+                const outer = getOuterMostWorkspaceFolder(folder);
+                const outerKey = outer.uri.toString();
+                folderStatus.delete(outerKey);
 
-            if (client) {
-                clients.delete(key);
-                client.stop();
+                const key = folder.uri.toString();
+                const client = clients.get(key);
+                if (client) {
+                    clients.delete(key);
+                    client.stop();
+                }
             }
-        }
-    });
+        }),
 
-    // If the active editor changes, we update the status bar based on the active folder client status
-    Window.onDidChangeActiveTextEditor(() => {
-        statusBarItem.text = 'AGLint';
-        statusBarItem.backgroundColor = undefined;
-    });
+        // On editor change, render the last-known status of that folder (don’t reset blindly)
+        Window.onDidChangeActiveTextEditor((editor) => {
+            if (!editor) {
+                renderStatus(undefined);
+                return;
+            }
+
+            const folder = Workspace.getWorkspaceFolder(editor.document.uri);
+            if (!folder) {
+                renderStatus(undefined);
+                return;
+            }
+
+            const outer = getOuterMostWorkspaceFolder(folder);
+            const key = outer.uri.toString();
+
+            renderStatus(folderStatus.get(key));
+        }),
+    );
 }
 
 /**
@@ -295,21 +419,37 @@ export function activate(context: ExtensionContext) {
     statusBarItem.command = { title: 'Open AGLint Output', command: 'aglint.showOutputChannel' };
     statusBarItem.show();
 
-    // This command allows users to open the AGLint output channel from the status bar
-    // to the first available client.
-    commands.registerCommand('aglint.showOutputChannel', () => {
-        const firstClient = defaultClient ?? [...clients.values()][0];
-        firstClient?.outputChannel.show();
-    });
+    context.subscriptions.push(
+        statusBarItem,
+        commands.registerCommand('aglint.showOutputChannel', () => {
+            const activeUri = Window.activeTextEditor?.document?.uri;
+            if (activeUri) {
+                const folder = Workspace.getWorkspaceFolder(activeUri);
+                if (folder) {
+                    const outer = getOuterMostWorkspaceFolder(folder);
+                    const key = outer.uri.toString();
+                    const clientForFolder = clients.get(key)
+                        // fall back to client created with the exact (non-outer) key
+                        ?? clients.get(folder.uri.toString());
+                    clientForFolder?.outputChannel.show();
+                    return;
+                }
+            }
+            const firstClient = defaultClient ?? [...clients.values()][0];
+            firstClient?.outputChannel.show();
+        }),
+    );
 
     // Handle already opened documents
     Workspace.textDocuments.forEach((doc) => didOpenTextDocument(doc, serverModule));
 
     // Handle newly opened documents
-    Workspace.onDidOpenTextDocument((doc) => didOpenTextDocument(doc, serverModule));
+    context.subscriptions.push(
+        Workspace.onDidOpenTextDocument((doc) => didOpenTextDocument(doc, serverModule)),
+    );
 
-    // Handle workspace changes
-    attachWorkspaceFolderListeners();
+    // Handle workspace changes and editor changes
+    attachWorkspaceFolderListeners(context);
 
     // Info (with the first available client)
     const anyClient = defaultClient ?? [...clients.values()][0];

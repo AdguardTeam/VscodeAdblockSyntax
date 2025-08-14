@@ -298,6 +298,18 @@ function hashRoot(input: string): string {
     return ([...input].reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0) >>> 0).toString(16);
 }
 
+/**
+ * Get the hashed workspace root path or an empty string if the workspace root is not set.
+ *
+ * @returns Hashed workspace root path
+ */
+// FIXME: Get rid of this. Its needed for add suffix to commands, otherwise command name collision can happen
+// when spawning multiple server instances for different workspace folders.
+// Probably we should switch to code actions with resolve provider.
+function getRootHash(): string {
+    return workspaceRoot ? `:${hashRoot(workspaceRoot)}` : '';
+}
+
 connection.onInitialize(async (params: InitializeParams) => {
     const { capabilities } = params;
 
@@ -321,7 +333,7 @@ connection.onInitialize(async (params: InitializeParams) => {
 
     hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
 
-    const suffix = workspaceRoot ? `:${hashRoot(workspaceRoot)}` : '';
+    const suffix = getRootHash();
 
     connection.console.log(`Initializing server instance ${suffix} ${workspaceRoot ?? 'without workspace root'}`);
 
@@ -471,7 +483,7 @@ connection.onCodeAction((params) => {
                 title,
                 Command.create(
                     title,
-                    CommandId.DisableLine,
+                    CommandId.DisableLine + getRootHash(),
                     // additional arguments for the command:
                     textDocument.uri,
                     range,
@@ -486,7 +498,7 @@ connection.onCodeAction((params) => {
                 title,
                 Command.create(
                     title,
-                    CommandId.DisableRuleLine,
+                    CommandId.DisableRuleLine + getRootHash(),
                     // additional arguments for the command:
                     textDocument.uri,
                     range,
@@ -556,7 +568,10 @@ connection.onExecuteCommand(async (params) => {
         });
     };
 
-    if (params.command === CommandId.DisableLine || params.command === CommandId.DisableRuleLine) {
+    if (
+        params.command === CommandId.DisableLine + getRootHash()
+        || params.command === CommandId.DisableRuleLine + getRootHash()
+    ) {
         // Get common arguments for both commands
         if (!params.arguments || params.arguments.length < 2) {
             return;
@@ -582,7 +597,7 @@ connection.onExecuteCommand(async (params) => {
             AglintCommand.DisableNextLine,
         ].join(EMPTY);
 
-        if (params.command === CommandId.DisableLine) {
+        if (params.command === CommandId.DisableLine + getRootHash()) {
             // If there are no previous lines, just insert the comment before the problematic line.
             // Note: vscode uses 0-based line numbers
             if (lineNumber === 0) {
@@ -635,7 +650,7 @@ connection.onExecuteCommand(async (params) => {
             }
         }
 
-        if (params.command === CommandId.DisableRuleLine) {
+        if (params.command === CommandId.DisableRuleLine + getRootHash()) {
             const ruleName = params.arguments[2];
 
             if (!ruleName || typeof ruleName !== 'string') {

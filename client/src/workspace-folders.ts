@@ -1,70 +1,66 @@
 /**
  * @file Utility functions for managing workspace folders in VSCode.
  */
-
-import { Uri, workspace as Workspace, type WorkspaceFolder } from 'vscode';
+import * as path from 'path';
+import { workspace as Workspace, type WorkspaceFolder } from 'vscode';
 
 /**
- * Caches the sorted workspace folders.
+ * Cache of WorkspaceFolders sorted by path length (outermost first).
  */
-let sortedWorkspaceFolders: string[] | undefined;
+let sortedFoldersCache: WorkspaceFolder[] | undefined;
 
 /**
- * Normalizes a workspace folder URI to always have a trailing slash.
+ * Checks if a file is inside a folder (by absolute fsPath).
  *
- * @param folder - The workspace folder to normalize.
- * @returns The normalized folder URI as a string, guaranteed to end with `/`.
+ * @param file Absolute or relative file path.
+ * @param folderFsPath Absolute or relative folder path.
+ *
+ * @returns True if the file is inside the folder, false otherwise.
  */
-const normalizeWorkspaceFolder = (folder: WorkspaceFolder): string => {
-    const result = folder.uri.toString();
-    return result.endsWith('/') ? result : `${result}/`;
+export const fileInFolder = (file: string, folderFsPath: string): boolean => {
+    const norm = (p: string) => path.resolve(p);
+    const withSep = (p: string) => (p.endsWith(path.sep) ? p : p + path.sep);
+
+    // Optional: make comparison case-insensitive on Windows
+    const normalizeForCompare = (p: string) => (process.platform === 'win32' ? p.toLowerCase() : p);
+
+    const root = normalizeForCompare(withSep(norm(folderFsPath)));
+    const filePath = normalizeForCompare(norm(file));
+    return filePath.startsWith(root);
 };
 
 /**
- * Retrieves the list of workspace folder URIs sorted by their length.
- * This helps with determining the outer-most workspace folder for a given path.
+ * Returns workspace folders sorted by fsPath length ascending.
+ * Shorter path means more "outer" folder.
  *
- * The result is cached for performance and reset when the workspace folders change.
- *
- * @returns An array of normalized workspace folder URIs sorted in ascending order by length.
+ * @returns Array of workspace folders sorted by path length.
  */
-export const getSortedWorkspaceFolders = (): string[] => {
-    if (sortedWorkspaceFolders !== undefined) {
-        return sortedWorkspaceFolders;
+export const getSortedWorkspaceFolders = (): WorkspaceFolder[] => {
+    if (sortedFoldersCache) {
+        return sortedFoldersCache;
     }
 
-    if (!Workspace.workspaceFolders) {
-        sortedWorkspaceFolders = [];
-        return sortedWorkspaceFolders;
-    }
+    const folders = Workspace.workspaceFolders ?? [];
+    sortedFoldersCache = [...folders].sort(
+        (a, b) => a.uri.fsPath.length - b.uri.fsPath.length,
+    );
 
-    sortedWorkspaceFolders = Workspace.workspaceFolders
-        .map(normalizeWorkspaceFolder)
-        .sort((a, b) => a.length - b.length);
-
-    return sortedWorkspaceFolders;
+    return sortedFoldersCache;
 };
 
 /**
  * Finds the outer-most workspace folder that contains the given folder.
  *
- * If multiple workspace folders are nested, this function returns the top-most
- * folder that includes the provided folder’s path.
- *
  * @param folder The workspace folder to check.
- * @returns The outer-most containing workspace folder, or the given folder if no outer folder exists.
+ *
+ * @returns The outer-most containing workspace folder, or the given folder if none contains it.
  */
 export const getOuterMostWorkspaceFolder = (folder: WorkspaceFolder): WorkspaceFolder => {
-    const sorted = getSortedWorkspaceFolders();
+    const target = folder.uri.fsPath;
 
-    if (sorted.length === 0) {
-        return folder;
-    }
-
-    for (const element of sorted) {
-        const uri = normalizeWorkspaceFolder(folder);
-        if (uri.startsWith(element)) {
-            return Workspace.getWorkspaceFolder(Uri.parse(element))!;
+    for (const candidate of getSortedWorkspaceFolders()) {
+        if (fileInFolder(target, candidate.uri.fsPath)) {
+            return candidate;
         }
     }
 
@@ -72,8 +68,8 @@ export const getOuterMostWorkspaceFolder = (folder: WorkspaceFolder): WorkspaceF
 };
 
 /**
- * Resets the cached sorted workspace folders when the workspace changes.
+ * Invalidate cache on workspace folder changes.
  */
 Workspace.onDidChangeWorkspaceFolders(() => {
-    sortedWorkspaceFolders = undefined;
+    sortedFoldersCache = undefined;
 });
