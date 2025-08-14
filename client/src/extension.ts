@@ -20,11 +20,29 @@ import * as v from 'valibot';
 
 import { getOuterMostWorkspaceFolder } from './workspace-folders';
 
+/**
+ * Schemes for file documents.
+ */
+const enum FileScheme {
+    File = 'file',
+    Untitled = 'untitled',
+}
+
 const SERVER_PATH = join('server', 'out', 'server.js');
-const DOCUMENT_SCHEME = 'file';
+const DOCUMENT_SCHEME = FileScheme.File;
 const LANGUAGE_ID = 'adblock';
 const CLIENT_ID = 'aglint';
 const CLIENT_NAME = 'AGLint';
+
+/**
+ * Supported file extensions.
+ */
+const SUPPORTED_FILE_EXTENSIONS = [
+    'txt',
+    'adblock',
+    'ublock',
+    'adguard',
+];
 
 /**
  * Possible names of the config file
@@ -43,7 +61,7 @@ const CONFIG_FILE_NAMES = [
 ];
 
 /**
- * Name of the ignore file
+ * Name of the ignore file.
  */
 const IGNORE_FILE_NAME = '.aglintignore';
 
@@ -144,7 +162,7 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
         workspaceFolder: folder,
         synchronize: {
             fileEvents: [
-                Workspace.createFileSystemWatcher('**/*.{txt,adblock,ublock,adguard}', false, true, false),
+                Workspace.createFileSystemWatcher(`**/*.{${SUPPORTED_FILE_EXTENSIONS.join(',')}}`, false, true, false),
                 Workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(',')}}`),
                 Workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
             ],
@@ -178,7 +196,7 @@ function ensureDefaultClient(serverModule: string) {
     };
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'untitled', language: LANGUAGE_ID }],
+        documentSelector: [{ scheme: FileScheme.Untitled, language: LANGUAGE_ID }],
         progressOnInitialization: true,
     };
 
@@ -194,13 +212,16 @@ function ensureDefaultClient(serverModule: string) {
  */
 function didOpenTextDocument(document: TextDocument, serverModule: string): void {
     // Only handle documents with the specific language ID and schemes
-    if (document.languageId !== LANGUAGE_ID || (document.uri.scheme !== 'file' && document.uri.scheme !== 'untitled')) {
+    if (
+        document.languageId !== LANGUAGE_ID
+        || (document.uri.scheme !== FileScheme.File && document.uri.scheme !== FileScheme.Untitled)
+    ) {
         return;
     }
 
     const { uri } = document;
 
-    if (uri.scheme === 'untitled') {
+    if (uri.scheme === FileScheme.Untitled) {
         ensureDefaultClient(serverModule);
         return;
     }
@@ -251,7 +272,7 @@ function attachWorkspaceFolderListeners() {
  */
 export function activate(context: ExtensionContext) {
     const isVirtualWorkspace = Workspace.workspaceFolders
-        && Workspace.workspaceFolders.every((f) => f.uri.scheme !== 'file');
+        && Workspace.workspaceFolders.every((f) => f.uri.scheme !== FileScheme.File);
 
     if (isVirtualWorkspace) {
         Window.showWarningMessage(
