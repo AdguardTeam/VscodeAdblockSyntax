@@ -3,10 +3,12 @@ import {
     ThemeColor,
     commands,
     StatusBarAlignment,
-    workspace,
+    workspace as Workspace,
+    window as Window,
     type ExtensionContext,
-    window,
     type StatusBarItem,
+    type TextDocument,
+    type WorkspaceFolder,
 } from 'vscode';
 import {
     LanguageClient,
@@ -14,6 +16,9 @@ import {
     type ServerOptions,
     TransportKind,
 } from 'vscode-languageclient/node';
+import * as v from 'valibot';
+
+import { getOuterMostWorkspaceFolder } from './workspace-folders';
 
 const SERVER_PATH = join('server', 'out', 'server.js');
 const DOCUMENT_SCHEME = 'file';
@@ -43,135 +48,267 @@ const CONFIG_FILE_NAMES = [
 const IGNORE_FILE_NAME = '.aglintignore';
 
 /**
- * Language client instance
+ * Language client instance for the default workspace folder or untitled documents.
+ * This is used when no specific workspace folder is available.
  */
-let client: LanguageClient;
+let defaultClient: LanguageClient | undefined;
 
+/**
+ * Map of language clients for each workspace folder.
+ * This allows us to manage multiple clients for different folders in the workspace.
+ */
+const clients = new Map<string, LanguageClient>();
+
+/**
+ * Status bar item to show the AGLint status.
+ * This is shared across all workspace folders and updates based on the active editor's folder.
+ */
 let statusBarItem: StatusBarItem;
 
 /**
- * Function called when the extension is activated
- *
- * @param context VSCode extension context
+ * Schema for the server notification parameters.
  */
-export function activate(context: ExtensionContext) {
-    // Check if the workspace is a virtual workspace. If yes, then we can't use the Node.js FS API,
-    // so we need to abort the activation process.
-    //
-    // Detection of virtual workspaces is done by checking if all workspace folders have the file scheme.
-    // More info:
-    // https://code.visualstudio.com/api/extension-guides/virtual-workspaces#detect-virtual-workspaces-programmatically
-    // TODO: Implement a workaround for virtual workspaces
-    const isVirtualWorkspace = workspace.workspaceFolders
-        && workspace.workspaceFolders.every((f) => f.uri.scheme !== 'file');
+// TODO (AG-45205): Improve notification schema
+const notificationSchema = v.object({
+    error: v.optional(v.unknown()),
+    aglintEnabled: v.optional(v.boolean()),
+});
 
-    if (isVirtualWorkspace) {
-        // Show a warning message
-        window.showWarningMessage(
-            // eslint-disable-next-line max-len
-            'AGLint doesn\'t support virtual workspaces, since it requires access to the filesystem via Node.js FS API. Only syntax highlighting will be available here.',
-        );
-
-        // Abort the activation
+/**
+ * We show the status bar based on the active editor's folder client status.
+ *
+ * @param folder Folder whose status we want to update.
+ * @param params Parameters from the server notification, which may include error status or AGLint enabled state.
+ */
+function updateStatusBarForFolder(folder: WorkspaceFolder, params: unknown) {
+    const active = Window.activeTextEditor?.document?.uri;
+    if (!active) {
         return;
     }
 
-    // Otherwise, continue the activation process
+    const activeFolder = Workspace.getWorkspaceFolder(active);
+    if (!activeFolder) {
+        return;
+    }
 
-    // Server is implemented in Node, so we need to launch it as a separate process
-    const serverModule = context.asAbsolutePath(join(SERVER_PATH));
+    // Only update the status bar if the active editor's folder matches the one we are updating
+    // This prevents unnecessary updates when switching between folders in the workspace
+    if (activeFolder.uri.toString() !== folder.uri.toString()) {
+        return;
+    }
 
-    // If the extension is launched in debug mode then the debug server options are used
-    // Otherwise the run options are used
+    const parseResult = v.safeParse(notificationSchema, params);
+    if (!parseResult.success) {
+        return;
+    }
+
+    const parsedData = parseResult.output;
+
+    if (parsedData.error) {
+        statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
+        statusBarItem.text = '$(warning) AGLint';
+    } else {
+        statusBarItem.backgroundColor = undefined;
+        if (parsedData.aglintEnabled === false) {
+            statusBarItem.text = '$(debug-pause) AGLint';
+        } else {
+            statusBarItem.text = 'AGLint';
+        }
+    }
+}
+
+/**
+ * Creates a language client for a specific workspace folder.
+ *
+ * @param folder The workspace folder for which the client is created.
+ * @param serverModule The path to the server module.
+ *
+ * @returns A new instance of LanguageClient for the specified folder.
+ */
+function createClientForFolder(folder: WorkspaceFolder, serverModule: string): LanguageClient {
     const serverOptions: ServerOptions = {
         run: { module: serverModule, transport: TransportKind.ipc },
-        debug: {
-            module: serverModule,
-            transport: TransportKind.ipc,
-        },
+        debug: { module: serverModule, transport: TransportKind.ipc },
     };
 
-    // Options to control the language client
     const clientOptions: LanguageClientOptions = {
-        // Register the server for adblock documents (this extension will also define the adblock language)
-        documentSelector: [{ scheme: DOCUMENT_SCHEME, language: LANGUAGE_ID }],
-
+        // Its important to limit the document selector to the specific folder
+        // to avoid conflicts with other clients in the workspace.
+        documentSelector: [
+            {
+                scheme: DOCUMENT_SCHEME,
+                language: LANGUAGE_ID,
+                pattern: `${folder.uri.fsPath}/**/*`,
+            },
+        ],
+        workspaceFolder: folder,
         synchronize: {
-            // Notify the server if the configuration has changed (such as .aglintrc, .aglintignore, etc.)
-            // We define these files as glob patterns here
             fileEvents: [
-                workspace.createFileSystemWatcher('**/*.{txt,adblock,ublock,adguard}', false, true, false),
-                workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(',')}}`),
-                workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
+                Workspace.createFileSystemWatcher('**/*.{txt,adblock,ublock,adguard}', false, true, false),
+                Workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(',')}}`),
+                Workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
             ],
         },
-
         progressOnInitialization: true,
     };
 
-    // Create the language client and start the client.
-    client = new LanguageClient(CLIENT_ID, CLIENT_NAME, serverOptions, clientOptions);
+    const client = new LanguageClient(CLIENT_ID, CLIENT_NAME, serverOptions, clientOptions);
 
-    // Add status bar
-    statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 100);
-
-    commands.registerCommand('aglint.showOutputChannel', () => {
-        client.outputChannel.show();
+    // Update the status bar item per folder based on server notifications
+    client.onNotification('aglint/status', (params: unknown) => {
+        updateStatusBarForFolder(folder, params);
     });
 
+    return client;
+}
+
+/**
+ * Default client creation for untitled documents or when no workspace folder is available.
+ *
+ * @param serverModule The path to the server module.
+ */
+function ensureDefaultClient(serverModule: string) {
+    if (defaultClient) {
+        return;
+    }
+
+    const serverOptions: ServerOptions = {
+        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: { module: serverModule, transport: TransportKind.ipc },
+    };
+
+    const clientOptions: LanguageClientOptions = {
+        documentSelector: [{ scheme: 'untitled', language: LANGUAGE_ID }],
+        progressOnInitialization: true,
+    };
+
+    defaultClient = new LanguageClient(CLIENT_ID, CLIENT_NAME, serverOptions, clientOptions);
+    defaultClient.start();
+}
+
+/**
+ * When a text document is opened, we make sure to create or use an existing client for the folder
+ *
+ * @param document The opened text document.
+ * @param serverModule The path to the server module.
+ */
+function didOpenTextDocument(document: TextDocument, serverModule: string): void {
+    // Only handle documents with the specific language ID and schemes
+    if (document.languageId !== LANGUAGE_ID || (document.uri.scheme !== 'file' && document.uri.scheme !== 'untitled')) {
+        return;
+    }
+
+    const { uri } = document;
+
+    if (uri.scheme === 'untitled') {
+        ensureDefaultClient(serverModule);
+        return;
+    }
+
+    const workspaceFolder = Workspace.getWorkspaceFolder(uri);
+    if (!workspaceFolder) {
+        return;
+    }
+
+    const mostOuterWorkspaceFolder = getOuterMostWorkspaceFolder(workspaceFolder);
+    const key = mostOuterWorkspaceFolder.uri.toString();
+
+    if (!clients.has(key)) {
+        const client = createClientForFolder(mostOuterWorkspaceFolder, serverModule);
+
+        client.start();
+        clients.set(key, client);
+    }
+}
+
+/**
+ * Attaches listeners to workspace folder changes to manage clients.
+ */
+function attachWorkspaceFolderListeners() {
+    Workspace.onDidChangeWorkspaceFolders((event) => {
+        for (const folder of event.removed) {
+            const key = folder.uri.toString();
+            const client = clients.get(key);
+
+            if (client) {
+                clients.delete(key);
+                client.stop();
+            }
+        }
+    });
+
+    // If the active editor changes, we update the status bar based on the active folder client status
+    Window.onDidChangeActiveTextEditor(() => {
+        statusBarItem.text = 'AGLint';
+        statusBarItem.backgroundColor = undefined;
+    });
+}
+
+/**
+ * Activates the extension.
+ *
+ * @param context The extension context.
+ */
+export function activate(context: ExtensionContext) {
+    const isVirtualWorkspace = Workspace.workspaceFolders
+        && Workspace.workspaceFolders.every((f) => f.uri.scheme !== 'file');
+
+    if (isVirtualWorkspace) {
+        Window.showWarningMessage(
+            // eslint-disable-next-line max-len
+            'AGLint does not support virtual workspaces, since it requires access to the filesystem via Node.js FS API. Only syntax highlighting will be available here.',
+        );
+        return;
+    }
+
+    const serverModule = context.asAbsolutePath(join(SERVER_PATH));
+
+    // Status bar
+    statusBarItem = Window.createStatusBarItem(StatusBarAlignment.Right, 100);
     statusBarItem.name = 'AGLint';
     statusBarItem.text = 'AGLint';
     statusBarItem.tooltip = 'Show AGLint output channel to see more information';
 
     // Add command to show AGLint debug console
     statusBarItem.command = { title: 'Open AGLint Output', command: 'aglint.showOutputChannel' };
-
-    // Show the status bar item
     statusBarItem.show();
 
-    // Handle notifications from the server
-    client.onNotification('aglint/status', (params) => {
-        if (params?.error) {
-            // We have an error, so change the status bar background to red
-            statusBarItem.backgroundColor = new ThemeColor('statusBarItem.warningBackground');
-
-            // Show warning icon
-            statusBarItem.text = '$(warning) AGLint';
-        } else {
-            // Everything is fine, so change the status bar background to the default color
-            // In this case, params is null
-            statusBarItem.backgroundColor = undefined;
-
-            if (params?.aglintEnabled === false) {
-                // Show a blocked icon if AGLint is disabled
-                statusBarItem.text = '$(debug-pause) AGLint';
-            } else {
-                // Reset the status bar text
-                statusBarItem.text = 'AGLint';
-            }
-        }
+    // This command allows users to open the AGLint output channel from the status bar
+    // to the first available client.
+    commands.registerCommand('aglint.showOutputChannel', () => {
+        const firstClient = defaultClient ?? [...clients.values()][0];
+        firstClient?.outputChannel.show();
     });
 
-    // Notify the user if the extension is activated. Show the version of the VSCode plugin,
-    // maybe it will be useful for debugging / support
-    client.info(`AGLint extension client activated. Extension version: ${context.extension.packageJSON.version}`);
+    // Handle already opened documents
+    Workspace.textDocuments.forEach((doc) => didOpenTextDocument(doc, serverModule));
 
-    // Start the client. This will also launch the server.
-    client.start();
+    // Handle newly opened documents
+    Workspace.onDidOpenTextDocument((doc) => didOpenTextDocument(doc, serverModule));
+
+    // Handle workspace changes
+    attachWorkspaceFolderListeners();
+
+    // Info (with the first available client)
+    const anyClient = defaultClient ?? [...clients.values()][0];
+    anyClient?.info?.(`AGLint client activated. Extension version: ${context.extension.packageJSON.version}`);
 }
 
 /**
  * Function called when the extension is deactivated
  *
- * @returns `undefined` if the client is not initialized, otherwise a promise that resolves when the client is stopped
+ * @returns An array of promises that resolves when all clients are stopped.
  */
 export function deactivate(): Thenable<void> | undefined {
-    // Handle the case where the client is not initialized
-    if (!client) {
-        return undefined;
+    const promises: Thenable<void>[] = [];
+
+    if (defaultClient) {
+        promises.push(defaultClient.stop());
     }
 
-    client.info('Deactivating AGLint extension client...');
+    for (const client of clients.values()) {
+        promises.push(client.stop());
+    }
 
-    return client.stop();
+    return Promise.all(promises).then(() => undefined);
 }

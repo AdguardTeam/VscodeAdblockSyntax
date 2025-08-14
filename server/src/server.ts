@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 /**
  * @file AGLint Language Server for VSCode (Node.js)
  * @todo Split this server into multiple files by creating a server context
@@ -287,14 +288,42 @@ async function loadAglintModule(
     connection.console.info(`Successfully loaded bundled AGLint module (version: ${AGLintModule.version})`);
 }
 
+/**
+ * Generate a hash from the workspace root path.
+ *
+ * @param input Workspace root path
+ * @returns Hashed workspace root path
+ */
+function hashRoot(input: string): string {
+    return ([...input].reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0) >>> 0).toString(16);
+}
+
 connection.onInitialize(async (params: InitializeParams) => {
     const { capabilities } = params;
+
+    let workspaceRootUri: string | undefined;
+
+    if (params.initializationOptions && params.initializationOptions.workspaceFolder?.uri) {
+        workspaceRootUri = params.initializationOptions.workspaceFolder.uri;
+    } else if (params.rootUri) {
+        workspaceRootUri = params.rootUri;
+    } else if (params.workspaceFolders?.length) {
+        workspaceRootUri = params.workspaceFolders[0].uri;
+    }
+
+    workspaceRoot = workspaceRootUri && workspaceRootUri.startsWith('file:')
+        ? fileURLToPath(workspaceRootUri)
+        : undefined;
 
     // Does the client support the `workspace/configuration` request?
     // If not, we fall back using global settings.
     hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
 
     hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
+
+    const suffix = workspaceRoot ? `:${hashRoot(workspaceRoot)}` : '';
+
+    connection.console.log(`Initializing server instance ${suffix} ${workspaceRoot ?? 'without workspace root'}`);
 
     // TODO: Define the capabilities of the language server here
     const result: InitializeResult = {
@@ -306,23 +335,20 @@ connection.onInitialize(async (params: InitializeParams) => {
             },
             executeCommandProvider: {
                 commands: [
-                    CommandId.DisableLine,
-                    CommandId.DisableRuleLine,
+                    CommandId.DisableLine + suffix,
+                    CommandId.DisableRuleLine + suffix,
                 ],
             },
         },
     };
 
+    // Since we start a new server instance for each workspace folder,
+    // we do not need to handle workspace folder changes.
     if (hasWorkspaceFolderCapability) {
-        result.capabilities.workspace = {
-            workspaceFolders: {
-                supported: true,
-            },
-        };
+        connection.workspace.onDidChangeWorkspaceFolders(() => {
+            connection.console.log('Workspace folder change event received (ignored by per-folder server instance).');
+        });
     }
-
-    // TODO: Checks for better way to get the workspace root
-    workspaceRoot = params.workspaceFolders ? fileURLToPath(params.workspaceFolders[0].uri) : undefined;
 
     return result;
 });
@@ -335,6 +361,11 @@ connection.onInitialize(async (params: InitializeParams) => {
  * @param textDocument Document to lint
  */
 async function lintFile(textDocument: TextDocument): Promise<void> {
+    if (!textDocument.uri.startsWith('file:')) {
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
+        return;
+    }
+
     try {
         const documentPath = fileURLToPath(textDocument.uri);
 
@@ -712,8 +743,8 @@ async function pullSettings(initial = false) {
     const oldSettings = cloneDeep(settings);
 
     if (hasConfigurationCapability) {
-        // Get settings from VSCode
-        const receivedSettings = (await connection.workspace.getConfiguration('adblock')) as ExtensionSettings;
+        const scopeUri = workspaceRoot ? pathToFileURL(workspaceRoot).toString() : undefined;
+        const receivedSettings = await connection.workspace.getConfiguration({ scopeUri, section: 'adblock' });
 
         // Update the settings. No need to validate them, VSCode does this for us based on the schema
         // specified in the package.json

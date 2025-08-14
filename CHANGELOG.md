@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## Unreleased
+
+### Added
+
+- Support for multi-root workspaces [#112].
+
+[#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
+
 ## 1.1.17 - 2024-05-05
 
 ### Added
