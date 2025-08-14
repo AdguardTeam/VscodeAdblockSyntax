@@ -37,17 +37,17 @@ const CLIENT_NAME = 'AGLint';
 /**
  * Supported file extensions.
  */
-const SUPPORTED_FILE_EXTENSIONS = [
+const SUPPORTED_FILE_EXTENSIONS: ReadonlySet<string> = new Set([
     'txt',
     'adblock',
     'ublock',
     'adguard',
-];
+]);
 
 /**
  * Possible names of the config file
  */
-const CONFIG_FILE_NAMES = [
+const CONFIG_FILE_NAMES: ReadonlySet<string> = new Set([
     // aglint.config stuff
     'aglint.config.json',
     'aglint.config.yaml',
@@ -58,7 +58,7 @@ const CONFIG_FILE_NAMES = [
     '.aglintrc.json',
     '.aglintrc.yaml',
     '.aglintrc.yml',
-];
+]);
 
 /**
  * Name of the ignore file.
@@ -162,8 +162,9 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
         workspaceFolder: folder,
         synchronize: {
             fileEvents: [
-                Workspace.createFileSystemWatcher(`**/*.{${SUPPORTED_FILE_EXTENSIONS.join(',')}}`, false, true, false),
-                Workspace.createFileSystemWatcher(`**/{${CONFIG_FILE_NAMES.join(',')}}`),
+                // eslint-disable-next-line max-len
+                Workspace.createFileSystemWatcher(`**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}}`, false, true, false),
+                Workspace.createFileSystemWatcher(`**/{${Array.from(CONFIG_FILE_NAMES).join(',')}}`),
                 Workspace.createFileSystemWatcher(`**/{${IGNORE_FILE_NAME}}`),
             ],
         },
