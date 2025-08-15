@@ -159,6 +159,9 @@ importers:
       vscode-languageserver-textdocument:
         specifier: ^1.0.8
         version: 1.0.12
+      vscode-uri:
+        specifier: ^3.1.0
+        version: 3.1.0
     devDependencies:
       '@adguard/aglint':
         specifier: 2.1.5
@@ -3879,6 +3882,9 @@ packages:
 
   vscode-textmate@9.2.0:
     resolution: {integrity: sha512-rkvG4SraZQaPSN/5XjwKswdU0OP9MF28QjrYzUBbhb8QyG3ljB1Ky996m++jiI7KdiAP2CkBiQZd9pqEDTClqA==}
+
+  vscode-uri@3.1.0:
+    resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
@@ -8360,6 +8366,8 @@ snapshots:
   vscode-oniguruma@2.0.1: {}
 
   vscode-textmate@9.2.0: {}
+
+  vscode-uri@3.1.0: {}
 
   walker@1.0.8:
     dependencies:

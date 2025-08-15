@@ -43,6 +43,7 @@ import {
 } from './common/constants';
 import { defaultSettings, type ExtensionSettings } from './settings';
 import { NPM, type PackageManager, getInstallationCommand } from './utils/package-managers';
+import { isFileUri } from './utils/uri';
 
 // Store AGLint module here
 let AGLintModule: typeof AGLint;
@@ -323,7 +324,7 @@ connection.onInitialize(async (params: InitializeParams) => {
         workspaceRootUri = params.workspaceFolders[0].uri;
     }
 
-    workspaceRoot = workspaceRootUri && workspaceRootUri.startsWith('file:')
+    workspaceRoot = workspaceRootUri && isFileUri(workspaceRootUri)
         ? fileURLToPath(workspaceRootUri)
         : undefined;
 
@@ -373,7 +374,7 @@ connection.onInitialize(async (params: InitializeParams) => {
  * @param textDocument Document to lint
  */
 async function lintFile(textDocument: TextDocument): Promise<void> {
-    if (!textDocument.uri.startsWith('file:')) {
+    if (!isFileUri(textDocument.uri)) {
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
         return;
     }
