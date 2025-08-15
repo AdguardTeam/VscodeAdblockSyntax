@@ -149,7 +149,10 @@ function parseStatusParams(params: unknown): AglintStatus {
 }
 
 /**
- * We show the status bar based on the active editor's folder client status.
+ * Update the status bar for a specific workspace folder.
+ *
+ * When user switches to a file in a different folder, this function is called to update the status bar
+ * for the OUTERMOST folder of that workspace.
  *
  * @param folder Folder whose status we want to update.
  * @param params Parameters from the server notification, which may include error status or AGLint enabled state.
