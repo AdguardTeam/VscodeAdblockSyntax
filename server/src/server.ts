@@ -311,9 +311,14 @@ function getRootHash(): string {
     return workspaceRoot ? `:${hashRoot(workspaceRoot)}` : '';
 }
 
-connection.onInitialize(async (params: InitializeParams) => {
-    const { capabilities } = params;
-
+/**
+ * Helper function to extract the workspace root URI from the initialization parameters.
+ *
+ * @param params Initialization parameters.
+ *
+ * @returns Workspace root URI or undefined if not found.
+ */
+const extractWorkspaceRootUri = (params: InitializeParams): string | undefined => {
     let workspaceRootUri: string | undefined;
 
     if (params.initializationOptions && params.initializationOptions.workspaceFolder?.uri) {
@@ -324,9 +329,27 @@ connection.onInitialize(async (params: InitializeParams) => {
         workspaceRootUri = params.workspaceFolders[0].uri;
     }
 
-    workspaceRoot = workspaceRootUri && isFileUri(workspaceRootUri)
-        ? fileURLToPath(workspaceRootUri)
+    return workspaceRootUri;
+};
+
+/**
+ * Helper function to get the workspace root path from the workspace root URI.
+ *
+ * @param rootUri Workspace root URI.
+ *
+ * @returns Workspace root path or undefined if the URI is not a file URI.
+ */
+const getWorkspaceRootFromRootUri = (rootUri: string | undefined): string | undefined => {
+    return rootUri && isFileUri(rootUri)
+        ? fileURLToPath(rootUri)
         : undefined;
+};
+
+connection.onInitialize(async (params: InitializeParams) => {
+    const { capabilities } = params;
+
+    const workspaceRootUri = extractWorkspaceRootUri(params);
+    workspaceRoot = getWorkspaceRootFromRootUri(workspaceRootUri);
 
     // Does the client support the `workspace/configuration` request?
     // If not, we fall back using global settings.
