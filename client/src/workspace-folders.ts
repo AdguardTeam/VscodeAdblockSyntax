@@ -41,9 +41,9 @@ export const getSortedWorkspaceFolders = (): WorkspaceFolder[] => {
     }
 
     const folders = Workspace.workspaceFolders ?? [];
-    sortedFoldersCache = [...folders].sort(
-        (a, b) => a.uri.fsPath.length - b.uri.fsPath.length,
-    );
+    sortedFoldersCache = [...folders].sort((a, b) => {
+        return a.uri.fsPath.length - b.uri.fsPath.length;
+    });
 
     return sortedFoldersCache;
 };
