@@ -19,5 +19,10 @@ const enum FileScheme {
  * @returns True if the URI is a file URI, false otherwise.
  */
 export const isFileUri = (uri: string) => {
-    return URI.parse(uri).scheme.toLowerCase() === FileScheme.File;
+    try {
+        return URI.parse(uri).scheme.toLowerCase() === FileScheme.File;
+    } catch {
+        // If parsing fails, we assume it's not a valid file URI
+        return false;
+    }
 };
