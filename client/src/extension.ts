@@ -67,6 +67,24 @@ const CONFIG_FILE_NAMES: ReadonlySet<string> = new Set([
 const IGNORE_FILE_NAME = '.aglintignore';
 
 /**
+ * Priority for the VS Code status bar item.
+ *
+ * Higher values mean the item is placed more to the left *within its alignment group*.
+ * For {@link StatusBarAlignment.Right}, a higher number positions it closer
+ * to the center of the status bar; a lower number moves it toward the right edge.
+ *
+ * This project uses `100` as a balanced value; it is prominent but not far-left,
+ * following the example from `vscode-extension-samples`:
+ * https://github.com/microsoft/vscode-extension-samples/blob/986bcc700dee6cc4d1e6d4961a316eead110fb21/statusbar-sample/src/extension.ts#L21
+ *
+ * Other extensions typically use values between 0 and 200:
+ * https://github.com/search?q=createStatusBarItem(vscode.StatusBarAlignment.Right&type=code
+ *
+ * This value is based on convention and visual preference, and can be adjusted in the future if needed.
+ */
+const STATUS_BAR_PRIORITY = 100;
+
+/**
  * Language client instance for the default workspace folder or untitled documents.
  * This is used when no specific workspace folder is available.
  */
@@ -413,7 +431,7 @@ export function activate(context: ExtensionContext) {
     const serverModule = context.asAbsolutePath(join(SERVER_PATH));
 
     // Status bar
-    statusBarItem = Window.createStatusBarItem(StatusBarAlignment.Right, 100);
+    statusBarItem = Window.createStatusBarItem(StatusBarAlignment.Right, STATUS_BAR_PRIORITY);
     statusBarItem.name = 'AGLint';
     statusBarItem.text = 'AGLint';
     statusBarItem.tooltip = 'Show AGLint output channel to see more information';
