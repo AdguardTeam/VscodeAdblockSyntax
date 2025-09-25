@@ -15,7 +15,6 @@ import {
     type InitializeResult,
     CodeActionKind,
     CodeAction,
-    Command,
     TextDocumentSyncKind,
     TextDocumentEdit,
     TextEdit,
@@ -87,14 +86,6 @@ let cachedPaths: CachedPaths | undefined;
  * Actual settings for the extension (always synced)
  */
 let settings: ExtensionSettings = defaultSettings;
-
-/**
- * VSCode commands supported by the language server
- */
-enum CommandId {
-    DisableLine = 'aglint.disable-line',
-    DisableRuleLine = 'aglint.disable-rule-line',
-}
 
 /**
  * AGLint commands supported by the language server
@@ -290,28 +281,6 @@ async function loadAglintModule(
 }
 
 /**
- * Generate a hash from the workspace root path.
- *
- * @param input Workspace root path
- * @returns Hashed workspace root path
- */
-function hashRoot(input: string): string {
-    return ([...input].reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0) >>> 0).toString(16);
-}
-
-/**
- * Get the hashed workspace root path or an empty string if the workspace root is not set.
- *
- * @returns Hashed workspace root path
- */
-// FIXME: Get rid of this. Its needed for add suffix to commands, otherwise command name collision can happen
-// when spawning multiple server instances for different workspace folders.
-// Probably we should switch to code actions with resolve provider.
-function getRootHash(): string {
-    return workspaceRoot ? `:${hashRoot(workspaceRoot)}` : '';
-}
-
-/**
  * Helper function to extract the workspace root URI from the initialization parameters.
  *
  * @param params Initialization parameters.
@@ -357,9 +326,13 @@ connection.onInitialize(async (params: InitializeParams) => {
 
     hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
 
-    const suffix = getRootHash();
-
-    connection.console.log(`Initializing server instance ${suffix} ${workspaceRoot ?? 'without workspace root'}`);
+    let message = 'Initializing server instance ';
+    if (workspaceRoot) {
+        message += `for workspace root: ${workspaceRoot}`;
+    } else {
+        message += 'without workspace root';
+    }
+    connection.console.log(message);
 
     // TODO: Define the capabilities of the language server here
     const result: InitializeResult = {
@@ -368,12 +341,6 @@ connection.onInitialize(async (params: InitializeParams) => {
             textDocumentSync: {
                 openClose: true,
                 change: TextDocumentSyncKind.Incremental,
-            },
-            executeCommandProvider: {
-                commands: [
-                    CommandId.DisableLine + suffix,
-                    CommandId.DisableRuleLine + suffix,
-                ],
             },
         },
     };
@@ -485,57 +452,6 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
     }
 }
 
-connection.onCodeAction((params) => {
-    const textDocument = documents.get(params.textDocument.uri);
-    if (textDocument === undefined) {
-        return undefined;
-    }
-
-    const { diagnostics } = params.context;
-    const actions = [];
-
-    for (const diagnostic of diagnostics) {
-        const { code, range } = diagnostic;
-
-        if (!code) {
-            // In this case we don't have a rule name, because some parsing error happened,
-            // and parsing errors have more priority than linting errors: if a rule cannot be parsed,
-            // it cannot be checked with linter rules.
-            // So we need to suggest disabling AGLint for the line completely as a quick fix.
-            const title = 'Disable AGLint for this line';
-            const action = CodeAction.create(
-                title,
-                Command.create(
-                    title,
-                    CommandId.DisableLine + getRootHash(),
-                    // additional arguments for the command:
-                    textDocument.uri,
-                    range,
-                ),
-                CodeActionKind.QuickFix,
-            );
-            actions.push(action);
-        } else {
-            // In this case we have a linter rule name, so we need to suggest disabling this rule for the line
-            const title = `Disable AGLint rule '${code}' for this line`;
-            const action = CodeAction.create(
-                title,
-                Command.create(
-                    title,
-                    CommandId.DisableRuleLine + getRootHash(),
-                    // additional arguments for the command:
-                    textDocument.uri,
-                    range,
-                    code,
-                ),
-                CodeActionKind.QuickFix,
-            );
-            actions.push(action);
-        }
-    }
-    return actions;
-});
-
 /**
  * Parse AGLint config comment rule in a tolerant way (did not throw on parsing error).
  *
@@ -551,98 +467,61 @@ const parseConfigCommentTolerant = (rule: string): ConfigCommentRule | null => {
     }
 };
 
-connection.onExecuteCommand(async (params) => {
-    /**
-     * Helper function to insert content into a document.
-     *
-     * @param textDocument The document to apply the edit to.
-     * @param position The position in the document to insert the edit.
-     * @param content The content to insert.
-     */
-    const insert = (textDocument: TextDocument, position: Position, content: string) => {
-        connection.workspace.applyEdit({
-            documentChanges: [
-                TextDocumentEdit.create({ uri: textDocument.uri, version: textDocument.version }, [
-                    TextEdit.insert(
-                        position,
-                        content,
-                    ),
-                ]),
-            ],
-        });
-    };
+connection.onCodeAction((params) => {
+    const textDocument = documents.get(params.textDocument.uri);
+    if (textDocument === undefined) {
+        return undefined;
+    }
 
-    /**
-     * Helper function to replace content in a document.
-     *
-     * @param textDocument The document to apply the edit to.
-     * @param range The range in the document to replace the edit.
-     * @param content The content to replace.
-     */
-    const replace = (textDocument: TextDocument, range: Range, content: string) => {
-        connection.workspace.applyEdit({
-            documentChanges: [
-                TextDocumentEdit.create({ uri: textDocument.uri, version: textDocument.version }, [
-                    TextEdit.replace(
-                        range,
-                        content,
-                    ),
-                ]),
-            ],
-        });
-    };
+    const { diagnostics } = params.context;
+    const actions: CodeAction[] = [];
 
-    if (
-        params.command === CommandId.DisableLine + getRootHash()
-        || params.command === CommandId.DisableRuleLine + getRootHash()
-    ) {
-        // Get common arguments for both commands
-        if (!params.arguments || params.arguments.length < 2) {
-            return;
-        }
+    // Make '! aglint-disable-next-line' prefix
+    const aglintDisableNextLinePrefix = [
+        CommentMarker.Regular,
+        SPACE,
+        AglintCommand.DisableNextLine,
+    ].join(EMPTY);
 
-        const textDocument = documents.get(params.arguments[0]);
-        if (textDocument === undefined) {
-            return;
-        }
+    for (const diagnostic of diagnostics) {
+        const { code, range } = diagnostic;
+        const { line } = range.start;
 
-        const range = params.arguments[1];
-        if (!Range.is(range)) {
-            return;
-        }
+        if (!code) {
+            // In this case we don't have a rule name, because some parsing error happened,
+            // and parsing errors have more priority than linting errors: if a rule cannot be parsed,
+            // it cannot be checked with linter rules.
+            // So we need to suggest disabling AGLint for the line completely as a quick fix.
+            const title = 'Disable AGLint for this line';
+            const action = CodeAction.create(title, CodeActionKind.QuickFix);
 
-        // Line number for the problematic line (adblock rule)
-        const lineNumber = range.start.line;
-
-        // Make '! aglint-disable-next-line' prefix
-        const aglintDisableNextLinePrefix = [
-            CommentMarker.Regular,
-            SPACE,
-            AglintCommand.DisableNextLine,
-        ].join(EMPTY);
-
-        if (params.command === CommandId.DisableLine + getRootHash()) {
-            // If there are no previous lines, just insert the comment before the problematic line.
-            // Note: vscode uses 0-based line numbers
-            if (lineNumber === 0) {
-                insert(
-                    textDocument,
-                    Position.create(lineNumber, 0),
-                    `${aglintDisableNextLinePrefix}${LF}`,
-                );
-                return;
+            if (line === 0) {
+                // If there are no previous lines, just insert the comment before the problematic line.
+                action.edit = {
+                    documentChanges: [
+                        TextDocumentEdit.create(
+                            { uri: textDocument.uri, version: textDocument.version },
+                            [TextEdit.insert(
+                                Position.create(line, 0),
+                                `${aglintDisableNextLinePrefix}${LF}`,
+                            )],
+                        ),
+                    ],
+                };
+                actions.push(action);
+                continue;
             }
 
-            // If we have previous lines
-            if (lineNumber > 0) {
-                const prevLineNumber = lineNumber - 1;
+            if (line > 0) {
+                // If we have previous lines
+                const previousLine = line - 1;
 
                 // Get the previous line
                 const prevLine = textDocument.getText(
                     Range.create(
-                        Position.create(prevLineNumber, 0),
+                        Position.create(previousLine, 0),
                         // Note: we do not know the length of the previous line, so we use the max value
-                        Position.create(prevLineNumber, uinteger.MAX_VALUE),
+                        Position.create(previousLine, uinteger.MAX_VALUE),
                     ),
                 );
 
@@ -657,89 +536,125 @@ connection.onExecuteCommand(async (params) => {
                     && commentNode.params
                 ) {
                     delete commentNode.params;
-                    replace(
-                        textDocument,
-                        Range.create(
-                            Position.create(prevLineNumber, 0),
-                            Position.create(prevLineNumber, prevLine.length),
-                        ),
-                        ConfigCommentRuleParser.generate(commentNode),
-                    );
-                    return;
+                    action.edit = {
+                        documentChanges: [
+                            TextDocumentEdit.create(
+                                { uri: textDocument.uri, version: textDocument.version },
+                                [TextEdit.replace(
+                                    Range.create(
+                                        Position.create(previousLine, 0),
+                                        Position.create(previousLine, prevLine.length),
+                                    ),
+                                    ConfigCommentRuleParser.generate(commentNode),
+                                )],
+                            ),
+                        ],
+                    };
+                    actions.push(action);
+                    continue;
                 }
 
                 // Otherwise just insert the comment before the problematic line
-                insert(textDocument, Position.create(lineNumber, 0), `${aglintDisableNextLinePrefix}${LF}`);
-                return;
+                action.edit = {
+                    documentChanges: [
+                        TextDocumentEdit.create(
+                            { uri: textDocument.uri, version: textDocument.version },
+                            [TextEdit.insert(
+                                Position.create(line, 0),
+                                `${aglintDisableNextLinePrefix}${LF}`,
+                            )],
+                        ),
+                    ],
+                };
+
+                actions.push(action);
+                continue;
             }
         }
 
-        if (params.command === CommandId.DisableRuleLine + getRootHash()) {
-            const ruleName = params.arguments[2];
+        // If we are here, it means that we have a linter rule name,
+        // so we need to suggest disabling this rule for the line
+        const action = CodeAction.create(`Disable AGLint rule '${code}' for this line`, CodeActionKind.QuickFix);
 
-            if (!ruleName || typeof ruleName !== 'string') {
-                return;
-            }
-
-            // If there are no previous lines, just insert the comment before the problematic line.
-            // Note: vscode uses 0-based line numbers
-            if (lineNumber === 0) {
-                insert(
-                    textDocument,
-                    Position.create(lineNumber, 0),
-                    `${aglintDisableNextLinePrefix}${SPACE}${ruleName}${LF}`,
-                );
-                return;
-            }
-
-            // If we have previous lines
-            if (lineNumber > 0) {
-                const prevLineNumber = lineNumber - 1;
-
-                // If we have previous lines
-                const prevLine = textDocument.getText(
-                    Range.create(
-                        Position.create(prevLineNumber, 0),
-                        // Note: we do not know the length of the previous line, so we use the max value
-                        Position.create(prevLineNumber, uinteger.MAX_VALUE),
+        // If there are no previous lines, just insert the comment before the problematic line
+        if (line === 0) {
+            action.edit = {
+                documentChanges: [
+                    TextDocumentEdit.create(
+                        { uri: textDocument.uri, version: textDocument.version },
+                        [TextEdit.insert(
+                            Position.create(line, 0),
+                            `${aglintDisableNextLinePrefix}${SPACE}${code}${LF}`,
+                        )],
                     ),
-                );
+                ],
+            };
+            actions.push(action);
+            continue;
+        }
 
-                // If the previous line is '! aglint-disable-next-line some-rule-name', we need to replace it
-                // to '! aglint-disable-next-line some-rule-name, currently-problematic-rule-name'.
-                // In other words, we just need to add the new rule to the list of rules to disable.
-                const commentNode = parseConfigCommentTolerant(prevLine.trim());
+        if (line > 0) {
+            // If we have previous lines
+            const previousLine = line - 1;
 
-                if (
-                    commentNode
-                    && commentNode.command.value === AglintCommand.DisableNextLine
-                    && commentNode.params
-                    && commentNode.params.type === 'ParameterList'
-                ) {
-                    commentNode.params.children.push({
-                        type: 'Value',
-                        value: ruleName,
-                    });
-                    replace(
-                        textDocument,
-                        Range.create(
-                            Position.create(prevLineNumber, 0),
-                            Position.create(prevLineNumber, prevLine.length),
+            const prevLine = textDocument.getText(
+                Range.create(
+                    Position.create(previousLine, 0),
+                    // Note: we do not know the length of the previous line, so we use the max value
+                    Position.create(previousLine, uinteger.MAX_VALUE),
+                ),
+            );
+
+            // If the previous line is '! aglint-disable-next-line some-rule-name', we need to replace it
+            // to '! aglint-disable-next-line some-rule-name, currently-problematic-rule-name'.
+            // In other words, we just need to add the new rule to the list of rules to disable.
+            const commentNode = parseConfigCommentTolerant(prevLine.trim());
+
+            if (
+                commentNode
+                && commentNode.command.value === AglintCommand.DisableNextLine
+                && commentNode.params
+                && commentNode.params.type === 'ParameterList'
+            ) {
+                commentNode.params.children.push({
+                    type: 'Value',
+                    value: String(code),
+                });
+                action.edit = {
+                    documentChanges: [
+                        TextDocumentEdit.create(
+                            { uri: textDocument.uri, version: textDocument.version },
+                            [TextEdit.replace(
+                                Range.create(
+                                    Position.create(previousLine, 0),
+                                    Position.create(previousLine, prevLine.length),
+                                ),
+                                ConfigCommentRuleParser.generate(commentNode),
+                            )],
                         ),
-                        ConfigCommentRuleParser.generate(commentNode),
-                    );
-                    return;
-                }
-
-                // Otherwise just insert the comment before the problematic line
-                insert(
-                    textDocument,
-                    Position.create(lineNumber, 0),
-                    `${aglintDisableNextLinePrefix}${SPACE}${ruleName}${LF}`,
-                );
+                    ],
+                };
+                actions.push(action);
+                continue;
             }
+
+            // Otherwise just insert the comment before the problematic line
+            action.edit = {
+                documentChanges: [
+                    TextDocumentEdit.create(
+                        { uri: textDocument.uri, version: textDocument.version },
+                        [TextEdit.insert(
+                            Position.create(line, 0),
+                            `${aglintDisableNextLinePrefix}${SPACE}${code}${LF}`,
+                        )],
+                    ),
+                ],
+            };
+            actions.push(action);
+            continue;
         }
     }
+    return actions;
 });
 
 /**
