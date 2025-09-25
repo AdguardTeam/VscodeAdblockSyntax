@@ -116,7 +116,7 @@
         "watch:agtree": "pnpm esbuild:agtree --sourcemap --watch",
         "watch:ecss-tree": "pnpm esbuild:ecss-tree --sourcemap --watch",
         "watch:client": "pnpm esbuild:client --sourcemap --watch",
-        "watch:grammar": "sane \"tsx tools/grammar-builder.ts\" --glob=syntaxes/adblock.yaml-tmlanguage",
+        "watch:grammar": "chokidar \"syntaxes/adblock.yaml-tmlanguage\" -c \"tsx tools/grammar-builder.ts\" --silent --initial",
         "watch:server": "pnpm esbuild:server --sourcemap --watch"
     },
     "devDependencies": {
@@ -129,6 +129,7 @@
         "@typescript-eslint/eslint-plugin": "^6.3.0",
         "@typescript-eslint/parser": "^6.3.0",
         "@vscode/vsce": "^2.22.0",
+        "chokidar-cli": "^3.0.0",
         "commander": "^11.1.0",
         "concurrently": "^8.0.1",
         "esbuild": "^0.17.17",
@@ -153,7 +154,6 @@
         "remark-parse": "^11.0.0",
         "remark-stringify": "^11.0.0",
         "rimraf": "^4.1.2",
-        "sane": "^5.0.1",
         "ts-jest": "^29.1.0",
         "ts-node": "^10.9.1",
         "tsx": "^4.7.0",
