@@ -6,6 +6,7 @@
     "description": "Integrates AGLint into VSCode",
     "private": true,
     "dependencies": {
+        "valibot": "^1.1.0",
         "vscode-languageclient": "^8.0.2"
     },
     "devDependencies": {

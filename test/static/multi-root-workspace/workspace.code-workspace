@@ -1,0 +1,20 @@
+{
+    "folders": [
+        {
+            "path": "project-1"
+        },
+        {
+            "path": "project-2"
+        },
+        {
+            "path": "project-3"
+        },
+        {
+            "path": "project-1/project-1-sub-1"
+        },
+        {
+            "path": "project-1/project-1-sub-2"
+        }
+    ],
+    "settings": {}
+}

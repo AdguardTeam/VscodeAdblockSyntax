@@ -9,7 +9,8 @@
         "rootDir": "src",
         "sourceMap": true,
         "baseUrl": ".",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "skipLibCheck": true,
     },
     "include": [
         "src"
