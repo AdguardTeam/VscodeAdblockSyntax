@@ -1,7 +1,8 @@
 /**
  * @file Utility functions for managing workspace folders in VSCode.
  */
-import * as path from 'path';
+import * as path from 'node:path';
+
 import { workspace as Workspace, type WorkspaceFolder } from 'vscode';
 
 /**

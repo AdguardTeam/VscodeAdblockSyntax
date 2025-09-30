@@ -1,6 +1,8 @@
 /**
- * @file This is a very simple script that builds the grammar file to PList
+ * @file This is a very simple script that builds the grammar file to PList.
  */
+
+import { join } from 'node:path';
 
 import {
     exists,
@@ -8,7 +10,6 @@ import {
     readFile,
     writeFile,
 } from 'fs-extra';
-import { join } from 'path';
 import { YAMLParseError } from 'yaml';
 
 import { convertYamlToPlist } from './grammar-converter';
@@ -21,7 +22,7 @@ const SYNTAXES_FOLDER = join(__dirname, '..', 'syntaxes');
 const OUT_FOLDER = join(SYNTAXES_FOLDER, 'out');
 
 /**
- * Creates the out folder if it doesn't exist
+ * Creates the out folder if it doesn't exist.
  */
 async function createOutFolder() {
     // If the dist folder doesn't exist, create it
@@ -31,11 +32,11 @@ async function createOutFolder() {
 }
 
 /**
- * Builds the source grammar file into a PList representation
+ * Builds the source grammar file into a PList representation.
  *
- * @throws If the source grammar file doesn't exist
- * @throws If the source grammar file is not a valid YAML file
- * @throws If cannot write the PList representation to the dist folder
+ * @throws If the source grammar file doesn't exist.
+ * @throws If the source grammar file is not a valid YAML file.
+ * @throws If cannot write the PList representation to the dist folder.
  */
 async function buildGrammar() {
     // Read the raw YAML content from the grammar file
@@ -49,7 +50,7 @@ async function buildGrammar() {
 }
 
 /**
- * Main function that runs the script
+ * Main function that runs the script.
  */
 async function main() {
     // eslint-disable-next-line no-console

@@ -1,19 +1,22 @@
 /**
- * @file Changelog extractor
+ * @file Changelog extractor.
+ *
  * @see {@link https://keepachangelog.com/en/1.1.0/ | Keep a Changelog}
+ *
  * @note Run with: node -r esbuild-register tools/changelog-extractor.ts
  */
 
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+
+import { Command } from 'commander';
 import escapeStringRegexp from 'escape-string-regexp';
-import path from 'path';
+import { ensureDir } from 'fs-extra';
 import remarkInlineLinks from 'remark-inline-links';
 import remarkParse from 'remark-parse';
-import remarkStringify, { type Options as StringifyOptions } from 'remark-stringify';
-import { readFile, writeFile } from 'fs/promises';
 import { type Root } from 'remark-parse/lib';
+import remarkStringify, { type Options as StringifyOptions } from 'remark-stringify';
 import { unified } from 'unified';
-import { Command } from 'commander';
-import { ensureDir } from 'fs-extra';
 
 const EMPTY = '';
 const HYPHEN = '-';
@@ -30,18 +33,18 @@ const outputFolderPath = path.join(__dirname, UPPER_LEVEL, OUT_FOLDER);
 const outputFilePath = path.join(outputFolderPath, OUTPUT_FILE);
 
 /**
- * Options for the remark-stringify plugin
+ * Options for the remark-stringify plugin.
  */
 const serializationOptions: StringifyOptions = {
     bullet: HYPHEN,
 };
 
 /**
- * Options for the extractRelease transformer
+ * Options for the extractRelease transformer.
  */
 interface ExtractOptions {
     /**
-     * Fallback text if the version number is not found in the changelog
+     * Fallback text if the version number is not found in the changelog.
      */
     fallback?: string;
 }
@@ -50,6 +53,7 @@ interface ExtractOptions {
  * A simple helper function that parses the markdown document into an AST.
  *
  * @param md Markdown document as string.
+ *
  * @returns Root node of the parsed markdown document (AST).
  */
 const parseMd = (md: string): Root => {
@@ -60,11 +64,12 @@ const parseMd = (md: string): Root => {
 };
 
 /**
- * Extracts the release from the markdown document
+ * Extracts the release from the markdown document.
  *
- * @param version Version number what we are looking for, e.g. 1.0.0
- * @param options Extract options
- * @returns Transformer function
+ * @param version Version number what we are looking for, e.g. 1.0.0.
+ * @param options Extract options.
+ *
+ * @returns Transformer function.
  */
 const extractRelease = (version: string, options: ExtractOptions = {}) => {
     return (tree: Root) => {

@@ -1,36 +1,37 @@
 /**
- * @file Utility functions for package managers
+ * @file Utility functions for package managers.
  */
 
-import { execSync } from 'child_process';
-import { isAbsolute } from 'path';
+import { execSync } from 'node:child_process';
+import { isAbsolute } from 'node:path';
+
 import { Files } from 'vscode-languageserver/node';
 
 import { EMPTY } from '../common/constants';
 
 /**
- * Node Package Manager
+ * Node Package Manager.
  *
  * @see https://www.npmjs.com/
  */
 export const NPM = 'npm';
 
 /**
- * Yarn Package Manager
+ * Yarn Package Manager.
  *
  * @see https://yarnpkg.com/
  */
 export const YARN = 'yarn';
 
 /**
- * PNPM Package Manager
+ * PNPM Package Manager.
  *
  * @see https://pnpm.io/
  */
 export const PNPM = 'pnpm';
 
 /**
- * Type of supported package managers
+ * Type of supported package managers.
  */
 export type PackageManager = typeof NPM | typeof YARN | typeof PNPM;
 
@@ -45,8 +46,9 @@ export type TraceFunction = (message: string, verbose?: string) => void;
  * Finds the global path for PNPM. This isn't implemented in the
  * VSCode server, so we need to do it here.
  *
- * @param tracer Trace function (optional)
- * @returns Path to the global PNPM root or undefined if not found
+ * @param tracer Trace function (optional).
+ *
+ * @returns Path to the global PNPM root or undefined if not found.
  */
 export function findPnpmRoot(tracer?: TraceFunction): string | undefined {
     try {
@@ -80,12 +82,13 @@ export function findPnpmRoot(tracer?: TraceFunction): string | undefined {
 }
 
 /**
- * Find the path to the global root of the given package manager
+ * Find the path to the global root of the given package manager.
  *
- * @param packageManager Name of the package manager (npm, yarn, pnpm)
- * @param tracer Trace function (optional)
+ * @param packageManager Name of the package manager (npm, yarn, pnpm).
+ * @param tracer Trace function (optional).
+ *
  * @returns Path to the root directory of the package manager or undefined if not found
- * or cannot be resolved
+ * or cannot be resolved.
  */
 export async function findGlobalPathForPackageManager(
     packageManager: PackageManager,
@@ -113,12 +116,13 @@ export async function findGlobalPathForPackageManager(
 }
 
 /**
- * Returns the installation command for the given package manager and package name
+ * Returns the installation command for the given package manager and package name.
  *
- * @param packageManager Name of the package manager (npm, yarn, pnpm)
- * @param packageName Name of the package to install
- * @param global Whether to install the package globally or not (default: false)
- * @returns Corresponding installation command for the given package manager
+ * @param packageManager Name of the package manager (npm, yarn, pnpm).
+ * @param packageName Name of the package to install.
+ * @param global Whether to install the package globally or not (default: false).
+ *
+ * @returns Corresponding installation command for the given package manager.
  */
 export function getInstallationCommand(packageManager: PackageManager, packageName: string, global = false): string {
     switch (packageManager) {

@@ -1,5 +1,5 @@
 /**
- * @file Tests for preprocessing directive comments
+ * @file Tests for preprocessing directive comments.
  */
 
 import { BASE_SCOPE } from '../common/constants';

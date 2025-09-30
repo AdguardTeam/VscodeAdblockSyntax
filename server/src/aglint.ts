@@ -1,5 +1,5 @@
 /**
- * @file Integrated version of AGLint
+ * @file Integrated version of AGLint.
  *
  * In this file, we simply re-export the AGLint API from the @adguard/aglint
  * package, which is a dev dependency of this server package, so we simply call

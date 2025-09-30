@@ -1,5 +1,5 @@
 /**
- * @file Tests for JS injection rules
+ * @file Tests for JS injection rules.
  */
 
 import { type AdblockTokenizer, getAdblockTokenizer } from '../common/get-adblock-tokenizer';

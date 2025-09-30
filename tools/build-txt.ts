@@ -1,8 +1,8 @@
 /**
- * @file Output the version number to a build.txt file
+ * @file Output the version number to a build.txt file.
  */
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const UPPER_LEVEL = '../';
 

@@ -1,5 +1,5 @@
 /**
- * @file Tests for the adblock agents
+ * @file Tests for the adblock agents.
  */
 
 import { BASE_SCOPE } from '../common/constants';

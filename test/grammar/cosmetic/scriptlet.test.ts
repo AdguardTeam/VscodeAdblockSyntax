@@ -1,5 +1,5 @@
 /**
- * @file Tests for scriptlets rules
+ * @file Tests for scriptlets rules.
  */
 
 import { type AdblockTokenizer, getAdblockTokenizer } from '../common/get-adblock-tokenizer';

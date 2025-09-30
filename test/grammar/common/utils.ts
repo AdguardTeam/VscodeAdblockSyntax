@@ -1,9 +1,10 @@
 /**
- * Checks if two arrays are equal
+ * Checks if two arrays are equal.
  *
- * @param a First array
- * @param b Second array
- * @returns `true` if the arrays are equal, `false` otherwise
+ * @param a First array.
+ * @param b Second array.
+ *
+ * @returns `true` if the arrays are equal, `false` otherwise.
  */
 export function isArraysEqual<T>(a: T[], b: T[]): boolean {
     if (a.length !== b.length) {

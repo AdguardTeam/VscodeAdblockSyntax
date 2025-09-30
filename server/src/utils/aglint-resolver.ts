@@ -1,18 +1,19 @@
 /**
- * @file Utility functions to find AGLint installations
+ * @file Utility functions to find AGLint installations.
  */
 
 import { Files } from 'vscode-languageserver/node';
 
+import { AGLINT_PACKAGE_NAME } from '../common/constants';
+
 import {
+    findGlobalPathForPackageManager,
     NPM,
-    PNPM,
     type PackageManager,
+    PNPM,
     type TraceFunction,
     YARN,
-    findGlobalPathForPackageManager,
 } from './package-managers';
-import { AGLINT_PACKAGE_NAME } from '../common/constants';
 
 /**
  * Priority of package managers. We will try to find global AGLint installation in
@@ -28,8 +29,8 @@ export const PACKAGE_MANAGER_PRIORITY: PackageManager[] = [NPM, YARN, PNPM];
  * If we didn't find the AGLint module, we return undefined, which means that
  * the extension will use the integrated version of AGLint.
  *
- * @param cwd Current working directory
- * @param tracer Trace function
+ * @param cwd Current working directory.
+ * @param tracer Trace function.
  * @param packageManagers Package managers to search for global AGLint installations.
  * - The priority of the package managers is defined by the order of the array.
  * - If you specify an empty array, global path search will be skipped.
@@ -37,7 +38,8 @@ export const PACKAGE_MANAGER_PRIORITY: PackageManager[] = [NPM, YARN, PNPM];
  * the others. For example, if you specify only NPM in the array, we will
  * try to find AGLint only in the global NPM path, and we will skip the search
  * for Yarn and PNPM.
- * @returns Path to the AGLint module or `undefined` if not found
+ *
+ * @returns Path to the AGLint module or `undefined` if not found.
  */
 export async function resolveAglintModulePath(
     cwd: string,
@@ -62,6 +64,7 @@ export async function resolveAglintModulePath(
     // given order
     for (const packageManager of packageManagers) {
         // Find the global path for the actual package manager
+        // eslint-disable-next-line no-await-in-loop
         const globalPath = await findGlobalPathForPackageManager(packageManager, tracer);
 
         // If we didn't find the global path, continue with the next package manager,
@@ -72,6 +75,7 @@ export async function resolveAglintModulePath(
 
         // Otherwise, try to find AGLint in the found global path
         try {
+            // eslint-disable-next-line no-await-in-loop
             const aglintPath = await Files.resolve(AGLINT_PACKAGE_NAME, globalPath, cwd, tracer);
 
             if (aglintPath) {

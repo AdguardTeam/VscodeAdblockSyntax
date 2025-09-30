@@ -1,15 +1,17 @@
-import { join } from 'path';
+import { join } from 'node:path';
+
+import * as v from 'valibot';
 import {
-    ThemeColor,
     commands,
-    StatusBarAlignment,
-    workspace as Workspace,
-    window as Window,
     type ExtensionContext,
+    RelativePattern,
+    StatusBarAlignment,
     type StatusBarItem,
     type TextDocument,
+    ThemeColor,
+    window as Window,
+    workspace as Workspace,
     type WorkspaceFolder,
-    RelativePattern,
 } from 'vscode';
 import {
     LanguageClient,
@@ -17,7 +19,6 @@ import {
     type ServerOptions,
     TransportKind,
 } from 'vscode-languageclient/node';
-import * as v from 'valibot';
 
 import { fileInFolder, getOuterMostWorkspaceFolder } from './workspace-folders';
 
@@ -46,7 +47,7 @@ const SUPPORTED_FILE_EXTENSIONS: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Possible names of the config file
+ * Possible names of the config file.
  */
 const CONFIG_FILE_NAMES: ReadonlySet<string> = new Set([
     // aglint.config stuff
@@ -75,10 +76,10 @@ const IGNORE_FILE_NAME = '.aglintignore';
  *
  * This project uses `100` as a balanced value; it is prominent but not far-left,
  * following the example from `vscode-extension-samples`:
- * https://github.com/microsoft/vscode-extension-samples/blob/986bcc700dee6cc4d1e6d4961a316eead110fb21/statusbar-sample/src/extension.ts#L21
+ * https://github.com/microsoft/vscode-extension-samples/blob/986bcc700dee6cc4d1e6d4961a316eead110fb21/statusbar-sample/src/extension.ts#L21.
  *
  * Other extensions typically use values between 0 and 200:
- * https://github.com/search?q=createStatusBarItem(vscode.StatusBarAlignment.Right&type=code
+ * https://github.com/search?q=createStatusBarItem(vscode.StatusBarAlignment.Right&type=code.
  *
  * This value is based on convention and visual preference, and can be adjusted in the future if needed.
  */
@@ -331,7 +332,7 @@ function ensureDefaultClient(serverModule: string) {
 }
 
 /**
- * When a text document is opened, we make sure to create or use an existing client for the folder
+ * When a text document is opened, we make sure to create or use an existing client for the folder.
  *
  * @param document The opened text document.
  * @param serverModule The path to the server module.
@@ -478,7 +479,7 @@ export function activate(context: ExtensionContext) {
 }
 
 /**
- * Function called when the extension is deactivated
+ * Function called when the extension is deactivated.
  *
  * @returns An array of promises that resolves when all clients are stopped.
  */

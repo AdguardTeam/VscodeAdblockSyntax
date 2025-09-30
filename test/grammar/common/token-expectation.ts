@@ -23,14 +23,15 @@ export interface ExpectedToken {
  * based on the fragments. If the location of a token doesn't match
  * the expected location, then this function will throw an error.
  *
- * @param tokenize Tokenizer function
- * @param source Source code to tokenize
- * @param expectedTokens Expected tokens
- * @throws If the merged fragments don't match the source code
- * @throws If the number of tokens doesn't match the number of expected tokens
- * @throws If the location of a token doesn't match the expected location
- * @throws If the scopes of a token don't match the expected scopes
- * @throws If the fragment of a token doesn't match the expected fragment
+ * @param tokenize Tokenizer function.
+ * @param source Source code to tokenize.
+ * @param expectedTokens Expected tokens.
+ *
+ * @throws If the merged fragments don't match the source code.
+ * @throws If the number of tokens doesn't match the number of expected tokens.
+ * @throws If the location of a token doesn't match the expected location.
+ * @throws If the scopes of a token don't match the expected scopes.
+ * @throws If the fragment of a token doesn't match the expected fragment.
  */
 export function expectTokens(tokenize: AdblockTokenizer, source: string, expectedTokens: ExpectedToken[]): void {
     // Merging fragments should give us the original source

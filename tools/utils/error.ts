@@ -9,13 +9,14 @@ interface ErrorWithMessage extends Error {
     /**
      * Error message.
      */
-    message: string
+    message: string;
 }
 
 /**
  * Checks if error has message.
  *
  * @param error Error object.
+ *
  * @returns If param is error.
  */
 function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
@@ -31,6 +32,7 @@ function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
  * Converts error to the error with message.
  *
  * @param maybeError Possible error.
+ *
  * @returns Error with message.
  */
 function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {

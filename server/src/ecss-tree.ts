@@ -1,5 +1,5 @@
 /**
- * @file Export ECSSTree API
+ * @file Export ECSSTree API.
  */
 
 export * from '@adguard/ecss-tree';

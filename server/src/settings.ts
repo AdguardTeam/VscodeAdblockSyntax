@@ -1,5 +1,5 @@
 /**
- * @file Extension settings
+ * @file Extension settings.
  *
  * Guide to add new settings to the extension:
  *
@@ -7,13 +7,13 @@
  *   - extension metadata (package.json: contributes.configuration.properties)
  *   - extension settings interface (settings.ts: ExtensionSettings)
  *   - default settings object (settings.ts: defaultSettings)
- * 2. Implement the logic in the server.ts file
+ * 2. Implement the logic in the server.ts file.
  */
 
 import { NPM, type PackageManager } from './utils/package-managers';
 
 /**
- * Represents the extension settings
+ * Represents the extension settings.
  */
 export interface ExtensionSettings {
     enableAglint: boolean;
@@ -22,7 +22,7 @@ export interface ExtensionSettings {
 }
 
 /**
- * Default extension settings
+ * Default extension settings.
  */
 export const defaultSettings: ExtensionSettings = {
     enableAglint: true,

@@ -1,5 +1,5 @@
 /**
- * @file Export AGTree API
+ * @file Export AGTree API.
  */
 
 export * from '@adguard/agtree';

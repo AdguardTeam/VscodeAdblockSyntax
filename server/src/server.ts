@@ -1,38 +1,37 @@
 /* eslint-disable no-bitwise */
 /**
- * @file AGLint Language Server for VSCode (Node.js)
- * @todo Split this server into multiple files by creating a server context
+ * @file AGLint Language Server for VSCode (Node.js).
+ *
+ * @todo Split this server into multiple files by creating a server context.
  */
 
+import { join as joinPath, type ParsedPath } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+import type * as AGLint from '@adguard/aglint';
+import cloneDeep from 'clone-deep';
+import { satisfies } from 'semver';
 import {
+    CodeAction,
+    CodeActionKind,
     createConnection,
-    TextDocuments,
     type Diagnostic,
     DiagnosticSeverity,
-    ProposedFeatures,
-    type InitializeParams,
     DidChangeConfigurationNotification,
+    type InitializeParams,
     type InitializeResult,
-    CodeActionKind,
-    CodeAction,
-    TextDocumentSyncKind,
-    TextDocumentEdit,
-    TextEdit,
     Position,
+    ProposedFeatures,
     Range,
+    TextDocumentEdit,
+    TextDocuments,
+    TextDocumentSyncKind,
+    TextEdit,
     uinteger,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { type ParsedPath, join as joinPath } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
-import { satisfies } from 'semver';
-// Import type definitions from the AGLint package
-import type * as AGLint from '@adguard/aglint';
-import cloneDeep from 'clone-deep';
 
-import { ConfigCommentRuleParser, type ConfigCommentRule, CommentMarker } from './agtree';
-import { getErrorMessage } from './utils/error';
-import { resolveAglintModulePath } from './utils/aglint-resolver';
+import { CommentMarker, type ConfigCommentRule, ConfigCommentRuleParser } from './agtree';
 import {
     AGLINT_PACKAGE_NAME,
     AGLINT_REPO_URL,
@@ -41,7 +40,9 @@ import {
     SPACE,
 } from './common/constants';
 import { defaultSettings, type ExtensionSettings } from './settings';
-import { NPM, type PackageManager, getInstallationCommand } from './utils/package-managers';
+import { resolveAglintModulePath } from './utils/aglint-resolver';
+import { getErrorMessage } from './utils/error';
+import { getInstallationCommand, NPM, type PackageManager } from './utils/package-managers';
 import { isFileUri } from './utils/uri';
 
 // Store AGLint module here
@@ -71,24 +72,24 @@ let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 
 /**
- * Root folder of the VSCode workspace
+ * Root folder of the VSCode workspace.
  */
 let workspaceRoot: string | undefined;
 
 type CachedPaths = { [key: string]: AGLint.LinterConfig };
 
 /**
- * Cache of the scanned workspace
+ * Cache of the scanned workspace.
  */
 let cachedPaths: CachedPaths | undefined;
 
 /**
- * Actual settings for the extension (always synced)
+ * Actual settings for the extension (always synced).
  */
 let settings: ExtensionSettings = defaultSettings;
 
 /**
- * AGLint commands supported by the language server
+ * AGLint commands supported by the language server.
  */
 enum AglintCommand {
     DisableNextLine = 'aglint-disable-next-line',
@@ -179,9 +180,11 @@ async function cachePaths(): Promise<boolean> {
 /**
  * Helper function to import the AGLint module dynamically.
  *
- * @param path Path to the AGLint module
- * @returns Loaded AGLint module
- * @throws If the module cannot be found
+ * @param path Path to the AGLint module.
+ *
+ * @returns Loaded AGLint module.
+ *
+ * @throws If the module cannot be found.
  */
 const importAglint = async (path: string): Promise<typeof AGLint> => {
     const aglintPkg = await import(path);
@@ -198,8 +201,8 @@ const importAglint = async (path: string): Promise<typeof AGLint> => {
  * Load the installed AGLint module. If the module is not found, it will
  * fallback to the bundled version.
  *
- * @param dir Workspace root path
- * @param searchExternal Search for external AGLint installations (default: true)
+ * @param dir Workspace root path.
+ * @param searchExternal Search for external AGLint installations (default: true).
  * @param packageManagers Package managers to use when searching for external AGLint installations (default: NPM).
  * It is only relevant if `searchExternal` is set to `true`. Technically, multiple package managers can be used,
  * but in practice, we only use one.
@@ -361,7 +364,7 @@ connection.onInitialize(async (params: InitializeParams) => {
  * ignore & config files, since it uses the cached scan result, which
  * is based on the AGLint CLI logic.
  *
- * @param textDocument Document to lint
+ * @param textDocument Document to lint.
  */
 async function lintFile(textDocument: TextDocument): Promise<void> {
     if (!isFileUri(textDocument.uri)) {
@@ -430,6 +433,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
             diagnostics.push(diagnostic);
 
             // Notify the client that the linting succeeded
+            // eslint-disable-next-line no-await-in-loop
             await connection.sendNotification('aglint/status');
         }
 
@@ -456,6 +460,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
  * Parse AGLint config comment rule in a tolerant way (did not throw on parsing error).
  *
  * @param rule Rule to parse.
+ *
  * @returns AGLint config comment rule node or null if parsing failed.
  */
 const parseConfigCommentTolerant = (rule: string): ConfigCommentRule | null => {
@@ -687,10 +692,11 @@ async function refreshLinter() {
  * re-builts the cached paths and revalidates any open text documents.
  *
  * "In this model the clients simply sends an empty change event to signal that the settings have
- * changed and must be reread"
+ * changed and must be reread".
  *
- * @param initial If true, it means that this is the first time we pull the settings
  * @see https://github.com/microsoft/vscode-languageserver-node/issues/380#issuecomment-414691493
+ *
+ * @param initial If true, it means that this is the first time we pull the settings.
  */
 async function pullSettings(initial = false) {
     // Store old settings

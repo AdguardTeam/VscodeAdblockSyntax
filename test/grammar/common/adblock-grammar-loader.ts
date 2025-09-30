@@ -1,31 +1,32 @@
 /**
- * @file Grammar loader for tests
+ * @file Grammar loader for tests.
  */
 
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { type IGrammar, Registry, parseRawGrammar } from 'vscode-textmate';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
 import { loadWASM, OnigScanner, OnigString } from 'vscode-oniguruma';
+import { type IGrammar, parseRawGrammar, Registry } from 'vscode-textmate';
 
 import { convertYamlToPlist } from '../../../tools/grammar-converter';
 
 /**
- * Source file path for the grammar
+ * Source file path for the grammar.
  */
 const ADBLOCK_GRAMMAR_PATH = join(__dirname, '../../../', 'syntaxes/adblock.yaml-tmlanguage');
 
 /**
- * Scope name for the adblock grammar
+ * Scope name for the adblock grammar.
  */
 const ADBLOCK_GRAMMAR_SCOPE = 'text.adblock';
 
 /**
- * Scope name for the JavaScript grammar
+ * Scope name for the JavaScript grammar.
  */
 const JS_GRAMMAR_SCOPE = 'source.js';
 
 /**
- * Dummy grammar for JavaScript (raw)
+ * Dummy grammar for JavaScript (raw).
  */
 const DUMMY_JS_GRAMMAR = `{
     "name": "JavaScript",
@@ -35,16 +36,17 @@ const DUMMY_JS_GRAMMAR = `{
 }`;
 
 /**
- * Fake file name for the dummy JavaScript grammar
+ * Fake file name for the dummy JavaScript grammar.
  */
 const DUMMY_JS_GRAMMAR_FILE_NAME = 'dummy-js-grammar.json';
 
 /**
  * Loads a grammar from YAML source, converts it to PList, and loads it into a registry.
- * Highly inspired by https://github.com/microsoft/vscode-textmate#using
+ * Highly inspired by https://github.com/microsoft/vscode-textmate#using.
  *
- * @returns The grammar or null if it could not be loaded
- * @throws If the grammar could not be loaded
+ * @returns The grammar or null if it could not be loaded.
+ *
+ * @throws If the grammar could not be loaded.
  */
 export async function loadAdblockGrammar(): Promise<IGrammar | null> {
     // Read the raw contents of the grammar file
