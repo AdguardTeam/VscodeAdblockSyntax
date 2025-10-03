@@ -13,7 +13,12 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Support for multi-root workspaces [#112].
 
+### Changed
+
+- Updated `husky` dependency to version `9.0.1` [#129].
+
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
+[#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
 
 ## 1.1.17 - 2024-05-05
 
