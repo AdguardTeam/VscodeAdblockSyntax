@@ -104,7 +104,7 @@
         "lint:md": "markdownlint .",
         "lint:staged": "lint-staged",
         "lint:ts": "eslint . --cache --ext .ts",
-        "prepare": "husky install",
+        "prepare": "husky",
         "test:compile": "tsc -p ./client --noEmit && tsc -p ./server --noEmit"
     },
     "devDependencies": {
@@ -124,7 +124,7 @@
         "eslint-plugin-import-newlines": "^1.4.0",
         "eslint-plugin-jsdoc": "^60.8.0",
         "eslint-plugin-n": "^17.23.1",
-        "husky": "^8.0.3",
+        "husky": "^9.0.1",
         "jsdoc": "^4.0.4",
         "lint-staged": "^15.1.0",
         "markdownlint": "^0.30.0",

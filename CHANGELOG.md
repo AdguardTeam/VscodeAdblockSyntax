@@ -15,10 +15,16 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ### Changed
 
+- Updated `husky` dependency to version `9.0.1` [#129].
+
+### Changed
+
+- Updated `husky` dependency to version `9.0.1` [#129].
 - Minimum supported VSCode version changed to 1.94.0.
   Project now uses ES modules and requires Node.js v20+.
 
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
+[#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
 
 ## 1.1.17 - 2024-05-05
 
