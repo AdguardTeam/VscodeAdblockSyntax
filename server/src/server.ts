@@ -9,6 +9,8 @@ import { join as joinPath, type ParsedPath } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import type * as AGLint from '@adguard/aglint';
+// FIXME: AGTree exports
+import { CommentMarker, ConfigCommentParser, type ConfigCommentRule } from '@adguard/agtree';
 import cloneDeep from 'clone-deep';
 import { satisfies } from 'semver';
 import {
@@ -31,7 +33,6 @@ import {
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { CommentMarker, type ConfigCommentRule, ConfigCommentRuleParser } from './agtree';
 import {
     AGLINT_PACKAGE_NAME,
     AGLINT_REPO_URL,
@@ -59,7 +60,7 @@ const MIN_EXTERNAL_AGLINT_VERSION = '2.0.6';
  * Development done in TypeScript, but here we should think as if
  * the bundles would already be built.
  */
-const BUNDLED_AGLINT_PATH = './aglint.js';
+const BUNDLED_AGLINT_PATH = './aglint.cjs';
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -465,7 +466,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
  */
 const parseConfigCommentTolerant = (rule: string): ConfigCommentRule | null => {
     try {
-        return ConfigCommentRuleParser.parse(rule);
+        return ConfigCommentParser.parse(rule);
     } catch (error: unknown) {
         connection.console.error(`'${rule}' is not a valid AGLint config comment rule: ${getErrorMessage(error)}`);
         return null;
@@ -550,7 +551,7 @@ connection.onCodeAction((params) => {
                                         Position.create(previousLine, 0),
                                         Position.create(previousLine, prevLine.length),
                                     ),
-                                    ConfigCommentRuleParser.generate(commentNode),
+                                    ConfigCommentGenerator.generate(commentNode),
                                 )],
                             ),
                         ],
@@ -634,7 +635,7 @@ connection.onCodeAction((params) => {
                                     Position.create(previousLine, 0),
                                     Position.create(previousLine, prevLine.length),
                                 ),
-                                ConfigCommentRuleParser.generate(commentNode),
+                                ConfigCommentGenerator.generate(commentNode),
                             )],
                         ),
                     ],

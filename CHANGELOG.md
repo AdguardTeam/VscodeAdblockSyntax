@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Support for multi-root workspaces [#112].
 
+### Changed
+
+- Minimum supported VSCode version changed to 1.94.0.
+  Project now uses ES modules and requires Node.js v20+.
+
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
 
 ## 1.1.17 - 2024-05-05

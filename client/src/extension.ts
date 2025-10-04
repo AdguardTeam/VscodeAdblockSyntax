@@ -1,5 +1,6 @@
 import { join } from 'node:path';
 
+import { FileScheme } from '@vscode-adblock-syntax/shared';
 import * as v from 'valibot';
 import {
     commands,
@@ -22,15 +23,7 @@ import {
 
 import { fileInFolder, getOuterMostWorkspaceFolder } from './workspace-folders';
 
-/**
- * Schemes for file documents.
- */
-const enum FileScheme {
-    File = 'file',
-    Untitled = 'untitled',
-}
-
-const SERVER_PATH = join('server', 'out', 'server.js');
+const SERVER_PATH = join('server', 'out', 'server.cjs');
 const DOCUMENT_SCHEME = FileScheme.File;
 const LANGUAGE_ID = 'adblock';
 const CLIENT_ID = 'aglint';

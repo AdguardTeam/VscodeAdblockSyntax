@@ -4,17 +4,12 @@
         "noEmit": true,
     },
     "include": [
-		".eslintrc.cjs",
-		"scripts/**/*.ts",
-		"scripts/.eslintrc.cjs",
 		"src/**/*.ts",
-		"test/.eslintrc.cjs",
-		"vitest.config.ts",
-		"vitest.config.ts",
         "test/**/*.ts",
+		".eslintrc.cjs",
+		"vitest.config.ts",
 	],
 	"exclude": [
 		"node_modules",
-		".vscode-test"
 	],
 }

@@ -1,0 +1,38 @@
+{
+    "name": "@vscode-adblock-syntax/shared",
+    "description": "Shared utilities for vscode-adblock-syntax packages.",
+    "type": "module",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "AdGuard Software Ltd.",
+    "private": true,
+    "files": [
+        "out"
+    ],
+    "exports": {
+        ".": {
+            "types": "./out/index.d.ts",
+            "import": "./out/index.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "out/index.d.ts"
+            ]
+        }
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    },
+    "scripts": {
+        "build": "tsc --project tsconfig.build.json",
+        "test": "vitest",
+        "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
+        "lint:md": "markdownlint .",
+        "lint": "pnpm run lint:code && pnpm run lint:md"
+    },
+    "devDependencies": {
+        "typescript": "catalog:"
+    }
+}

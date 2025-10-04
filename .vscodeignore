@@ -6,11 +6,11 @@
 !CHANGELOG.md
 !LICENSE.md
 !README.md
-!client/out/**/*.js
+!client/out/**/*.cjs
 !client/package.json
 !icons/*
 !language-configuration.json
 !package.json
-!server/out/**/*.js
+!server/out/**/*.cjs
 !server/package.json
 !syntaxes/out/adblock.plist

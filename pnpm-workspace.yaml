@@ -1,3 +1,12 @@
 packages:
-  - server
   - client
+  - server
+  - shared
+  - syntaxes
+
+catalog:
+  '@types/node': ^20.19.9
+  esbuild: ^0.25.10
+  tsx: ^4.20.3
+  vitest: ^3.2.4
+  typescript: ^5.9.2

@@ -1,0 +1,30 @@
+{
+    "name": "@vscode-adblock-syntax/syntaxes",
+    "description": "TextMate grammars for Adblock/AdGuard/uBlock filters syntax.",
+    "type": "module",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "AdGuard Software Ltd.",
+    "private": true,
+    "scripts": {
+        "build": "tsx scripts/build.ts",
+        "test": "vitest",
+        "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
+        "lint:md": "markdownlint .",
+        "lint": "pnpm run lint:code && pnpm run lint:md"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^11.0.4",
+        "@types/node": "catalog:",
+        "@types/plist": "^3.0.5",
+        "@vitest/expect": "^3.2.4",
+        "chokidar": "^4.0.3",
+        "fs-extra": "^11.3.1",
+        "plist": "^3.1.0",
+        "valibot": "^1.1.0",
+        "vitest": "catalog:",
+        "vscode-oniguruma": "^2.0.1",
+        "vscode-textmate": "^9.2.0",
+        "yaml": "^2.8.1"
+    }
+}

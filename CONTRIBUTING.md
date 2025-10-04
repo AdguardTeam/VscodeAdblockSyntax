@@ -120,21 +120,12 @@ To create a production build of the extension:
 
 During development, you can use the following commands (listed in `package.json`).
 
-- `pnpm build:grammar` - Compiles the TextMate (TM) grammar into a PList format, since VSCode does not natively support
-  YAML grammars.
 - `pnpm build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
   VSCode installation.
 - `pnpm build:txt` - Creates a `build.txt` file in the out directory containing the current version number, primarily
   for Continuous Integration (CI) purposes.
 - `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
 - `pnpm clean` - Removes all generated files in the output directories, cleaning up the build results.
-- `pnpm esbuild:aglint` - Base ESBuild command for building integrated AGLint with the common options.
-- `pnpm esbuild:agtree` - Base ESBuild command for building integrated AGTree with the common options.
-  Integrated AGTree comes with the integrated AGLint, this command just helps to bundle it to a separate file.
-  This is needed because AGTree is also used by the server, and by bundling it to a separate file, we can avoid
-  double-bundling AGTree.
-- `pnpm esbuild:server` - Base ESBuild command for building the server with the common options.
-- `pnpm esbuild:client` - Base ESBuild command for building the client with the common options.
 - `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically, this is used by
   CI.
 - `pnpm increment` - Increment the patch version number of the extension in the `package.json` file. Typically, this is
@@ -145,11 +136,6 @@ During development, you can use the following commands (listed in `package.json`
 - `pnpm lint` - Run all linters.
 - `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
 - `pnpm test` - Run tests with [Jest][jest].
-- `pnpm watch:aglint` - Watch for changes in the AGLint code and create a development build automatically.
-- `pnpm watch:agtree` - Watch for changes in the AGTree code and create a development build automatically.
-- `pnpm watch:client` - Watch for changes in the client code and create a development build automatically.
-- `pnpm watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
-- `pnpm watch:server` - Watch for changes in the server code and create a development build automatically.
 
 > [!NOTE]
 > Watch commands (e.g., `pnpm watch:client`) are typically used by VSCode tasks (see

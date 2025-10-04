@@ -1,24 +1,38 @@
 {
-    "name": "aglint-server",
+    "name": "@vscode-adblock-syntax/server",
+    "description": "Language server for Adblock/AdGuard/uBlock filters syntax.",
+    "type": "module",
     "version": "1.0.0",
     "license": "MIT",
     "author": "AdGuard Software Ltd.",
     "private": true,
     "engines": {
-        "node": ">=16"
+        "node": ">=20.0.0"
+    },
+    "scripts": {
+        "build": "tsx scripts/build.ts",
+        "test": "vitest",
+        "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
+        "lint:md": "markdownlint .",
+        "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "dependencies": {
-        "vscode-languageserver": "^8.0.2",
-        "vscode-languageserver-textdocument": "^1.0.8",
+        "@vscode-adblock-syntax/shared": "workspace:^",
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.12",
         "vscode-uri": "^3.1.0"
     },
     "devDependencies": {
-        "@adguard/aglint": "2.1.5",
-        "@adguard/agtree": "^2.3.0",
+        "@adguard/aglint": "3.0.0",
+        "@adguard/agtree": "^3.2.3",
         "@adguard/ecss-tree": "^1.1.0",
         "@types/clone-deep": "^4.0.1",
         "@types/semver": "^7.5.0",
+        "@vitest/coverage-v8": "^3.2.4",
         "clone-deep": "^4.0.1",
-        "semver": "^7.5.4"
+        "esbuild": "catalog:",
+        "semver": "^7.5.4",
+        "tsx": "catalog:",
+        "vitest": "catalog:"
     }
 }

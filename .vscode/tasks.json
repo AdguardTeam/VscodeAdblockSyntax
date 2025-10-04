@@ -2,9 +2,25 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Shared lib dev build (watch)",
+            "type": "shell",
+            "command": "pnpm --silent --filter @vscode-adblock-syntax/shared build --watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": "$tsc-watch",
+        },
+        {
             "label": "Server dev build (watch)",
-            "type": "npm",
-            "script": "watch:server",
+            "type": "shell",
+            "command": "pnpm --silent --filter @vscode-adblock-syntax/server build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -16,59 +32,14 @@
                 "close": true
             },
             "problemMatcher": "$esbuild-watch",
-        },
-        {
-            "label": "Integrated AGTree dev build (watch)",
-            "type": "npm",
-            "script": "watch:agtree",
-            "isBackground": true,
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "never",
-                "close": true
-            },
-            "problemMatcher": "$esbuild-watch",
-        },
-        {
-            "label": "Integrated ECSSTree dev build (watch)",
-            "type": "npm",
-            "script": "watch:ecss-tree",
-            "isBackground": true,
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "never",
-                "close": true
-            },
-            "problemMatcher": "$esbuild-watch",
-        },
-        {
-            "label": "Integrated AGLint dev build (watch)",
-            "type": "npm",
-            "script": "watch:aglint",
-            "isBackground": true,
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "never",
-                "close": true
-            },
-            "problemMatcher": "$esbuild-watch",
+            "dependsOn": [
+                "Shared lib dev build (watch)"
+            ],
         },
         {
             "label": "Client dev build (watch)",
-            "type": "npm",
-            "script": "watch:client",
+            "type": "shell",
+            "command": "pnpm --silent --filter @vscode-adblock-syntax/client build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -80,11 +51,14 @@
                 "close": true
             },
             "problemMatcher": "$esbuild-watch",
+            "dependsOn": [
+                "Shared lib dev build (watch)"
+            ],
         },
         {
             "label": "Grammar dev build (watch)",
-            "type": "npm",
-            "script": "watch:grammar",
+            "type": "shell",
+            "command": "pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -126,9 +100,6 @@
             "dependsOn": [
                 "Grammar dev build (watch)",
                 "Server dev build (watch)",
-                "Integrated AGTree dev build (watch)",
-                "Integrated ECSSTree dev build (watch)",
-                "Integrated AGLint dev build (watch)",
                 "Client dev build (watch)"
             ],
         },
