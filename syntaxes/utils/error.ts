@@ -1,6 +1,16 @@
-type ErrorWithMessage = {
+/**
+ * @file Error utilities.
+ */
+
+/**
+ * Error with message.
+ */
+interface ErrorWithMessage extends Error {
+    /**
+     * Error message.
+     */
     message: string;
-};
+}
 
 /**
  * Checks if error has message.

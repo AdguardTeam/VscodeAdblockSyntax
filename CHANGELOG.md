@@ -16,10 +16,6 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ### Changed
 
 - Updated `husky` dependency to version `9.0.1` [#129].
-
-### Changed
-
-- Updated `husky` dependency to version `9.0.1` [#129].
 - Minimum supported VSCode version changed to 1.94.0.
   Project now uses ES modules and requires Node.js v20+.
 
