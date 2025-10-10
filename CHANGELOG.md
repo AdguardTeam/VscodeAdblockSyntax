@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ### Added
 
 - Support for multi-root workspaces [#112].
+- `Remove this rule` quick fix option [#126].
 
 ### Changed
 
@@ -19,6 +20,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
 [#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
+[#126]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/126
 
 ## 1.1.17 - 2024-05-05
 

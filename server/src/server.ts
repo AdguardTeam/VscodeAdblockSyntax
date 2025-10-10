@@ -497,12 +497,16 @@ connection.onCodeAction((params) => {
             // and parsing errors have more priority than linting errors: if a rule cannot be parsed,
             // it cannot be checked with linter rules.
             // So we need to suggest disabling AGLint for the line completely as a quick fix.
-            const title = 'Disable AGLint for this line';
-            const action = CodeAction.create(title, CodeActionKind.QuickFix);
+            const titleDisableRule = 'Disable AGLint for this line';
+            const actionDisableRule = CodeAction.create(titleDisableRule, CodeActionKind.QuickFix);
+
+            // Or delete this rule
+            const titleRemoveRule = 'Remove this rule';
+            const actionRemoveRule = CodeAction.create(titleRemoveRule, CodeActionKind.QuickFix);
 
             if (line === 0) {
                 // If there are no previous lines, just insert the comment before the problematic line.
-                action.edit = {
+                actionDisableRule.edit = {
                     documentChanges: [
                         TextDocumentEdit.create(
                             { uri: textDocument.uri, version: textDocument.version },
@@ -513,7 +517,23 @@ connection.onCodeAction((params) => {
                         ),
                     ],
                 };
-                actions.push(action);
+
+                actions.push(actionDisableRule);
+
+                actionRemoveRule.edit = {
+                    documentChanges: [
+                        TextDocumentEdit.create(
+                            { uri: textDocument.uri, version: textDocument.version },
+                            [TextEdit.del(Range.create(
+                                Position.create(line, 0),
+                                Position.create(line + 1, 0),
+                            ))],
+                        ),
+                    ],
+                };
+
+                actions.push(actionRemoveRule);
+
                 continue;
             }
 
@@ -541,7 +561,8 @@ connection.onCodeAction((params) => {
                     && commentNode.params
                 ) {
                     delete commentNode.params;
-                    action.edit = {
+
+                    actionDisableRule.edit = {
                         documentChanges: [
                             TextDocumentEdit.create(
                                 { uri: textDocument.uri, version: textDocument.version },
@@ -555,12 +576,13 @@ connection.onCodeAction((params) => {
                             ),
                         ],
                     };
-                    actions.push(action);
+
+                    actions.push(actionDisableRule);
                     continue;
                 }
 
                 // Otherwise just insert the comment before the problematic line
-                action.edit = {
+                actionDisableRule.edit = {
                     documentChanges: [
                         TextDocumentEdit.create(
                             { uri: textDocument.uri, version: textDocument.version },
@@ -572,7 +594,22 @@ connection.onCodeAction((params) => {
                     ],
                 };
 
-                actions.push(action);
+                actions.push(actionDisableRule);
+
+                // Or remove rule
+                actionRemoveRule.edit = {
+                    documentChanges: [
+                        TextDocumentEdit.create(
+                            { uri: textDocument.uri, version: textDocument.version },
+                            [TextEdit.del(Range.create(
+                                Position.create(line, 0),
+                                Position.create(line + 1, 0),
+                            ))],
+                        ),
+                    ],
+                };
+
+                actions.push(actionRemoveRule);
                 continue;
             }
         }
