@@ -196,9 +196,6 @@ importers:
       '@adguard/agtree':
         specifier: ^2.3.0
         version: 2.3.0
-      '@adguard/ecss-tree':
-        specifier: ^1.1.0
-        version: 1.1.0
       '@types/semver':
         specifier: ^7.5.0
         version: 7.5.0
@@ -229,9 +226,6 @@ packages:
 
   '@adguard/css-tokenizer@1.2.0':
     resolution: {integrity: sha512-cUj5j/AU5z/T4//5M6KnIJBpykAY4QbDsoiQ2DaWX/r2XkepMkTb8DhIbUHJD/QLGEyLeQLpi+nlxAgf4NTRRQ==}
-
-  '@adguard/ecss-tree@1.1.0':
-    resolution: {integrity: sha512-Qs7cpUH5AexO9JAXxMPmh6CwdNEnP1qUBSpvHnGxPmHQDjBzpAn4qz8zsJILmX4Rc5Up0iqeYcYC7Pq5HBvoyQ==}
 
   '@adguard/ecss-tree@2.0.0':
     resolution: {integrity: sha512-IWywA8l6WhsjcFZV0Z6UGBiiwnW2tcoAEb+rOLlsdQVcDwmQKpRZKho8l3Ily814eYURt9r6pJnjQgcpP8RRww==}
@@ -1764,10 +1758,6 @@ packages:
   css-select@5.1.0:
     resolution: {integrity: sha512-nwoRF1rvRRnnCqqY7updORDsuqKzqYJ28+oSMaJMMgOauh3fvwHqMS7EZpIPqK8GL+g9mKxF1vP/ZjSeNjEVHg==}
 
-  css-tree@2.3.1:
-    resolution: {integrity: sha512-6Fv1DV/TYw//QF5IzQdqsNDjx/wc8TrMBZsqjL9eW01tWb7R7k/mq+/VXfJCl7SoD5emsJop9cOByJZfs8hYIw==}
-    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
-
   css-what@6.1.0:
     resolution: {integrity: sha512-HTUrgRJ7r4dsZKU6GjmpfRK1O76h97Z8MfS1G0FozR+oF2kG6Vfe8JE6zwrkbxigziPHinCJ+gCPjA9EaBDtRw==}
     engines: {node: '>= 6'}
@@ -3128,9 +3118,6 @@ packages:
   mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
 
-  mdn-data@2.0.30:
-    resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
-
   mdn-data@2.23.0:
     resolution: {integrity: sha512-786vq1+4079JSeu2XdcDjrhi/Ry7BWtjDl9WtGPWLiIHb2T66GvIVflZTBoSNZ5JqTtJGYEVMuFA/lbQlMOyDQ==}
 
@@ -4420,10 +4407,6 @@ snapshots:
       zod: 3.24.4
 
   '@adguard/css-tokenizer@1.2.0': {}
-
-  '@adguard/ecss-tree@1.1.0':
-    dependencies:
-      css-tree: 2.3.1
 
   '@adguard/ecss-tree@2.0.0':
     dependencies:
@@ -6041,11 +6024,6 @@ snapshots:
       domhandler: 5.0.3
       domutils: 3.2.2
       nth-check: 2.1.1
-
-  css-tree@2.3.1:
-    dependencies:
-      mdn-data: 2.0.30
-      source-map-js: 1.2.1
 
   css-what@6.1.0: {}
 
@@ -7804,8 +7782,6 @@ snapshots:
   mdast-util-to-string@4.0.0:
     dependencies:
       '@types/mdast': 4.0.4
-
-  mdn-data@2.0.30: {}
 
   mdn-data@2.23.0: {}
 
