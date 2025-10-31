@@ -13,14 +13,24 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Support for multi-root workspaces [#112].
 - `Remove this rule` quick fix option [#126].
+- Support for applying various fixes offered by AGLint [#127].
+- Support for detecting package manager automatically [#117].
 
 ### Changed
 
+- Updated extension for AGLint `v4.0.0`.
 - Updated `husky` dependency to version `9.0.1` [#129].
 
+### Removed
+
+- Integrated version of AGLint. From now on, AGLint only works if it is installed separately.
+  This provides more consistent behavior.
+
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
-[#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
+[#117]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/117
 [#126]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/126
+[#127]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/127
+[#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
 
 ## 1.1.17 - 2024-05-05
 
