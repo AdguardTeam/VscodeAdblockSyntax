@@ -7,27 +7,26 @@ example.com##.ad1, .ad2
 example.com##.ad1, .ad2
 
 ! Syntax error:
-example.com###.a
 example.com#%#//scriptlet("aaa",
 
-! Test disabling and enabling
+! Unsupported CSS pseudo-class
+##:hsa-text()
 
-! aglint-disable
-! This rule should not be reported
-example.com##...
-! aglint-enable
-! This rule should be reported
-example.com##...
-
-! invalid modifier
+! Invalid modifier
 ||example.com^$specifichide
 ||example.com^$referrerpolicy=~origin
 
-! excluded rule
+! Excluded rule
 example.com/bad/query/
 
-! Invalid declaration
-#$#div { display: foo; color: bar; }
+! Duplicated CSS property
+#$#div { color: red; color: red; }
 
-! Duplicated declaration
-#$#div { display: none; display: none; }
+! Same property with different values
+#$#div { color: red; color: blue; }
+
+! Invalid declaration
+#$#div { display: foo; }
+
+! Invalid declaration
+##div:style(display: foo; color: bar; color: bar;)

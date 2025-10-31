@@ -1,139 +1,164 @@
-/**
- * @file Utility functions for package managers.
- */
-
 import { execSync } from 'node:child_process';
-import { isAbsolute } from 'node:path';
+import { existsSync } from 'node:fs';
+import os from 'node:os';
+import { isAbsolute, join } from 'node:path';
 
-import { Files } from 'vscode-languageserver/node';
-
-import { EMPTY } from '../common/constants';
-
-/**
- * Node Package Manager.
- *
- * @see https://www.npmjs.com/
- */
-export const NPM = 'npm';
-
-/**
- * Yarn Package Manager.
- *
- * @see https://yarnpkg.com/
- */
-export const YARN = 'yarn';
-
-/**
- * PNPM Package Manager.
- *
- * @see https://pnpm.io/
- */
-export const PNPM = 'pnpm';
-
-/**
- * Type of supported package managers.
- */
-export type PackageManager = typeof NPM | typeof YARN | typeof PNPM;
-
-/**
- * Type of trace function. It's the same as the trace function
- * as used in the VSCode server, but we define it here to give
- * a more convenient way to use it via the type alias.
- */
 export type TraceFunction = (message: string, verbose?: string) => void;
 
+export const NPM = 'npm' as const;
+export const YARN = 'yarn' as const;
+export const PNPM = 'pnpm' as const;
+export const BUN = 'bun' as const;
+
+export type PackageManager = typeof NPM | typeof YARN | typeof PNPM | typeof BUN;
+
 /**
- * Finds the global path for PNPM. This isn't implemented in the
- * VSCode server, so we need to do it here.
+ * Runs a command and returns the output.
  *
- * @param tracer Trace function (optional).
+ * @param cmd Command to run.
+ * @param tracer Tracer function.
  *
- * @returns Path to the global PNPM root or undefined if not found.
+ * @returns The output of the command or undefined if it failed.
  */
-export function findPnpmRoot(tracer?: TraceFunction): string | undefined {
+function run(cmd: string, tracer?: TraceFunction): string | undefined {
     try {
-        // Execute `pnpm root -g` command to find the global root.
-        // If the command fails (e.g. PNPM is not installed or
-        // not in the PATH), the execSync will throw an error
-        const result = execSync('pnpm root -g').toString().trim();
-
-        // If the command succeeded, we should check if the result
-        // is an absolute path. If it's not, we should ignore it
-        if (isAbsolute(result)) {
-            if (tracer) {
-                tracer(`Found global PNPM root: ${result}`);
-            }
-
-            return result;
+        const out = execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+        if (out && isAbsolute(out)) {
+            return out;
         }
 
         if (tracer) {
-            tracer(`Global PNPM root is not an absolute path: ${result}`);
+            tracer(`Command returned non-absolute path for "${cmd}": ${out}`);
         }
-    } catch (error: unknown) {
-        // If the execution failed, we simply ignore the error,
-        // and consider the PNPM root as not found
+    } catch (e) {
         if (tracer) {
-            tracer(`Error while finding global PNPM root: ${error}`);
+            tracer(`Failed running "${cmd}": ${String(e)}`);
         }
     }
-
     return undefined;
 }
 
 /**
- * Find the path to the global root of the given package manager.
+ * Finds the global node_modules directory for npm.
  *
- * @param packageManager Name of the package manager (npm, yarn, pnpm).
- * @param tracer Trace function (optional).
+ * @param tracer Tracer function.
  *
- * @returns Path to the root directory of the package manager or undefined if not found
- * or cannot be resolved.
+ * @returns The global node_modules directory for npm or undefined if it could not be found.
+ */
+export function findNpmRoot(tracer?: TraceFunction) {
+    // Official: `npm root -g` prints the global node_modules directory
+    return run('npm root -g', tracer);
+}
+
+/**
+ * Finds the global node_modules directory for yarn.
+ *
+ * @param tracer Tracer function.
+ *
+ * @returns The global node_modules directory for yarn or undefined if it could not be found.
+ */
+export function findYarnRoot(tracer?: TraceFunction) {
+    // Yarn Classic: `yarn global dir` prints the global node_modules directory
+    // Yarn Berry still supports global installs via plugin; fall back to config if needed
+    const dir = run('yarn global dir', tracer);
+    if (dir) {
+        return dir;
+    }
+
+    // Yarn Berry: try reading the configured global folder (if present)
+    const berry = run('yarn config get globalFolder', tracer);
+    if (berry && existsSync(berry)) {
+        const candidate = join(berry, 'global', 'node_modules');
+
+        if (existsSync(candidate)) {
+            return candidate;
+        }
+    }
+    return undefined;
+}
+
+/**
+ * Finds the global node_modules directory for pnpm.
+ *
+ * @param tracer Tracer function.
+ *
+ * @returns The global node_modules directory for pnpm or undefined if it could not be found.
+ */
+export function findPnpmRoot(tracer?: TraceFunction) {
+    // pnpm: `pnpm root -g` prints the global node_modules directory
+    return run('pnpm root -g', tracer);
+}
+
+/**
+ * Finds the global bin directory for pnpm.
+ *
+ * @param tracer Tracer function.
+ *
+ * @returns The global bin directory for pnpm or undefined if it could not be found.
+ */
+export function findPnpmBin(tracer?: TraceFunction) {
+    // pnpm: `pnpm bin -g` prints the global bin dir (may require `pnpm setup` first)
+    return run('pnpm bin -g', tracer);
+}
+
+/**
+ * Finds the global node_modules directory for bun.
+ *
+ * @param tracer Tracer function.
+ *
+ * @returns The global node_modules directory for bun or undefined if it could not be found.
+ */
+export function findBunRoot(tracer?: TraceFunction) {
+    // Bun uses ~/.bun by default; configurable via bunfig.toml [install.globalDir]
+    // If BUN_INSTALL is set, prefer it.
+    const bunInstall = process.env.BUN_INSTALL ?? join(os.homedir(), '.bun');
+    const candidate = join(bunInstall, 'install', 'global', 'node_modules');
+    if (existsSync(candidate)) {
+        if (tracer) {
+            tracer(`Found Bun global node_modules at ${candidate}`);
+        }
+        return candidate;
+    }
+    // If the user customized bunfig, we could try to read bunfig.toml, but that's optional.
+    return undefined;
+}
+
+/**
+ * Finds the global node_modules directory for the specified package manager.
+ *
+ * @param packageManager The package manager to find the global node_modules directory for.
+ * @param tracer Tracer function.
+ *
+ * @returns The global node_modules directory for the specified package manager or undefined if it could not be found.
  */
 export async function findGlobalPathForPackageManager(
     packageManager: PackageManager,
     tracer?: TraceFunction,
 ): Promise<string | undefined> {
-    try {
-        switch (packageManager) {
-            case NPM:
-                // eslint-disable-next-line max-len
-                // TODO: It seems that this function marked as deprecated in the VSCode server, so we should find a better way to do this.
-                // Anyway, this solution is works for now, so it doesn't seem to be a big problem
-                return Files.resolveGlobalNodePath(tracer);
-            case YARN:
-                return Files.resolveGlobalYarnPath(tracer);
-            case PNPM:
-                return findPnpmRoot(tracer);
-            default:
-                return undefined;
-        }
-    } catch (error: unknown) {
-        // Error tolerance: if the function throws an error, we simply ignore it,
-        // and consider the global path as not found
-        return undefined;
+    switch (packageManager) {
+        case NPM: return findNpmRoot(tracer);
+        case YARN: return findYarnRoot(tracer);
+        case PNPM: return findPnpmRoot(tracer);
+        case BUN: return findBunRoot(tracer);
+        default: return undefined;
     }
 }
 
 /**
- * Returns the installation command for the given package manager and package name.
+ * Gets the installation command for the specified package manager.
  *
- * @param packageManager Name of the package manager (npm, yarn, pnpm).
- * @param packageName Name of the package to install.
- * @param global Whether to install the package globally or not (default: false).
+ * @param pm The package manager to get the installation command for.
+ * @param pkg The package to install.
+ * @param global Whether to install the package globally.
  *
- * @returns Corresponding installation command for the given package manager.
+ * @returns The installation command for the specified package manager.
  */
-export function getInstallationCommand(packageManager: PackageManager, packageName: string, global = false): string {
-    switch (packageManager) {
-        case NPM:
-            return `npm install ${global ? '-g ' : EMPTY}${packageName}`;
-        case YARN:
-            return `yarn add ${global ? 'global ' : EMPTY}${packageName}`;
-        case PNPM:
-            return `pnpm install ${global ? '-g ' : EMPTY}${packageName}`;
-        default:
-            // Theoretically, this should never happen
-            return 'Cannot determine the package manager';
+export function getInstallationCommand(pm: PackageManager, pkg: string, global = false) {
+    switch (pm) {
+        case NPM: return `npm install ${global ? '-g ' : ''}${pkg}`;
+        case YARN: return global ? `yarn global add ${pkg}` : `yarn add ${pkg}`; // fix
+        case PNPM: return `pnpm ${global ? 'add -g' : 'add'} ${pkg}`; // prefer `add`
+        case BUN: return `bun ${global ? 'add -g' : 'add'} ${pkg}`; // prefer `add`
+        default: return 'Unknown package manager';
     }
 }

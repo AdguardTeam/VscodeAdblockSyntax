@@ -8,17 +8,20 @@
         "node": ">=16"
     },
     "dependencies": {
+        "fast-glob": "^3.3.3",
+        "preferred-pm": "^4.1.1",
+        "resolve-from": "^5.0.0",
+        "resolve-pkg": "^2.0.0",
         "vscode-languageserver": "^8.0.2",
         "vscode-languageserver-textdocument": "^1.0.8",
-        "vscode-uri": "^3.1.0"
+        "vscode-uri": "^3.1.0",
+        "yaml": "^2.7.1"
     },
     "devDependencies": {
-        "@adguard/aglint": "2.1.5",
+        "@adguard/aglint": "catalog:",
         "@adguard/agtree": "^2.3.0",
         "@adguard/ecss-tree": "^1.1.0",
-        "@types/clone-deep": "^4.0.1",
         "@types/semver": "^7.5.0",
-        "clone-deep": "^4.0.1",
         "semver": "^7.5.4"
     }
 }

@@ -10,15 +10,11 @@
  * 2. Implement the logic in the server.ts file.
  */
 
-import { NPM, type PackageManager } from './utils/package-managers';
-
 /**
  * Represents the extension settings.
  */
 export interface ExtensionSettings {
     enableAglint: boolean;
-    useExternalAglintPackages: boolean;
-    packageManager: PackageManager;
 }
 
 /**
@@ -26,6 +22,4 @@ export interface ExtensionSettings {
  */
 export const defaultSettings: ExtensionSettings = {
     enableAglint: true,
-    useExternalAglintPackages: true,
-    packageManager: NPM,
 };

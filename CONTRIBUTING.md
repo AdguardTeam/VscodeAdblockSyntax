@@ -13,7 +13,6 @@ Table of Contents:
 - [Project structure](#project-structure)
 - [Running the extension in development mode](#running-the-extension-in-development-mode)
 - [Creating a production build](#creating-a-production-build)
-- [Updating integrated AGLint](#updating-integrated-aglint)
 - [Updating syntax highlighting](#updating-syntax-highlighting)
 - [Available commands](#available-commands)
 - [Useful links](#useful-links)
@@ -86,22 +85,6 @@ To create a production build of the extension:
 1. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
    (`Ctrl + Shift + P`), select "Extensions: Install from VSIX...", and choose the `vscode-adblock.vsix` file.
 
-## Updating integrated AGLint
-
-> [!NOTE]
-> This extension includes an integrated AGLint. It's a bundled version, avoiding the need for a separate AGLint
-> installation. However, the extension can use an external AGLint version if installed by a package manager.
-
-1. Update AGLint in the `server/package.json` file. Alternatively, link the local AGLint repository if it hasn't been
-   released on NPM.
-1. If there are breaking changes in the AGLint API, update the server code accordingly, changing the minimum supported
-   AGLint version in `server/index.ts` (`MIN_AGLINT_VERSION` constant).
-1. Test the extension with the new AGLint version by running it in debug mode (see
-   [*Running the extension in development mode*](#running-the-extension-in-development-mode) section). In the
-   *"Extension Development Host"* window, you should open the test project (see `test/static` folder) and check if the
-   extension works as expected.
-1. If needed, update the test project (e.g., update the config file, add new example rules).
-
 ## Updating syntax highlighting
 
 1. Update the TM grammar in the `syntaxes/adblock.yaml-tmLanguage` file.
@@ -128,7 +111,6 @@ During development, you can use the following commands (listed in `package.json`
   for Continuous Integration (CI) purposes.
 - `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
 - `pnpm clean` - Removes all generated files in the output directories, cleaning up the build results.
-- `pnpm esbuild:aglint` - Base ESBuild command for building integrated AGLint with the common options.
 - `pnpm esbuild:agtree` - Base ESBuild command for building integrated AGTree with the common options.
   Integrated AGTree comes with the integrated AGLint, this command just helps to bundle it to a separate file.
   This is needed because AGTree is also used by the server, and by bundling it to a separate file, we can avoid
@@ -145,7 +127,6 @@ During development, you can use the following commands (listed in `package.json`
 - `pnpm lint` - Run all linters.
 - `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
 - `pnpm test` - Run tests with [Jest][jest].
-- `pnpm watch:aglint` - Watch for changes in the AGLint code and create a development build automatically.
 - `pnpm watch:agtree` - Watch for changes in the AGTree code and create a development build automatically.
 - `pnpm watch:client` - Watch for changes in the client code and create a development build automatically.
 - `pnpm watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.

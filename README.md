@@ -85,13 +85,10 @@ etc. For more information about AGLint, please refer to its [repository][aglint]
 
 AGLint integration is done in the following way:
 
-1. Extension will search local AGLint installation (if it is installed) and use it for linting. First, it will search
-   for local installation in the current workspace, and if it is not found, it will search for a global installation.
-   This is an ideal behavior, because if you have a local installation, it guarantees that you will use the same version
-   of AGLint, and the results will be the same.
-2. If the extension doesn't find any installation, it will use the bundled version of AGLint, which is included in the
-   extension itself. Usually, it is the latest version of AGLint. The advantage of this approach is that you don't need
-   to install AGLint manually, and you can start using the extension immediately after installation.
+Extension will search local AGLint installation (if it is installed) and use it for linting. First, it will search
+for local installation in the current workspace, and if it is not found, it will search for a global installation.
+This is an ideal behavior, because if you have a local installation, it guarantees that you will use the same version
+of AGLint, and the results will be the same.
 
 > [!WARNING]
 > Please note that the linter is under active development, so it may not work properly for some rules. If you
@@ -106,8 +103,6 @@ This extension provides the following configuration options:
 | Option | Description | Default value | Possible values |
 | ------ | ----------- | ------------- | --------------- |
 | `adblock.enableAglint` | Enable or disable AGLint integration. If disabled, only syntax highlighting and other language features will be available. | `true` | `true`, `false` |
-| `adblock.useExternalAglintPackages` | If enabled, extension will search for AGLint installations in the system. If disabled, extension will use its own AGLint installation, which is included in the extension (integrated AGLint bundle). If you have AGLint installed in your system / project, it is recommended to enable this option in order to provide consistent results. | `true` | `true`, `false` |
-| `adblock.packageManager` | Package manager to use for searching global AGLint installations. Set it to your preferred package manager. | `npm` | `npm`, `yarn`, `pnpm` |
 <!--markdownlint-enable MD013-->
 
 ### GitHub Linguist support

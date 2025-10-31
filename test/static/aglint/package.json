@@ -1,0 +1,6 @@
+{
+    "name": "aglint-test-project",
+    "dependencies": {
+        "@adguard/aglint": "catalog:"
+    }
+}
