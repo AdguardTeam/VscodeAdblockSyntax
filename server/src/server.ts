@@ -219,7 +219,7 @@ const getVscodeCodeRangeFromAglintPositionRange = (range: LinterPositionRange): 
  * @returns Documentation URL.
  */
 const getAglintRuleDocumentationUrl = (ruleId: string): string => {
-    return `${AGLINT_REPO_URL}/blob/master/docs/${ruleId}.md`;
+    return `${AGLINT_REPO_URL}/blob/master/docs/rules/${ruleId}.md`;
 };
 
 /**
