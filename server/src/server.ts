@@ -16,6 +16,7 @@ import type {
 import type {
     LinterFixCommand,
     LinterOffsetRange,
+    LinterPositionRange,
     LinterResult,
     LinterRunOptions,
     LinterSuggestion,
@@ -181,6 +182,32 @@ async function getLinterConfig(textDocument: TextDocument): Promise<LinterConfig
 }
 
 /**
+ * Convert AGLint position range to VSCode range.
+ *
+ * @param range AGLint position range.
+ *
+ * @returns VSCode range.
+ */
+const getVscodeCodeRangeFromAglintPositionRange = (range: LinterPositionRange): Range => {
+    // Note: linting problems using 1-based line numbers, but VSCode uses 0-based line numbers
+    return Range.create(
+        Position.create(range.start.line - 1, range.start.column),
+        Position.create(range.end.line - 1, range.end.column),
+    );
+};
+
+/**
+ * Get the documentation URL for the given AGLint rule.
+ *
+ * @param ruleId Rule ID.
+ *
+ * @returns Documentation URL.
+ */
+const getAglintRuleDocumentationUrl = (ruleId: string): string => {
+    return `${AGLINT_REPO_URL}/docs/rules/${ruleId}.md`;
+};
+
+/**
  * Convert AGLint result to VSCode diagnostics.
  *
  * @param linterResult Linter result.
@@ -201,11 +228,7 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagn
 
         const diagnostic: Diagnostic = {
             severity,
-            range: Range.create(
-                // Note: linting problems using 1-based line numbers, but VSCode uses 0-based line numbers
-                Position.create(problem.position.start.line - 1, problem.position.start.column),
-                Position.create(problem.position.end.line - 1, problem.position.end.column),
-            ),
+            range: getVscodeCodeRangeFromAglintPositionRange(problem.position),
             message: problem.message,
             source: 'aglint',
         };
@@ -214,7 +237,7 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagn
         if (problem.ruleId) {
             diagnostic.code = problem.ruleId;
             diagnostic.codeDescription = {
-                href: `${AGLINT_REPO_URL}#${problem.ruleId}`,
+                href: getAglintRuleDocumentationUrl(problem.ruleId),
             };
         }
 
