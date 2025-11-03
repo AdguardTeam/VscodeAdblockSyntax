@@ -111,10 +111,6 @@ During development, you can use the following commands (listed in `package.json`
   for Continuous Integration (CI) purposes.
 - `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
 - `pnpm clean` - Removes all generated files in the output directories, cleaning up the build results.
-- `pnpm esbuild:agtree` - Base ESBuild command for building integrated AGTree with the common options.
-  Integrated AGTree comes with the integrated AGLint, this command just helps to bundle it to a separate file.
-  This is needed because AGTree is also used by the server, and by bundling it to a separate file, we can avoid
-  double-bundling AGTree.
 - `pnpm esbuild:server` - Base ESBuild command for building the server with the common options.
 - `pnpm esbuild:client` - Base ESBuild command for building the client with the common options.
 - `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically, this is used by
@@ -127,7 +123,6 @@ During development, you can use the following commands (listed in `package.json`
 - `pnpm lint` - Run all linters.
 - `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
 - `pnpm test` - Run tests with [Jest][jest].
-- `pnpm watch:agtree` - Watch for changes in the AGTree code and create a development build automatically.
 - `pnpm watch:client` - Watch for changes in the client code and create a development build automatically.
 - `pnpm watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
 - `pnpm watch:server` - Watch for changes in the server code and create a development build automatically.
