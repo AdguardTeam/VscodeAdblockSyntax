@@ -54,8 +54,6 @@ import { loadAglintModule, type LoadedAglint } from './utils/aglint-loader';
 import { getErrorMessage, getErrorStack } from './utils/error';
 import { isFileUri } from './utils/uri';
 
-let aglint: LoadedAglint | undefined;
-
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -75,6 +73,26 @@ let workspaceRoot: string | undefined;
  * Actual settings for the extension (always synced).
  */
 let settings: ExtensionSettings = defaultSettings;
+
+/**
+ * Loaded AGLint module, if any.
+ */
+let aglint: LoadedAglint | undefined;
+
+/**
+ * File system adapter, if any.
+ */
+let fsAdapter: FileSystemAdapter | undefined;
+
+/**
+ * Path adapter, if any.
+ */
+let pathAdapter: PathAdapter | undefined;
+
+/**
+ * Linter tree, if any.
+ */
+let linterTree: LinterTree | undefined;
 
 /**
  * AGLint commands supported by the language server.
@@ -158,10 +176,6 @@ connection.onInitialize(async (params: InitializeParams) => {
 
     return result;
 });
-
-let fsAdapter: FileSystemAdapter | undefined;
-let pathAdapter: PathAdapter | undefined;
-let linterTree: LinterTree | undefined;
 
 /**
  * Get the linter config for the given document.
