@@ -79,16 +79,16 @@ to read.
 
 ### AGLint integration (linter)
 
-We integrated [AGLint][aglint] into this extension, that makes it able to check your rules for various issues, such as
-invalid syntax, invalid domains, invalid / incompatible CSS selectors, unknown / incompatible scriptlets, bad practices,
-etc. For more information about AGLint, please refer to its [repository][aglint].
+This extension integrates [AGLint][aglint] to check your rules for syntax errors, invalid domains,
+incompatible CSS selectors, unknown scriptlets, and other issues. For more details, see the [AGLint repository][aglint].
 
-AGLint integration is done in the following way:
+The extension automatically searches for AGLint installations in this order:
 
-Extension will search local AGLint installation (if it is installed) and use it for linting. First, it will search
-for local installation in the current workspace, and if it is not found, it will search for a global installation.
-This is an ideal behavior, because if you have a local installation, it guarantees that you will use the same version
-of AGLint, and the results will be the same.
+1. Local workspace installation
+2. Global installation
+3. Prompts to install if not found
+
+Using a local installation ensures consistent results with your project's AGLint version.
 
 > [!WARNING]
 > Please note that the linter is under active development, so it may not work properly for some rules. If you
