@@ -12,29 +12,75 @@ import { AGLINT_PACKAGE_NAME, LF } from '../common/constants';
 import { getErrorMessage } from './error';
 import { importModule } from './import';
 import { resolveModulePath } from './module-resolver';
-import { getInstallationCommand, NPM } from './package-managers';
+import { getInstallationCommand, NPM, type PackageManager } from './package-managers';
 
 /**
- * Type of the loaded AGLint module.
+ * Loaded AGLint module with instance-level rule cache.
  */
-export type LoadedAglint = {
+export class LoadedAglint {
     /**
      * AGLint linter module.
      */
-    linter: typeof AGLintLinterModule;
+    public linter: typeof AGLintLinterModule;
 
     /**
      * AGLint CLI module.
      */
-    cli: typeof AGLintCliModule;
+    public cli: typeof AGLintCliModule;
 
     /**
      * Root directory of the AGLint presets.
      */
-    presetsRoot: string;
+    public presetsRoot: string;
 
     /**
-     * Function to load a linter rule.
+     * Cache of loaded linter rules for this instance.
+     */
+    private ruleCache: Record<string, AGLintLinterModule.LinterRule> = {};
+
+    /**
+     * Connection for logging.
+     */
+    private connection: Connection;
+
+    /**
+     * Workspace directory.
+     */
+    private dir: string;
+
+    /**
+     * Preferred package manager name.
+     */
+    private packageManager: PackageManager;
+
+    /**
+     * Creates a new LoadedAglint instance.
+     *
+     * @param linter AGLint linter module.
+     * @param cli AGLint CLI module.
+     * @param presetsRoot Root directory of the AGLint presets.
+     * @param connection Language server connection.
+     * @param dir Workspace directory.
+     * @param packageManager Preferred package manager name.
+     */
+    constructor(
+        linter: typeof AGLintLinterModule,
+        cli: typeof AGLintCliModule,
+        presetsRoot: string,
+        connection: Connection,
+        dir: string,
+        packageManager: PackageManager,
+    ) {
+        this.linter = linter;
+        this.cli = cli;
+        this.presetsRoot = presetsRoot;
+        this.connection = connection;
+        this.dir = dir;
+        this.packageManager = packageManager;
+    }
+
+    /**
+     * Load a linter rule.
      *
      * @param name Name of the rule.
      *
@@ -42,8 +88,32 @@ export type LoadedAglint = {
      *
      * @throws If the rule cannot be loaded.
      */
-    loadRule: AGLintLinterModule.LinterRunOptions['loadRule'];
-};
+    public loadRule: AGLintLinterModule.LinterRunOptions['loadRule'] = async (name: string) => {
+        if (this.ruleCache[name]) {
+            return this.ruleCache[name];
+        }
+
+        const path = await resolveModulePath(
+            this.dir,
+            `${AGLINT_PACKAGE_NAME}/rules/${name}`,
+            this.packageManager,
+            (message: string, verbose?: string | undefined) => {
+                this.connection.tracer.log(message, verbose);
+            },
+        );
+
+        if (!path) {
+            throw new Error(`Failed to resolve AGLint rule: ${name}`);
+        }
+
+        this.connection.console.info(`Loading AGLint rule '${name}' from: ${path}`);
+
+        const rule = await importModule(path);
+        this.ruleCache[name] = rule;
+
+        return rule;
+    };
+}
 
 /**
  * Minimum version of the external AGLint module that is supported by the VSCode extension.
@@ -156,27 +226,17 @@ export async function loadAglintModule(
 
         const cli = await importModule(cliPath) as typeof AGLintCliModule;
         const pathAdapter = new cli.NodePathAdapter();
+        const linter = await importModule(linterPath) as typeof AGLintLinterModule;
+        const presetsRoot = pathAdapter.join(pathAdapter.dirname(aglintPath), '../config-presets');
 
-        return {
-            linter: await importModule(linterPath) as typeof AGLintLinterModule,
+        return new LoadedAglint(
+            linter,
             cli,
-            presetsRoot: pathAdapter.join(pathAdapter.dirname(aglintPath), '../config-presets'),
-            loadRule: async (name: string) => {
-                const path = await resolveModulePath(
-                    dir,
-                    `${AGLINT_PACKAGE_NAME}/rules/${name}`,
-                    preferredPackageManager.name,
-                    (message: string, verbose?: string | undefined) => {
-                        connection.tracer.log(message, verbose);
-                    },
-                );
-                if (!path) {
-                    throw new Error(`Failed to resolve AGLint rule: ${name}`);
-                }
-                connection.console.info(`Loading AGLint rule '${name}' from: ${path}`);
-                return importModule(path);
-            },
-        };
+            presetsRoot,
+            connection,
+            dir,
+            preferredPackageManager.name as PackageManager,
+        );
     } catch (error: unknown) {
         connection.console.error(
             // eslint-disable-next-line max-len
