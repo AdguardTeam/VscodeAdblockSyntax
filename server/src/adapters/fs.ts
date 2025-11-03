@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import fs from 'node:fs/promises';
 
-import { type FileStats, type FileSystemAdapter, type GlobOptions } from '@adguard/aglint';
+import { type FileStats, type FileSystemAdapter, type GlobOptions } from '@adguard/aglint/cli';
 import fastGlob from 'fast-glob';
 import type { TextDocuments } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';

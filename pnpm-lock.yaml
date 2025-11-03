@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@adguard/aglint':
-      specifier: ^4.0.0-alpha.1
-      version: 4.0.0-alpha.1
+      specifier: ^4.0.0-alpha.4
+      version: 4.0.0-alpha.4
 
 importers:
 
@@ -189,7 +189,7 @@ importers:
     devDependencies:
       '@adguard/aglint':
         specifier: 'catalog:'
-        version: 4.0.0-alpha.1(@types/node@18.19.86)(typescript@5.9.2)
+        version: 4.0.0-alpha.4(@types/node@18.19.86)(typescript@5.9.2)
       '@adguard/agtree':
         specifier: ^2.3.0
         version: 2.3.0
@@ -204,12 +204,12 @@ importers:
     dependencies:
       '@adguard/aglint':
         specifier: 'catalog:'
-        version: 4.0.0-alpha.1(@types/node@18.19.86)(typescript@5.9.2)
+        version: 4.0.0-alpha.4(@types/node@18.19.86)(typescript@5.9.2)
 
 packages:
 
-  '@adguard/aglint@4.0.0-alpha.1':
-    resolution: {integrity: sha512-2TzROOdPtcOAZBbYjlewBnZ/4vjXq4OS4JXzBD59SdEk5N5GxsmBYoO4ODpnxEqfmZ3/wcOnb14fc8ZM5Yo+fA==}
+  '@adguard/aglint@4.0.0-alpha.4':
+    resolution: {integrity: sha512-pDOrQWrrwzDznFM8XVhHdKpf0aBqPKz4Bt/sL6+QNkqrfe1+mI12fz49jCPsKY0jchdVnIBYPLLfrPjkCbwZWw==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -4345,7 +4345,7 @@ packages:
 
 snapshots:
 
-  '@adguard/aglint@4.0.0-alpha.1(@types/node@18.19.86)(typescript@5.9.2)':
+  '@adguard/aglint@4.0.0-alpha.4(@types/node@18.19.86)(typescript@5.9.2)':
     dependencies:
       '@adguard/agtree': 3.2.4
       '@adguard/ecss-tree': 2.0.0

@@ -1,0 +1,19 @@
+/**
+ * Helper function to import the module dynamically.
+ *
+ * @param path Path to the AGLint module.
+ *
+ * @returns Loaded module.
+ *
+ * @throws If the module cannot be found.
+ */
+export const importModule = async (path: string): Promise<any> => {
+    const module = await import(path);
+
+    // Module may have a default export
+    if ('default' in module) {
+        return module.default;
+    }
+
+    return module;
+};

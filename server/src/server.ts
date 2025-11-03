@@ -5,10 +5,21 @@
  * @todo Split this server into multiple files by creating a server context.
  */
 
-import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import type * as AGLint from '@adguard/aglint';
+import type {
+    FileSystemAdapter,
+    LinterConfigFile,
+    LinterTree,
+    PathAdapter,
+} from '@adguard/aglint/cli';
+import type {
+    LinterFixCommand,
+    LinterOffsetRange,
+    LinterResult,
+    LinterRunOptions,
+    LinterSuggestion,
+} from '@adguard/aglint/linter';
 import {
     CodeAction,
     CodeActionKind,
@@ -147,9 +158,9 @@ connection.onInitialize(async (params: InitializeParams) => {
     return result;
 });
 
-let fsAdapter: AGLint.FileSystemAdapter | undefined;
-let pathAdapter: AGLint.PathAdapter | undefined;
-let linterTree: AGLint.LinterTree | undefined;
+let fsAdapter: FileSystemAdapter | undefined;
+let pathAdapter: PathAdapter | undefined;
+let linterTree: LinterTree | undefined;
 
 /**
  * Get the linter config for the given document.
@@ -158,7 +169,7 @@ let linterTree: AGLint.LinterTree | undefined;
  *
  * @returns Linter config for the document or undefined if the document is not lintable.
  */
-async function getLinterConfig(textDocument: TextDocument): Promise<AGLint.LinterConfigFile | undefined> {
+async function getLinterConfig(textDocument: TextDocument): Promise<LinterConfigFile | undefined> {
     // e.g. new unsaved documents
     if (!isFileUri(textDocument.uri) || !workspaceRoot) {
         return undefined;
@@ -176,11 +187,15 @@ async function getLinterConfig(textDocument: TextDocument): Promise<AGLint.Linte
  *
  * @returns VSCode diagnostics.
  */
-const getVscodeDiagnosticsFromLinterResult = (linterResult: AGLint.LinterResult): Diagnostic[] => {
+const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagnostic[] => {
     const diagnostics: Diagnostic[] = [];
 
+    if (!aglint) {
+        return diagnostics;
+    }
+
     for (const problem of linterResult.problems) {
-        const severity = problem.severity === aglint!.module.LinterRuleSeverity.Warning
+        const severity = problem.severity === aglint.linter.LinterRuleSeverity.Warning
             ? DiagnosticSeverity.Warning
             : DiagnosticSeverity.Error;
 
@@ -229,7 +244,7 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: AGLint.LinterResult)
  * @param textDocument Document to lint.
  */
 async function lintFile(textDocument: TextDocument): Promise<void> {
-    if (!isFileUri(textDocument.uri) || !workspaceRoot || !settings.enableAglint) {
+    if (!isFileUri(textDocument.uri) || !workspaceRoot || !settings.enableAglint || !aglint) {
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
         return;
     }
@@ -245,7 +260,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         const documentPath = fileURLToPath(textDocument.uri);
         const text = textDocument.getText();
 
-        const linterRunOptions: AGLint.LinterRunOptions = {
+        const linterRunOptions: LinterRunOptions = {
             fileProps: {
                 filePath: documentPath,
                 content: text,
@@ -256,19 +271,13 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
                 rules: config.rules ?? {},
                 allowInlineConfig: true,
             },
-            subParsers: aglint!.module.defaultSubParsers,
-            loadRule: async (ruleId: string) => {
-                const imported = await import(path.join(pathAdapter!.dirname(aglint!.path), `rules/${ruleId}.js`));
-                if (imported.default) {
-                    return imported.default;
-                }
-                return imported;
-            },
+            subParsers: aglint.linter.defaultSubParsers,
+            loadRule: aglint.loadRule,
         };
 
         // connection.console.log(`Linting document: ${documentPath} with config: ${JSON.stringify(config, null, 2)}`);
 
-        const linterResult = await aglint!.module.lint(linterRunOptions);
+        const linterResult = await aglint.linter.lint(linterRunOptions);
         const diagnostics = getVscodeDiagnosticsFromLinterResult(linterResult);
 
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
@@ -312,7 +321,7 @@ const parseConfigCommentTolerant = (rule: string): ConfigCommentRule | null => {
  *
  * @returns VSCode range.
  */
-const convertAglintRangeToVsCodeRange = (textDocument: TextDocument, range: AGLint.LinterOffsetRange): Range => {
+const convertAglintRangeToVsCodeRange = (textDocument: TextDocument, range: LinterOffsetRange): Range => {
     const [startOffset, endOffset] = range;
     const start = textDocument.positionAt(startOffset);
     const end = textDocument.positionAt(endOffset);
@@ -327,7 +336,7 @@ const convertAglintRangeToVsCodeRange = (textDocument: TextDocument, range: AGLi
  *
  * @returns VSCode code edit.
  */
-const convertAglintFixToVsCodeCodeEdit = (textDocument: TextDocument, fix: AGLint.LinterFixCommand): TextEdit => {
+const convertAglintFixToVsCodeCodeEdit = (textDocument: TextDocument, fix: LinterFixCommand): TextEdit => {
     return TextEdit.replace(
         convertAglintRangeToVsCodeRange(textDocument, fix.range),
         fix.text,
@@ -478,7 +487,7 @@ connection.onCodeAction((params) => {
 
         if (diagnostic.data?.fix) {
             // eslint-disable-next-line prefer-destructuring
-            const fix = diagnostic.data.fix as AGLint.LinterFixCommand;
+            const fix = diagnostic.data.fix as LinterFixCommand;
             const actionFix = CodeAction.create(`Fix AGLint rule '${code}'`, CodeActionKind.QuickFix);
 
             actionFix.edit = {
@@ -499,7 +508,7 @@ connection.onCodeAction((params) => {
 
         if (diagnostic.data?.suggestions) {
             // eslint-disable-next-line prefer-destructuring
-            const suggestions: AGLint.LinterSuggestion[] = diagnostic.data.suggestions;
+            const suggestions: LinterSuggestion[] = diagnostic.data.suggestions;
 
             for (const suggestion of suggestions) {
                 const actionFix = CodeAction.create(
@@ -514,7 +523,7 @@ connection.onCodeAction((params) => {
                             [
                                 convertAglintFixToVsCodeCodeEdit(
                                     textDocument,
-                                    suggestion.fix as AGLint.LinterFixCommand,
+                                    suggestion.fix as LinterFixCommand,
                                 ),
                             ],
                         ),
@@ -680,17 +689,17 @@ async function pullSettings(initial = false) {
         }
 
         if (workspaceRoot) {
-            pathAdapter = new aglint!.module.NodePathAdapter();
+            pathAdapter = new aglint.cli.NodePathAdapter();
             fsAdapter = new LSPFileSystemAdapter(documents);
 
-            const configResolver = new aglint!.module.ConfigResolver(fsAdapter, pathAdapter, {
-                presetsRoot: pathAdapter.join(pathAdapter.dirname(aglint!.path), '../config-presets'),
+            const configResolver = new aglint.cli.ConfigResolver(fsAdapter, pathAdapter, {
+                presetsRoot: aglint.presetsRoot,
                 baseConfig: {},
             });
 
-            linterTree = new aglint!.module.LinterTree(fsAdapter, pathAdapter, {
-                configFileNames: aglint!.module.CONFIG_FILE_NAMES,
-                ignoreFileName: aglint!.module.IGNORE_FILE_NAME,
+            linterTree = new aglint.cli.LinterTree(fsAdapter, pathAdapter, {
+                configFileNames: aglint.cli.CONFIG_FILE_NAMES,
+                ignoreFileName: aglint.cli.IGNORE_FILE_NAME,
                 root: workspaceRoot,
             }, {
                 resolve: (p) => configResolver.resolve(p),

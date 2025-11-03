@@ -1,84 +1,64 @@
-/* eslint-disable n/no-missing-require */
-/* eslint-disable global-require */
-// module-resolver.ts
-import { createRequire } from 'node:module';
-import { join } from 'node:path';
+/**
+ * @file Utility functions to find module installations.
+ */
 
 import resolveFrom from 'resolve-from';
 import { Files } from 'vscode-languageserver/node';
 
-import {
-    BUN,
-    findGlobalPathForPackageManager,
-    NPM,
-    type PackageManager,
-    PNPM,
-    type TraceFunction,
-    YARN,
-} from './package-managers';
+import { findGlobalPathForPackageManager, type PackageManager, type TraceFunction } from './package-managers';
 
 /**
- * Resolves the path to a module.
+ * Resolve the path to the module. First, we try to find it in the current
+ * working directory, then we try to find it in the global path of the package
+ * managers in the given priority order.
  *
- * @param cwd The current working directory.
- * @param tracer The tracer function.
- * @param pkgName The name of the package to resolve.
- * @param managers The package managers to use.
+ * @param cwd Current working directory.
+ * @param packageName Package name to search for global module installation.
+ * @param packageManager Package manager to search for global module installation.
+ * @param tracer Trace function.
  *
- * @returns The path to the module or undefined if it could not be resolved.
+ * @returns Path to the module or `undefined` if not found.
  */
 export async function resolveModulePath(
     cwd: string,
+    packageName: string,
+    packageManager: PackageManager,
     tracer: TraceFunction,
-    pkgName: string,
-    managers: PackageManager[] = [NPM, YARN, PNPM, BUN],
 ): Promise<string | undefined> {
-    // 1) Try local first (Node’s resolver semantics)
+    // First, try to find the module in the current working directory
     try {
-        const local = resolveFrom(cwd, pkgName);
-        if (local) {
-            return local;
+        const modulePath = resolveFrom(cwd, packageName);
+
+        // If we found it, return the path and abort the search
+        if (modulePath) {
+            return modulePath;
         }
     } catch {
-        // Ignore
+        // Continue searching in the global path
     }
 
-    // 1b) Yarn PnP (if extension runs inside the project context)
-    try {
-        // Will only succeed when the current process is inside a PnP runtime
-        // (otherwise require('pnpapi') throws).
-        // Safe to wrap in try/catch and ignore on failure.
-        // @ts-ignore
-        const pnp = require('pnpapi');
-        const unq = pnp.resolveToUnqualified(pkgName, cwd);
-        if (unq) {
-            return unq;
-        }
-    } catch {
-        // Ignore
-    }
-
-    // 2) Try each manager’s global node_modules
-    for (const pm of managers) {
+    // Find the global path for the actual package manager
     // eslint-disable-next-line no-await-in-loop
-        const globalModules = await findGlobalPathForPackageManager(pm, tracer);
-        if (!globalModules) continue;
+    const globalPath = await findGlobalPathForPackageManager(packageManager, tracer);
 
-        // Try VS Code’s helper (resolves like Node with a custom search path)
-        try {
-            // eslint-disable-next-line no-await-in-loop
-            const resolved = await Files.resolve(pkgName, globalModules, cwd, tracer);
-            if (resolved) return resolved;
-        } catch {
-            // Fallback to Node’s resolver with custom paths
-            try {
-                const req = createRequire(join(globalModules, 'noop.js'));
-                const resolved = req.resolve(pkgName);
-                if (resolved) return resolved;
-            } catch {
-                // Ignore
-            }
+    // If we didn't find the global path, continue with the next package manager,
+    // because the current one seems to be not installed
+    if (!globalPath) {
+        return undefined;
+    }
+
+    // Otherwise, try to find the module in the found global path
+    try {
+        // eslint-disable-next-line no-await-in-loop
+        const modulePath = await Files.resolve(packageName, globalPath, cwd, tracer);
+
+        if (modulePath) {
+            return modulePath;
         }
+    } catch (error: unknown) {
+        // Error tolerance: if the function throws an error, we ignore it,
+        // and continue with the next package manager. In the worst case,
+        // we will return undefined, which means that the module is not installed
     }
 
     return undefined;
