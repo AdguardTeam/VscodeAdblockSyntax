@@ -8,6 +8,7 @@
         "node": ">=16"
     },
     "dependencies": {
+        "debounce": "^3.0.0",
         "fast-glob": "^3.3.3",
         "preferred-pm": "^4.1.1",
         "resolve-from": "^5.0.0",
