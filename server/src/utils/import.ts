@@ -1,7 +1,7 @@
 /**
  * Helper function to import the module dynamically.
  *
- * @param path Path to the AGLint module.
+ * @param path Path to the module.
  *
  * @returns Loaded module.
  *

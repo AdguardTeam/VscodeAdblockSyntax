@@ -14,16 +14,40 @@ import { importModule } from './import';
 import { resolveModulePath } from './module-resolver';
 import { getInstallationCommand, NPM } from './package-managers';
 
+/**
+ * Type of the loaded AGLint module.
+ */
 export type LoadedAglint = {
+    /**
+     * AGLint linter module.
+     */
     linter: typeof AGLintLinterModule;
+
+    /**
+     * AGLint CLI module.
+     */
     cli: typeof AGLintCliModule;
+
+    /**
+     * Root directory of the AGLint presets.
+     */
     presetsRoot: string;
+
+    /**
+     * Function to load a linter rule.
+     *
+     * @param name Name of the rule.
+     *
+     * @returns The loaded rule.
+     *
+     * @throws If the rule cannot be loaded.
+     */
     loadRule: AGLintLinterModule.LinterRunOptions['loadRule'];
 };
 
 /**
  * Minimum version of the external AGLint module that is supported by the VSCode extension.
- * If the version is lower than this, the extension will fallback to the bundled version.
+ * If the version is lower than this, the extension cannot use the external AGLint module.
  */
 const MIN_AGLINT_VERSION = '4.0.0-alpha.4';
 
