@@ -21,6 +21,7 @@ import type {
     LinterRunOptions,
     LinterSuggestion,
 } from '@adguard/aglint/linter';
+import { CommentMarker, type ConfigCommentRule, ConfigCommentRuleParser } from '@adguard/agtree';
 import debounce from 'debounce';
 import {
     CodeAction,
@@ -43,7 +44,6 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { LSPFileSystemAdapter } from './adapters/fs';
-import { CommentMarker, type ConfigCommentRule, ConfigCommentRuleParser } from './agtree';
 import {
     AGLINT_REPO_URL,
     EMPTY,
