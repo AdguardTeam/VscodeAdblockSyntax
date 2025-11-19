@@ -58,6 +58,39 @@ jobs:
 
           pnpm extract-changelog -e $VERSION
 
+      - name: Set up variables
+        uses: actions/github-script@v7
+        with:
+          script: |
+              const tag = context.ref.replace('refs/tags/', '');
+            
+              const refRes = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`,
+              });
+
+              const { object } = refRes.data;
+
+              let tagMessage = '';
+              if (object.type === 'tag') {
+                // Annotated tag
+                const tagObj = await github.rest.git.getTag({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_sha: object.sha,
+                });
+                tagMessage = (tagObj.data.message || '').trim();
+              } else {
+                // Lightweight tag
+                tagMessage = '';
+              }
+
+              const isPreRelease = tagMessage.toLowerCase() === 'prerelease';
+
+              core.exportVariable('TAG_NAME', tag);
+              core.exportVariable('IS_PRERELEASE', isPreRelease.toString());
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -65,7 +98,7 @@ jobs:
             syntaxes/out/adblock.plist
             out/vscode-adblock.vsix
           draft: false
-          prerelease: false
+          prerelease: ${{ env.IS_PRERELEASE }}
           body_path: ./out/TEMP_CHANGES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

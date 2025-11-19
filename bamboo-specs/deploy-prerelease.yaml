@@ -1,0 +1,132 @@
+---
+version: 2
+deployment:
+  name: VSCode Adblock Syntax - Deploy Prerelease
+  source-plan: AJL-VSCODEADBLOCKSYNTAXBUILDPRERELEASE
+release-naming: ${bamboo.inject.version}
+environments:
+  - marketplace.visualstudio.com
+  - open-vsx.org
+
+marketplace.visualstudio.com:
+  docker:
+    image: adguard/node-ssh:22.14--0
+    volumes:
+      ${system.PNPM_DIR}: "${bamboo.cachePnpm}"
+  triggers: []
+  tasks:
+    - checkout:
+        force-clean-build: 'true'
+    - artifact-download:
+        artifacts:
+          - name: vscode-adblock.vsix
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -e
+            set -x
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -laht
+
+            # Set cache directory
+            pnpm config set store-dir ${bamboo.cachePnpm}
+
+            # Install dependencies
+            pnpm install
+
+            # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publish-an-extension
+            # https://github.com/microsoft/vscode-vsce/issues/421#issuecomment-1038911725
+            pnpm vsce publish --no-dependencies -p ${bamboo.vsceTokenPassword} --pre-release -i vscode-adblock.vsix
+  final-tasks:
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -la
+
+            echo "Size before cleanup:" && du -h | tail -n 1
+
+            # cleanup
+            pnpm clean
+
+            echo "Size after cleanup:" && du -h | tail -n 1
+  requirements:
+    - adg-docker: 'true'
+  notifications:
+    - events:
+        - deployment-started-and-finished
+      recipients:
+        - webhook:
+            name: Deploy webhook
+            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
+
+open-vsx.org:
+  docker:
+    image: adguard/node-ssh:22.14--0
+    volumes:
+      ${system.PNPM_DIR}: "${bamboo.cachePnpm}"
+  triggers: []
+  tasks:
+    - checkout:
+        force-clean-build: 'true'
+    - artifact-download:
+        artifacts:
+          - name: vscode-adblock.vsix
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -e
+            set -x
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -laht
+
+            # Set cache directory
+            pnpm config set store-dir ${bamboo.cachePnpm}
+
+            # Install dependencies
+            pnpm install
+
+            # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions#5-package-and-upload
+            pnpm ovsx publish vscode-adblock.vsix -p ${bamboo.openVsxTokenPassword} --pre-release
+  final-tasks:
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -la
+
+            echo "Size before cleanup:" && du -h | tail -n 1
+
+            # Cleanup
+            pnpm clean
+
+            echo "Size after cleanup:" && du -h | tail -n 1
+  requirements:
+    - adg-docker: 'true'
+  notifications:
+    - events:
+        - deployment-started-and-finished
+      recipients:
+        - webhook:
+            name: Deploy webhook
+            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
