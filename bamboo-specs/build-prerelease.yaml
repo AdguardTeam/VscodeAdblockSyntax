@@ -1,0 +1,119 @@
+---
+version: 2
+plan:
+  project-key: AJL
+  key: VSCODEADBLOCKSYNTAXBUILDPRERELEASE
+  name: vscode adblock syntax - build prerelease
+variables:
+  dockerNode: adguard/node-ssh:22.14--0
+
+stages:
+  - Build:
+      manual: false
+      final: false
+      jobs:
+        - Build
+
+Build:
+  key: BUILD
+  other:
+    clean-working-dir: true
+  docker:
+    image: ${bamboo.dockerNode}
+    volumes:
+      ${system.PNPM_DIR}: "${bamboo.cachePnpm}"
+  tasks:
+    - checkout:
+        force-clean-build: true
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -e
+            set -x
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -laht
+
+            # Set cache directory
+            pnpm config set store-dir ${bamboo.cachePnpm}
+
+            # Install dependencies
+            pnpm install
+
+            # Check TypeScript types
+            pnpm test:compile
+
+            # Run markdownlint
+            pnpm lint:md
+
+            # Run ESLint
+            pnpm lint:ts
+
+            # Run Jest tests
+            pnpm test
+
+            # Create production build
+            pnpm build:prod
+
+            # Create build.txt file with version
+            pnpm build:txt
+    - inject-variables:
+        file: out/build.txt
+        scope: RESULT
+        namespace: inject
+    - any-task:
+        plugin-key: com.atlassian.bamboo.plugins.vcs:task.vcs.tagging
+        configuration:
+          selectedRepository: defaultRepository
+          tagName: v${bamboo.inject.version}
+          # annotated tag
+          description: prerelease
+  final-tasks:
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -la
+
+            echo "Size before cleanup:" && du -h | tail -n 1
+
+            # Cleanup
+            pnpm clean
+
+            echo "Size after cleanup:" && du -h | tail -n 1
+  # Store the .vsix file as a build artifact
+  artifacts:
+    - name: vscode-adblock.vsix
+      location: out
+      pattern: vscode-adblock.vsix
+      shared: true
+      required: true
+  requirements:
+    - adg-docker: true
+
+triggers: []
+
+branches:
+  create: manually
+  delete: never
+  link-to-jira: true
+
+notifications:
+  - events:
+      - plan-status-changed
+    recipients:
+      - webhook:
+          name: Build webhook
+          url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
+labels: []
+other:
+  concurrent-build-plugin: system-default
