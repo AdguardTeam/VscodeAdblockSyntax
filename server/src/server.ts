@@ -18,7 +18,6 @@ import type {
     LinterPositionRange,
     LinterResult,
     LinterRunOptions,
-    LinterSuggestion,
 } from '@adguard/aglint/linter';
 import { CommentMarker, type ConfigCommentRule, ConfigCommentRuleParser } from '@adguard/agtree';
 import debounce from 'debounce';
@@ -538,34 +537,10 @@ connection.onCodeAction((params) => {
 
         if (diagnostic.data?.fix) {
             // eslint-disable-next-line prefer-destructuring
-            const fix = diagnostic.data.fix as LinterFixCommand;
-            const actionFix = CodeAction.create(`Fix AGLint rule '${code}'`, CodeActionKind.QuickFix);
+            const fix = diagnostic.data.fix;
 
-            actionFix.edit = {
-                documentChanges: [
-                    TextDocumentEdit.create(
-                        { uri: textDocument.uri, version: textDocument.version },
-                        [
-                            convertAglintFixToVsCodeCodeEdit(
-                                textDocument,
-                                fix,
-                            ),
-                        ],
-                    ),
-                ],
-            };
-            actions.push(actionFix);
-        }
-
-        if (diagnostic.data?.suggestions) {
-            // eslint-disable-next-line prefer-destructuring
-            const suggestions: LinterSuggestion[] = diagnostic.data.suggestions;
-
-            for (const suggestion of suggestions) {
-                const actionFix = CodeAction.create(
-                    `Apply suggestion '${suggestion.message}' from AGLint rule '${code}'`,
-                    CodeActionKind.QuickFix,
-                );
+            if (aglint?.linter.isLinterFixCommand(fix)) {
+                const actionFix = CodeAction.create(`Fix AGLint rule '${code}'`, CodeActionKind.QuickFix);
 
                 actionFix.edit = {
                     documentChanges: [
@@ -574,13 +549,42 @@ connection.onCodeAction((params) => {
                             [
                                 convertAglintFixToVsCodeCodeEdit(
                                     textDocument,
-                                    suggestion.fix as LinterFixCommand,
+                                    fix,
                                 ),
                             ],
                         ),
                     ],
                 };
                 actions.push(actionFix);
+            }
+        }
+
+        if (diagnostic.data?.suggestions) {
+            // eslint-disable-next-line prefer-destructuring
+            const suggestions = diagnostic.data.suggestions;
+
+            if (aglint?.linter.isLinterSuggestions(suggestions)) {
+                for (const suggestion of suggestions) {
+                    const actionFix = CodeAction.create(
+                        `Apply suggestion '${suggestion.message}' from AGLint rule '${code}'`,
+                        CodeActionKind.QuickFix,
+                    );
+
+                    actionFix.edit = {
+                        documentChanges: [
+                            TextDocumentEdit.create(
+                                { uri: textDocument.uri, version: textDocument.version },
+                                [
+                                    convertAglintFixToVsCodeCodeEdit(
+                                        textDocument,
+                                        suggestion.fix,
+                                    ),
+                                ],
+                            ),
+                        ],
+                    };
+                    actions.push(actionFix);
+                }
             }
         }
 

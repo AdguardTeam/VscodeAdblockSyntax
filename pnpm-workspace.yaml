@@ -4,4 +4,4 @@ packages:
   - test/static/aglint
 
 catalog:
-  '@adguard/aglint': ^4.0.0-alpha.6
+  '@adguard/aglint': ^4.0.0-alpha.7

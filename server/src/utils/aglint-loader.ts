@@ -119,7 +119,7 @@ export class LoadedAglint {
  * Minimum version of the external AGLint module that is supported by the VSCode extension.
  * If the version is lower than this, the extension cannot use the external AGLint module.
  */
-const MIN_AGLINT_VERSION = '4.0.0-alpha.4';
+const MIN_AGLINT_VERSION = '4.0.0-alpha.7';
 
 /**
  * Load the installed AGLint module.
