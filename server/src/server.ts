@@ -536,8 +536,7 @@ connection.onCodeAction((params) => {
         }
 
         if (diagnostic.data?.fix) {
-            // eslint-disable-next-line prefer-destructuring
-            const fix = diagnostic.data.fix;
+            const { fix } = diagnostic.data;
 
             if (aglint?.linter.isLinterFixCommand(fix)) {
                 const actionFix = CodeAction.create(`Fix AGLint rule '${code}'`, CodeActionKind.QuickFix);
@@ -560,8 +559,7 @@ connection.onCodeAction((params) => {
         }
 
         if (diagnostic.data?.suggestions) {
-            // eslint-disable-next-line prefer-destructuring
-            const suggestions = diagnostic.data.suggestions;
+            const { suggestions } = diagnostic.data;
 
             if (aglint?.linter.isLinterSuggestions(suggestions)) {
                 for (const suggestion of suggestions) {
