@@ -9,4 +9,6 @@
 ---
 !include 'build-prerelease.yaml'
 ---
+!include 'deploy-prerelease.yaml'
+---
 !include 'permissions.yaml'
