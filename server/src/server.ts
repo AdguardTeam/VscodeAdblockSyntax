@@ -44,12 +44,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { LSPFileSystemAdapter } from './adapters/fs';
-import {
-    AGLINT_REPO_URL,
-    EMPTY,
-    LF,
-    SPACE,
-} from './common/constants';
+import { EMPTY, LF, SPACE } from './common/constants';
 import { defaultSettings, type ExtensionSettings } from './settings';
 import { loadAglintModule, type LoadedAglint } from './utils/aglint-loader';
 import { getErrorMessage, getErrorStack } from './utils/error';
@@ -212,17 +207,6 @@ const getVscodeCodeRangeFromAglintPositionRange = (range: LinterPositionRange): 
 };
 
 /**
- * Get the documentation URL for the given AGLint rule.
- *
- * @param ruleId Rule ID.
- *
- * @returns Documentation URL.
- */
-const getAglintRuleDocumentationUrl = (ruleId: string): string => {
-    return `${AGLINT_REPO_URL}/blob/master/docs/rules/${ruleId}.md`;
-};
-
-/**
  * Convert AGLint result to VSCode diagnostics.
  *
  * @param linterResult Linter result.
@@ -252,7 +236,7 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagn
         if (problem.ruleId) {
             diagnostic.code = problem.ruleId;
             diagnostic.codeDescription = {
-                href: getAglintRuleDocumentationUrl(problem.ruleId),
+                href: aglint.linter.getAglintRuleDocumentationUrl(problem.ruleId),
             };
         }
 
