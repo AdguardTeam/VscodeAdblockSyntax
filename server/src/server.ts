@@ -266,7 +266,13 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagn
  * @param textDocument Document to lint.
  */
 async function lintFile(textDocument: TextDocument): Promise<void> {
-    if (!isFileUri(textDocument.uri) || !workspaceRoot || !settings.enableAglint || !aglint) {
+    if (
+        !isFileUri(textDocument.uri)
+        || !workspaceRoot
+        || !settings.enableAglint
+        || !aglint
+        || await linterTree?.isIgnored(fileURLToPath(textDocument.uri))
+    ) {
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
         return;
     }
