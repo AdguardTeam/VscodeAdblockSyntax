@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 /**
  * @file AGLint Language Server for VSCode (Node.js).
  *
@@ -50,14 +49,25 @@ import { loadAglintModule, type LoadedAglint } from './utils/aglint-loader';
 import { getErrorMessage, getErrorStack } from './utils/error';
 import { isFileUri } from './utils/uri';
 
-// Create a connection for the server, using Node's IPC as a transport.
-// Also include all preview / proposed LSP features.
+/**
+ * Create a connection for the server, using Node's IPC as a transport.
+ * Also include all preview / proposed LSP features.
+ */
 const connection = createConnection(ProposedFeatures.all);
 
-// Create a simple text document manager.
+/**
+ * Create a simple text document manager.
+ */
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
+/**
+ * Whether the client supports the `workspace/configuration` request.
+ */
 let hasConfigurationCapability = false;
+
+/**
+ * Whether the client supports the `workspace/workspaceFolders` request.
+ */
 let hasWorkspaceFolderCapability = false;
 
 /**
