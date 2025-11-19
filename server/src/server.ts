@@ -49,6 +49,8 @@ import { loadAglintModule, type LoadedAglint } from './utils/aglint-loader';
 import { getErrorMessage, getErrorStack } from './utils/error';
 import { isFileUri } from './utils/uri';
 
+const LINT_FILE_DEBOUNCE_DELAY = 100;
+
 /**
  * Create a connection for the server, using Node's IPC as a transport.
  * Also include all preview / proposed LSP features.
@@ -269,9 +271,7 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagn
 };
 
 /**
- * Lint the document and send the diagnostics to VSCode. It handles the
- * ignore & config files, since it uses the cached scan result, which
- * is based on the AGLint CLI logic.
+ * Lint the document and send the diagnostics to VSCode.
  *
  * @param textDocument Document to lint.
  */
@@ -281,7 +281,8 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         || !workspaceRoot
         || !settings.enableAglint
         || !aglint
-        || await linterTree?.isIgnored(fileURLToPath(textDocument.uri))
+        || !linterTree
+        || await linterTree.isIgnored(fileURLToPath(textDocument.uri))
     ) {
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
         return;
@@ -334,6 +335,14 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         await connection.sendNotification('aglint/status', { error });
     }
 }
+
+/**
+ * Lint the document and send the diagnostics to VSCode.
+ * Debounced version of {@link lintFile}.
+ *
+ * @param textDocument Document to lint.
+ */
+const lintFileDebounced = debounce(lintFile, LINT_FILE_DEBOUNCE_DELAY);
 
 /**
  * Parse AGLint config comment rule in a tolerant way (did not throw on parsing error).
@@ -776,7 +785,7 @@ connection.onDidChangeWatchedFiles(async () => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
-    debounce(lintFile, 100)(change.document);
+    lintFileDebounced(change.document);
 });
 
 connection.onInitialized(async () => {
