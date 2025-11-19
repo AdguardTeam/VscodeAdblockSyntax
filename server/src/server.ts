@@ -49,6 +49,10 @@ import { loadAglintModule, type LoadedAglint } from './utils/aglint-loader';
 import { getErrorMessage, getErrorStack } from './utils/error';
 import { isFileUri } from './utils/uri';
 
+/**
+ * Debounce delay for linting files.
+ * It is used to avoid too frequent linting when the user modifies the file.
+ */
 const LINT_FILE_DEBOUNCE_DELAY = 100;
 
 /**
