@@ -18,6 +18,7 @@ marketplace.visualstudio.com:
     - checkout:
         force-clean-build: 'true'
     - artifact-download:
+        source-plan: AJL-VSCODEADBLOCKSYNTAXBUILDPRERELEASE
         artifacts:
           - name: vscode-adblock.vsix
     - script:
@@ -80,6 +81,7 @@ open-vsx.org:
     - checkout:
         force-clean-build: 'true'
     - artifact-download:
+        source-plan: AJL-VSCODEADBLOCKSYNTAXBUILDPRERELEASE
         artifacts:
           - name: vscode-adblock.vsix
     - script:
