@@ -741,24 +741,22 @@ async function pullSettings(initial = false) {
             return;
         }
 
-        if (workspaceRoot) {
-            pathAdapter = new aglint.cli.NodePathAdapter();
-            fsAdapter = new LSPFileSystemAdapter(documents);
+        pathAdapter = new aglint.cli.NodePathAdapter();
+        fsAdapter = new LSPFileSystemAdapter(documents);
 
-            const configResolver = new aglint.cli.ConfigResolver(fsAdapter, pathAdapter, {
-                presetsRoot: aglint.presetsRoot,
-                baseConfig: {},
-            });
+        const configResolver = new aglint.cli.ConfigResolver(fsAdapter, pathAdapter, {
+            presetsRoot: aglint.presetsRoot,
+            baseConfig: {},
+        });
 
-            linterTree = new aglint.cli.LinterTree(fsAdapter, pathAdapter, {
-                configFileNames: aglint.cli.CONFIG_FILE_NAMES,
-                ignoreFileName: aglint.cli.IGNORE_FILE_NAME,
-                root: workspaceRoot,
-            }, {
-                resolve: (p) => configResolver.resolve(p),
-                isRoot: (p) => configResolver.isRoot(p),
-            });
-        }
+        linterTree = new aglint.cli.LinterTree(fsAdapter, pathAdapter, {
+            configFileNames: aglint.cli.CONFIG_FILE_NAMES,
+            ignoreFileName: aglint.cli.IGNORE_FILE_NAME,
+            root: workspaceRoot,
+        }, {
+            resolve: (p) => configResolver.resolve(p),
+            isRoot: (p) => configResolver.isRoot(p),
+        });
     }
 
     // If AGLint is disabled, remove status bar problems
