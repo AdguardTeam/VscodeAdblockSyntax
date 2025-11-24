@@ -103,6 +103,8 @@ This extension provides the following configuration options:
 | Option | Description | Default value | Possible values |
 | ------ | ----------- | ------------- | --------------- |
 | `adblock.enableAglint` | Enable or disable AGLint integration. If disabled, only syntax highlighting and other language features will be available. | `true` | `true`, `false` |
+| `adblock.enableAglintDebug` | Enable or disable AGLint debug logging. | `false` | `true`, `false` |
+| `adblock.enableAglintCache` | Enable or disable caching of linting results for better performance. | `true` | `true`, `false` |
 <!--markdownlint-enable MD013-->
 
 ### GitHub Linguist support

@@ -65,6 +65,18 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Enable or disable AGLint integration. If disabled, only syntax highlighting and other language features will be available."
+                },
+                "adblock.enableAglintDebug": {
+                    "scope": "resource",
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable or disable AGLint debug logging."
+                },
+                "adblock.enableAglintCache": {
+                    "scope": "resource",
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable or disable caching of linting results for better performance."
                 }
             }
         }
@@ -139,7 +151,6 @@
         "yaml": "^2.2.2"
     },
     "pnpm": {
-        "neverBuiltDependencies": [],
-        "overrides": {}
+        "neverBuiltDependencies": []
     }
 }

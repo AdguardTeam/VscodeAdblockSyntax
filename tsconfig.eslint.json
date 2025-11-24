@@ -7,6 +7,7 @@
       "server/**/*.ts",
       "test/**/*.ts",
       "tools/**/*.ts",
-      "tools/**/*.mjs"
+      "tools/**/*.mjs",
+      "server/.eslintrc.cjs",
     ]
 }

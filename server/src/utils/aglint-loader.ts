@@ -15,6 +15,12 @@ import { resolveModulePath } from './module-resolver';
 import { getInstallationCommand, NPM, type PackageManager } from './package-managers';
 
 /**
+ * Minimum version of the external AGLint module that is supported by the VSCode extension.
+ * If the version is lower than this, the extension cannot use the external AGLint module.
+ */
+const MIN_AGLINT_VERSION = '4.0.0-alpha.8';
+
+/**
  * Loaded AGLint module with instance-level rule cache.
  */
 export class LoadedAglint {
@@ -32,6 +38,11 @@ export class LoadedAglint {
      * Root directory of the AGLint presets.
      */
     public presetsRoot: string;
+
+    /**
+     * Version of the loaded AGLint module.
+     */
+    public version: string;
 
     /**
      * Cache of loaded linter rules for this instance.
@@ -59,6 +70,7 @@ export class LoadedAglint {
      * @param linter AGLint linter module.
      * @param cli AGLint CLI module.
      * @param presetsRoot Root directory of the AGLint presets.
+     * @param version Version of the loaded AGLint module.
      * @param connection Language server connection.
      * @param dir Workspace directory.
      * @param packageManager Preferred package manager name.
@@ -67,6 +79,7 @@ export class LoadedAglint {
         linter: typeof AGLintLinterModule,
         cli: typeof AGLintCliModule,
         presetsRoot: string,
+        version: string,
         connection: Connection,
         dir: string,
         packageManager: PackageManager,
@@ -74,6 +87,7 @@ export class LoadedAglint {
         this.linter = linter;
         this.cli = cli;
         this.presetsRoot = presetsRoot;
+        this.version = version;
         this.connection = connection;
         this.dir = dir;
         this.packageManager = packageManager;
@@ -114,12 +128,6 @@ export class LoadedAglint {
         return rule;
     };
 }
-
-/**
- * Minimum version of the external AGLint module that is supported by the VSCode extension.
- * If the version is lower than this, the extension cannot use the external AGLint module.
- */
-const MIN_AGLINT_VERSION = '4.0.0-alpha.7';
 
 /**
  * Load the installed AGLint module.
@@ -233,6 +241,7 @@ export async function loadAglintModule(
             linter,
             cli,
             presetsRoot,
+            aglint.version,
             connection,
             dir,
             preferredPackageManager.name as PackageManager,

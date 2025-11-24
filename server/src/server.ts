@@ -6,12 +6,7 @@
 
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import type {
-    FileSystemAdapter,
-    LinterConfigFile,
-    LinterTree,
-    PathAdapter,
-} from '@adguard/aglint/cli';
+import type { LinterConfigFile } from '@adguard/aglint/cli';
 import type {
     LinterFixCommand,
     LinterOffsetRange,
@@ -30,6 +25,7 @@ import {
     DidChangeConfigurationNotification,
     type InitializeParams,
     type InitializeResult,
+    LRUCache,
     Position,
     ProposedFeatures,
     Range,
@@ -41,10 +37,9 @@ import {
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { LSPFileSystemAdapter } from './adapters/fs';
 import { EMPTY, LF, SPACE } from './common/constants';
+import { AglintContext } from './context/aglint-context';
 import { defaultSettings, type ExtensionSettings } from './settings';
-import { loadAglintModule, type LoadedAglint } from './utils/aglint-loader';
 import { getErrorMessage, getErrorStack } from './utils/error';
 import { isFileUri } from './utils/uri';
 
@@ -86,30 +81,33 @@ let workspaceRoot: string | undefined;
 let settings: ExtensionSettings = defaultSettings;
 
 /**
- * Loaded AGLint module, if any.
+ * AGLint context instance, if initialized.
  */
-let aglint: LoadedAglint | undefined;
+let aglintContext: AglintContext | undefined;
 
 /**
- * File system adapter, if any.
+ * Cache for linting results, keyed by cache key.
+ * Uses LRU eviction strategy with size limit (no TTL).
  */
-let fsAdapter: FileSystemAdapter | undefined;
+const lintCache = new LRUCache<string, Diagnostic[]>(100);
 
 /**
- * Path adapter, if any.
+ * Create a cache key for linting results.
+ *
+ * @param uri Document URI.
+ * @param aglintVersion AGLint version.
+ * @param documentVersion Document version (incremented on each change).
+ * @param configHash Hash of the linter config.
+ *
+ * @returns Cache key.
  */
-let pathAdapter: PathAdapter | undefined;
-
-/**
- * Linter tree, if any.
- */
-let linterTree: LinterTree | undefined;
-
-/**
- * AGLint commands supported by the language server.
- */
-enum AglintCommand {
-    DisableNextLine = 'aglint-disable-next-line',
+function createLintCacheKey(
+    uri: string,
+    aglintVersion: string,
+    documentVersion: number,
+    configHash: string,
+): string {
+    return `${uri}:${aglintVersion}:${documentVersion}:${configHash}`;
 }
 
 /**
@@ -197,11 +195,11 @@ connection.onInitialize(async (params: InitializeParams) => {
  */
 async function getLinterConfig(textDocument: TextDocument): Promise<LinterConfigFile | undefined> {
     // e.g. new unsaved documents
-    if (!isFileUri(textDocument.uri) || !workspaceRoot) {
+    if (!isFileUri(textDocument.uri) || !workspaceRoot || !aglintContext) {
         return undefined;
     }
 
-    const config = await linterTree?.getResolvedConfig(fileURLToPath(textDocument.uri));
+    const config = await aglintContext.linterTree.getResolvedConfig(fileURLToPath(textDocument.uri));
 
     return config;
 }
@@ -222,6 +220,22 @@ const getVscodeCodeRangeFromAglintPositionRange = (range: LinterPositionRange): 
 };
 
 /**
+ * Get the rule documentation URL from the linter result.
+ *
+ * @param ruleId Rule ID.
+ * @param linterResult Linter result.
+ *
+ * @returns Rule documentation URL or undefined if the rule documentation URL is not found.
+ */
+const getRuleDocumentationUrlFromLinterResult = (ruleId: string, linterResult: LinterResult): string | undefined => {
+    if (!linterResult.metadata) {
+        return undefined;
+    }
+
+    return linterResult.metadata[ruleId]?.docs?.url;
+};
+
+/**
  * Convert AGLint result to VSCode diagnostics.
  *
  * @param linterResult Linter result.
@@ -231,12 +245,12 @@ const getVscodeCodeRangeFromAglintPositionRange = (range: LinterPositionRange): 
 const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagnostic[] => {
     const diagnostics: Diagnostic[] = [];
 
-    if (!aglint) {
+    if (!aglintContext) {
         return diagnostics;
     }
 
     for (const problem of linterResult.problems) {
-        const severity = problem.severity === aglint.linter.LinterRuleSeverity.Warning
+        const severity = problem.severity === aglintContext.aglint.linter.LinterRuleSeverity.Warning
             ? DiagnosticSeverity.Warning
             : DiagnosticSeverity.Error;
 
@@ -250,9 +264,12 @@ const getVscodeDiagnosticsFromLinterResult = (linterResult: LinterResult): Diagn
         // Add permalink to the rule documentation
         if (problem.ruleId) {
             diagnostic.code = problem.ruleId;
-            diagnostic.codeDescription = {
-                href: aglint.linter.getAglintRuleDocumentationUrl(problem.ruleId),
-            };
+            const href = getRuleDocumentationUrlFromLinterResult(problem.ruleId, linterResult);
+            if (href) {
+                diagnostic.codeDescription = {
+                    href,
+                };
+            }
         }
 
         if (problem.fix || problem.suggestions) {
@@ -283,13 +300,15 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         !isFileUri(textDocument.uri)
         || !workspaceRoot
         || !settings.enableAglint
-        || !aglint
-        || !linterTree
-        || await linterTree.isIgnored(fileURLToPath(textDocument.uri))
+        || !aglintContext
+        || await aglintContext.linterTree.isIgnored(fileURLToPath(textDocument.uri))
     ) {
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
         return;
     }
+
+    const documentPath = fileURLToPath(textDocument.uri);
+    const startTime = Date.now();
 
     try {
         const config = await getLinterConfig(textDocument);
@@ -299,8 +318,38 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
             return;
         }
 
-        const documentPath = fileURLToPath(textDocument.uri);
         const text = textDocument.getText();
+
+        // Normalize config for linting (this is what will actually be used)
+        const normalizedConfig = {
+            syntax: config.syntax,
+            rules: config.rules ?? {},
+            allowInlineConfig: true,
+        };
+
+        // Create cache key using document version and config hash
+        const configHash = aglintContext.aglint.cli.getLinterConfigHash(normalizedConfig);
+        const cacheKey = createLintCacheKey(
+            textDocument.uri,
+            aglintContext.aglint.version,
+            textDocument.version,
+            configHash,
+        );
+
+        // Check cache first if caching is enabled
+        if (settings.enableAglintCache) {
+            const cachedDiagnostics = lintCache.get(cacheKey);
+            if (cachedDiagnostics) {
+                const duration = Date.now() - startTime;
+                connection.console.info(
+                    `Linting completed for: ${documentPath} (from cache, ${duration}ms)`,
+                );
+                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: cachedDiagnostics });
+                return;
+            }
+        }
+
+        connection.console.info(`Linting started for: ${documentPath}`);
 
         const linterRunOptions: LinterRunOptions = {
             fileProps: {
@@ -308,19 +357,26 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
                 content: text,
                 cwd: workspaceRoot,
             },
-            config: {
-                syntax: config.syntax,
-                rules: config.rules ?? {},
-                allowInlineConfig: true,
-            },
-            subParsers: aglint.linter.defaultSubParsers,
-            loadRule: aglint.loadRule,
+            config: normalizedConfig,
+            subParsers: aglintContext.aglint.linter.defaultSubParsers,
+            loadRule: aglintContext.aglint.loadRule,
+            // Need to include metadata to get the rule documentation
+            includeMetadata: true,
+            debug: aglintContext.debuggerInstance.module('linter-core'),
         };
 
         // connection.console.log(`Linting document: ${documentPath} with config: ${JSON.stringify(config, null, 2)}`);
 
-        const linterResult = await aglint.linter.lint(linterRunOptions);
+        const linterResult = await aglintContext.aglint.linter.lint(linterRunOptions);
         const diagnostics = getVscodeDiagnosticsFromLinterResult(linterResult);
+
+        // Store result in cache if caching is enabled
+        if (settings.enableAglintCache) {
+            lintCache.set(cacheKey, diagnostics);
+        }
+
+        const duration = Date.now() - startTime;
+        connection.console.info(`Linting completed for: ${documentPath} (${duration}ms)`);
 
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     } catch (error: unknown) {
@@ -406,7 +462,7 @@ connection.onCodeAction((params) => {
     const aglintDisableNextLinePrefix = [
         CommentMarker.Regular,
         SPACE,
-        AglintCommand.DisableNextLine,
+        aglintContext?.aglint.linter.LinterConfigCommentType.DisableNextLine,
     ].join(EMPTY);
 
     for (const diagnostic of diagnostics) {
@@ -478,7 +534,8 @@ connection.onCodeAction((params) => {
 
                 if (
                     commentNode
-                    && commentNode.command.value === AglintCommand.DisableNextLine
+                    // eslint-disable-next-line max-len
+                    && commentNode.command.value === aglintContext?.aglint.linter.LinterConfigCommentType.DisableNextLine
                     && commentNode.params
                 ) {
                     delete commentNode.params;
@@ -538,7 +595,7 @@ connection.onCodeAction((params) => {
         if (diagnostic.data?.fix) {
             const { fix } = diagnostic.data;
 
-            if (aglint?.linter.isLinterFixCommand(fix)) {
+            if (aglintContext?.aglint.linter.isLinterFixCommand(fix)) {
                 const actionFix = CodeAction.create(`Fix AGLint rule '${code}'`, CodeActionKind.QuickFix);
 
                 actionFix.edit = {
@@ -561,7 +618,7 @@ connection.onCodeAction((params) => {
         if (diagnostic.data?.suggestions) {
             const { suggestions } = diagnostic.data;
 
-            if (aglint?.linter.isLinterSuggestions(suggestions)) {
+            if (aglintContext?.aglint.linter.isLinterSuggestions(suggestions)) {
                 for (const suggestion of suggestions) {
                     const actionFix = CodeAction.create(
                         `Apply suggestion '${suggestion.message}' from AGLint rule '${code}'`,
@@ -626,7 +683,8 @@ connection.onCodeAction((params) => {
 
             if (
                 commentNode
-                && commentNode.command.value === AglintCommand.DisableNextLine
+                // eslint-disable-next-line max-len
+                && commentNode.command.value === aglintContext?.aglint.linter.LinterConfigCommentType.DisableNextLine
                 && commentNode.params
                 && commentNode.params.type === 'ParameterList'
             ) {
@@ -690,6 +748,8 @@ async function refreshLinter() {
     }
 
     // Revalidate any open text documents
+    // Note: No need to clear cache here - cache keys include AGLint version,
+    // so version changes are handled automatically
     documents.all().forEach(lintFile);
 }
 
@@ -701,10 +761,12 @@ async function refreshLinter() {
  * changed and must be reread".
  *
  * @see https://github.com/microsoft/vscode-languageserver-node/issues/380#issuecomment-414691493
- *
- * @param initial If true, it means that this is the first time we pull the settings.
  */
-async function pullSettings(initial = false) {
+async function pullSettings() {
+    const previousEnableAglint = settings.enableAglint;
+    const previousEnableDebug = settings.enableAglintDebug;
+    const previousEnableCache = settings.enableAglintCache;
+
     if (hasConfigurationCapability) {
         const scopeUri = workspaceRoot ? pathToFileURL(workspaceRoot).toString() : undefined;
         const receivedSettings = await connection.workspace.getConfiguration({ scopeUri, section: 'adblock' });
@@ -717,72 +779,83 @@ async function pullSettings(initial = false) {
         settings = defaultSettings;
     }
 
-    // If initial is true, it means that this is the first time we pull the settings
-    // In this case, we should load the AGLint module
-    // If module related settings changed, we also need to reload the AGLint module
-    if (initial) {
-        // Workspace root should be defined at this point
-        if (!workspaceRoot) {
-            connection.console.error('Workspace root is not defined');
-            removeAllDiagnostics();
-            return;
-        }
-
-        aglint = await loadAglintModule(
-            connection,
-            workspaceRoot,
-        );
-
-        connection.console.info('AGLint module loaded');
-
-        if (!aglint) {
-            connection.console.error('AGLint module could not be loaded');
-            removeAllDiagnostics();
-            return;
-        }
-
-        pathAdapter = new aglint.cli.NodePathAdapter();
-        fsAdapter = new LSPFileSystemAdapter(documents);
-
-        const configResolver = new aglint.cli.ConfigResolver(fsAdapter, pathAdapter, {
-            presetsRoot: aglint.presetsRoot,
-            baseConfig: {},
-        });
-
-        linterTree = new aglint.cli.LinterTree(fsAdapter, pathAdapter, {
-            configFileNames: aglint.cli.CONFIG_FILE_NAMES,
-            ignoreFileName: aglint.cli.IGNORE_FILE_NAME,
-            root: workspaceRoot,
-        }, {
-            resolve: (p) => configResolver.resolve(p),
-            isRoot: (p) => configResolver.isRoot(p),
-        });
+    // If nothing changed and AGLint is already initialized, skip heavy work
+    if (
+        aglintContext
+        && previousEnableAglint === settings.enableAglint
+        && previousEnableDebug === settings.enableAglintDebug
+        && previousEnableCache === settings.enableAglintCache
+    ) {
+        return;
     }
 
-    // If AGLint is disabled, remove status bar problems
+    // Clear cache if caching was disabled
+    if (previousEnableCache && !settings.enableAglintCache) {
+        lintCache.clear();
+        connection.console.info('AGLint cache cleared (caching disabled)');
+    }
+
+    // Send status notification about AGLint being enabled/disabled
     connection.sendNotification('aglint/status', { aglintEnabled: settings.enableAglint });
 
+    // If AGLint is disabled, clean up and return early
     if (!settings.enableAglint) {
         removeAllDiagnostics();
         connection.console.info('AGLint is disabled');
         return;
     }
 
+    connection.console.info('AGLint is enabled');
+
+    // Initialize AGLint context if not already initialized
+    if (!aglintContext) {
+        if (!workspaceRoot) {
+            connection.console.error('Workspace root is not defined');
+            removeAllDiagnostics();
+            return;
+        }
+
+        aglintContext = await AglintContext.create(connection, documents, workspaceRoot, settings.enableAglintDebug);
+
+        if (!aglintContext) {
+            removeAllDiagnostics();
+            return;
+        }
+    } else if (previousEnableDebug !== settings.enableAglintDebug) {
+        // Handle debug setting change
+        connection.console.info(`AGLint debug mode changed: ${settings.enableAglintDebug}`);
+
+        if (settings.enableAglintDebug) {
+            aglintContext.debuggerInstance.enable();
+        } else {
+            aglintContext.debuggerInstance.disable();
+        }
+    }
+
     await refreshLinter();
 }
 
 connection.onDidChangeConfiguration(async () => {
-    connection.console.info('Configuration changed');
-
-    // Pull the settings from VSCode
     await pullSettings();
 });
 
 // Called when any of monitored file paths change
-connection.onDidChangeWatchedFiles(async () => {
+connection.onDidChangeWatchedFiles(async (events) => {
+    const { changes } = events;
+
+    for (const change of changes) {
+        const filePath = fileURLToPath(change.uri);
+        connection.console.info(`Configuration file changed: ${filePath}`);
+
+        // eslint-disable-next-line no-await-in-loop
+        await aglintContext?.linterTree.changed(filePath);
+    }
+
     // Reset current file diagnostics
     removeAllDiagnostics();
 
+    // Note: No need to clear cache here - cache keys include config hash,
+    // so config changes are handled automatically
     await refreshLinter();
 });
 
@@ -807,8 +880,8 @@ connection.onInitialized(async () => {
     if (!workspaceRoot) {
         connection.console.error('Could not determine the workspace root of the VSCode instance');
     } else {
-        // Pull the settings from VSCode (in initial mode)
-        await pullSettings(true);
+        // Pull the settings from VSCode
+        await pullSettings();
 
         connection.console.info(`AGLint Language Server initialized in workspace: ${workspaceRoot}`);
     }
