@@ -806,7 +806,7 @@ async function pullSettings() {
         return;
     }
 
-    connection.console.info('AGLint is enabled');
+    connection.console.info('AGLint integration is enabled');
 
     // Initialize AGLint context if not already initialized
     if (!aglintContext) {
