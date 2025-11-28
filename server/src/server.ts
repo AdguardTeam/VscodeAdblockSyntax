@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import type { LinterConfigFile } from '@adguard/aglint/cli';
 import type {
+    LinterConfig,
     LinterFixCommand,
     LinterOffsetRange,
     LinterPositionRange,
@@ -321,8 +322,8 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         const text = textDocument.getText();
 
         // Normalize config for linting (this is what will actually be used)
-        const normalizedConfig = {
-            syntax: config.syntax,
+        const normalizedConfig: LinterConfig = {
+            platforms: config.platforms,
             rules: config.rules ?? {},
             allowInlineConfig: true,
         };
