@@ -18,7 +18,7 @@ import { getInstallationCommand, NPM, type PackageManager } from './package-mana
  * Minimum version of the external AGLint module that is supported by the VSCode extension.
  * If the version is lower than this, the extension cannot use the external AGLint module.
  */
-const MIN_AGLINT_VERSION = '4.0.0-alpha.8';
+const MIN_AGLINT_VERSION = '4.0.0-beta.1';
 
 /**
  * Loaded AGLint module with instance-level rule cache.
