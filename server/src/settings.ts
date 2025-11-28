@@ -18,7 +18,7 @@ export interface ExtensionSettings {
 
     enableAglintDebug: boolean;
 
-    enableAglintCache: boolean;
+    enableInMemoryAglintCache: boolean;
 }
 
 /**
@@ -27,5 +27,5 @@ export interface ExtensionSettings {
 export const defaultSettings: ExtensionSettings = {
     enableAglint: true,
     enableAglintDebug: false,
-    enableAglintCache: true,
+    enableInMemoryAglintCache: false,
 };

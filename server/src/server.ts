@@ -338,7 +338,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         );
 
         // Check cache first if caching is enabled
-        if (settings.enableAglintCache) {
+        if (settings.enableInMemoryAglintCache) {
             const cachedDiagnostics = lintCache.get(cacheKey);
             if (cachedDiagnostics) {
                 const duration = Date.now() - startTime;
@@ -372,7 +372,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         const diagnostics = getVscodeDiagnosticsFromLinterResult(linterResult);
 
         // Store result in cache if caching is enabled
-        if (settings.enableAglintCache) {
+        if (settings.enableInMemoryAglintCache) {
             lintCache.set(cacheKey, diagnostics);
         }
 
@@ -766,7 +766,7 @@ async function refreshLinter() {
 async function pullSettings() {
     const previousEnableAglint = settings.enableAglint;
     const previousEnableDebug = settings.enableAglintDebug;
-    const previousEnableCache = settings.enableAglintCache;
+    const previousEnableCache = settings.enableInMemoryAglintCache;
 
     if (hasConfigurationCapability) {
         const scopeUri = workspaceRoot ? pathToFileURL(workspaceRoot).toString() : undefined;
@@ -785,13 +785,13 @@ async function pullSettings() {
         aglintContext
         && previousEnableAglint === settings.enableAglint
         && previousEnableDebug === settings.enableAglintDebug
-        && previousEnableCache === settings.enableAglintCache
+        && previousEnableCache === settings.enableInMemoryAglintCache
     ) {
         return;
     }
 
     // Clear cache if caching was disabled
-    if (previousEnableCache && !settings.enableAglintCache) {
+    if (previousEnableCache && !settings.enableInMemoryAglintCache) {
         lintCache.clear();
         connection.console.info('AGLint cache cleared (caching disabled)');
     }

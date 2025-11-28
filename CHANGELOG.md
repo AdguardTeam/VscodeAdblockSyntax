@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
-## Unreleased
+## [2.0.0] (prerelease) - 2025-11-28
 
 ### Added
 
@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 - `Remove this rule` quick fix option [#126].
 - Support for applying various fixes offered by AGLint [#127].
 - Support for detecting package manager automatically [#117].
+- `enableAglintDebug` and `enableInMemoryAglintCache` (experimental, disabled by default) settings.
 
 ### Changed
 
@@ -25,7 +26,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Integrated version of AGLint. From now on, AGLint only works if it is installed separately.
   This provides more consistent behavior.
+  This removed `useExternalAglintPackages` setting.
+- `packageManager` setting. It is now detected automatically.
 
+[2.0.0]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/1.1.17...2.0.0
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
 [#117]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/117
 [#126]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/126
