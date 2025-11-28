@@ -55,8 +55,8 @@ Build:
             # Run Jest tests
             pnpm test
 
-            # Create production build
-            pnpm build:prod
+            # Create prerelease build
+            pnpm build:prerelease
 
             # Create build.txt file with version
             pnpm build:txt
