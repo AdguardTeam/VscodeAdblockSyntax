@@ -7,7 +7,7 @@
     "private": true,
     "dependencies": {
         "valibot": "^1.1.0",
-        "vscode-languageclient": "^8.0.2"
+        "vscode-languageclient": "10.0.0-next.15"
     },
     "devDependencies": {
         "@types/vscode": "^1.74.0"

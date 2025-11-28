@@ -107,6 +107,9 @@ This extension provides the following configuration options:
 | `adblock.enableInMemoryAglintCache` | ⚠️ **Experimental**: Enable or disable in-memory caching of linting results for better performance. | `false` | `true`, `false` |
 <!--markdownlint-enable MD013-->
 
+> **💡 Tip**: To control AGLint logging verbosity, use VSCode's built-in log level control:
+> Open Command Palette (**Cmd+Shift+P**) → **Developer: Set Log Level...** → Select **AGLint**
+
 ### GitHub Linguist support
 
 GitHub supports adblock syntax officially via the [Linguist][linguist] library. Our extension provides a

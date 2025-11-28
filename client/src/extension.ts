@@ -228,6 +228,9 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
             workspaceFolder: { uri: folder.uri.toString(), name: folder.name },
         },
 
+        // Create output channel - this makes the extension appear in "Developer: Set Log Level"
+        outputChannel: Window.createOutputChannel(`${CLIENT_NAME} (${folder.name})`, { log: true }),
+
         synchronize: {
             fileEvents: [
                 Workspace.createFileSystemWatcher(
@@ -319,6 +322,8 @@ function ensureDefaultClient(serverModule: string) {
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: FileScheme.Untitled, language: LANGUAGE_ID }],
         progressOnInitialization: true,
+        // Create output channel - this makes the extension appear in "Developer: Set Log Level"
+        outputChannel: Window.createOutputChannel(`${CLIENT_NAME} (untitled)`, { log: true }),
     };
 
     // Give the untitled client a unique ID too

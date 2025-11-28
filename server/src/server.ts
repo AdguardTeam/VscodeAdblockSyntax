@@ -56,6 +56,8 @@ const LINT_FILE_DEBOUNCE_DELAY = 100;
  */
 const connection = createConnection(ProposedFeatures.all);
 
+connection.console.info(`AGLint Language Server starting (Node.js ${process.version})`);
+
 /**
  * Create a simple text document manager.
  */
@@ -163,7 +165,7 @@ connection.onInitialize(async (params: InitializeParams) => {
     } else {
         message += 'without workspace root';
     }
-    connection.console.log(message);
+    connection.console.debug(message);
 
     // TODO: Define the capabilities of the language server here
     const result: InitializeResult = {
@@ -180,7 +182,7 @@ connection.onInitialize(async (params: InitializeParams) => {
     // we do not need to handle workspace folder changes.
     if (hasWorkspaceFolderCapability) {
         connection.workspace.onDidChangeWorkspaceFolders(() => {
-            connection.console.log('Workspace folder change event received (ignored by per-folder server instance).');
+            connection.console.warn('Workspace folder change event received (ignored by per-folder server instance).');
         });
     }
 
@@ -342,7 +344,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
             const cachedDiagnostics = lintCache.get(cacheKey);
             if (cachedDiagnostics) {
                 const duration = Date.now() - startTime;
-                connection.console.info(
+                connection.console.debug(
                     `Linting completed for: ${documentPath} (from cache, ${duration}ms)`,
                 );
                 connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: cachedDiagnostics });
@@ -350,7 +352,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
             }
         }
 
-        connection.console.info(`Linting started for: ${documentPath}`);
+        connection.console.debug(`Linting file: ${documentPath}`);
 
         const linterRunOptions: LinterRunOptions = {
             fileProps: {
@@ -377,7 +379,7 @@ async function lintFile(textDocument: TextDocument): Promise<void> {
         }
 
         const duration = Date.now() - startTime;
-        connection.console.info(`Linting completed for: ${documentPath} (${duration}ms)`);
+        connection.console.debug(`Linting completed for: ${documentPath} (${duration}ms)`);
 
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     } catch (error: unknown) {
@@ -415,7 +417,7 @@ const parseConfigCommentTolerant = (rule: string): ConfigCommentRule | null => {
     try {
         return ConfigCommentRuleParser.parse(rule);
     } catch (error: unknown) {
-        connection.console.error(`'${rule}' is not a valid AGLint config comment rule: ${getErrorMessage(error)}`);
+        connection.console.debug(`'${rule}' is not a valid AGLint config comment rule: ${getErrorMessage(error)}`);
         return null;
     }
 };
@@ -802,11 +804,11 @@ async function pullSettings() {
     // If AGLint is disabled, clean up and return early
     if (!settings.enableAglint) {
         removeAllDiagnostics();
-        connection.console.info('AGLint is disabled');
+        connection.console.debug('AGLint is disabled');
         return;
     }
 
-    connection.console.info('AGLint integration is enabled');
+    connection.console.debug('AGLint integration is enabled');
 
     // Initialize AGLint context if not already initialized
     if (!aglintContext) {
@@ -824,12 +826,23 @@ async function pullSettings() {
         }
     } else if (previousEnableDebug !== settings.enableAglintDebug) {
         // Handle debug setting change
-        connection.console.info(`AGLint debug mode changed: ${settings.enableAglintDebug}`);
+        connection.console.info(`AGLint debug mode ${settings.enableAglintDebug ? 'enabled' : 'disabled'}`);
 
         if (settings.enableAglintDebug) {
             aglintContext.debuggerInstance.enable();
         } else {
             aglintContext.debuggerInstance.disable();
+        }
+    }
+
+    // Log cache setting changes
+    if (previousEnableCache !== settings.enableInMemoryAglintCache) {
+        if (settings.enableInMemoryAglintCache) {
+            connection.console.info('In-memory linting cache enabled');
+        } else {
+            connection.console.info('In-memory linting cache disabled');
+            lintCache.clear();
+            connection.console.debug('Cache cleared');
         }
     }
 
@@ -874,7 +887,7 @@ connection.onInitialized(async () => {
 
     if (hasWorkspaceFolderCapability) {
         connection.workspace.onDidChangeWorkspaceFolders(() => {
-            connection.console.log('Workspace folder change event received.');
+            connection.console.warn('Workspace folder change event received.');
         });
     }
 
@@ -894,5 +907,3 @@ documents.listen(connection);
 
 // Listen on the connection
 connection.listen();
-
-connection.console.info(`AGLint Node.js Language Server running in node ${process.version}`);

@@ -1,9 +1,14 @@
-import { execSync } from 'node:child_process';
+import { spawnSync, type SpawnSyncOptionsWithStringEncoding } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import os from 'node:os';
 import { isAbsolute, join } from 'node:path';
 
-export type TraceFunction = (message: string, verbose?: string) => void;
+/**
+ * Checks if the current platform is Windows.
+ */
+const isWindows = os.platform() === 'win32';
+
+export type TraceFunction = (message: string) => void;
 
 export const NPM = 'npm' as const;
 export const YARN = 'yarn' as const;
@@ -14,26 +19,64 @@ export type PackageManager = typeof NPM | typeof YARN | typeof PNPM | typeof BUN
 
 /**
  * Runs a command and returns the output.
+ * Based on VSCode language server implementation.
  *
- * @param cmd Command to run.
+ * @param command Command to run.
+ * @param args Command arguments.
  * @param tracer Tracer function.
  *
  * @returns The output of the command or undefined if it failed.
  */
-function run(cmd: string, tracer?: TraceFunction): string | undefined {
+function run(command: string, args: string[], tracer?: TraceFunction): string | undefined {
+    const env: typeof process.env = Object.create(null);
+    Object.keys(process.env).forEach((key) => {
+        env[key] = process.env[key];
+    });
+    env.NO_UPDATE_NOTIFIER = 'true';
+
+    const options: SpawnSyncOptionsWithStringEncoding = {
+        encoding: 'utf8',
+        env,
+    };
+
+    // On Windows, use .cmd extension and shell
+    let cmd = command;
+    if (isWindows) {
+        cmd = `${command}.cmd`;
+        options.shell = true;
+    }
+
+    const handler = () => {};
     try {
-        const out = execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+        process.on('SIGPIPE', handler);
+        const { stdout } = spawnSync(cmd, args, options);
+
+        if (!stdout) {
+            if (tracer) {
+                tracer(`'${cmd} ${args.join(' ')}' didn't return a value.`);
+            }
+            return undefined;
+        }
+
+        const out = stdout.trim();
+
+        if (tracer) {
+            tracer(`'${cmd} ${args.join(' ')}' returned: ${out}`);
+        }
+
         if (out && isAbsolute(out)) {
             return out;
         }
 
         if (tracer) {
-            tracer(`Command returned non-absolute path for "${cmd}": ${out}`);
+            tracer(`Command returned non-absolute path for "${cmd} ${args.join(' ')}": "${out}"`);
         }
     } catch (e) {
         if (tracer) {
-            tracer(`Failed running "${cmd}": ${String(e)}`);
+            tracer(`Failed running "${cmd} ${args.join(' ')}": ${String(e)}`);
         }
+    } finally {
+        process.removeListener('SIGPIPE', handler);
     }
     return undefined;
 }
@@ -46,8 +89,31 @@ function run(cmd: string, tracer?: TraceFunction): string | undefined {
  * @returns The global node_modules directory for npm or undefined if it could not be found.
  */
 export function findNpmRoot(tracer?: TraceFunction) {
-    // Official: `npm root -g` prints the global node_modules directory
-    return run('npm root -g', tracer);
+    // Try direct approach first (faster)
+    const direct = run('npm', ['root', '-g'], tracer);
+    if (direct) {
+        return direct;
+    }
+
+    // Fallback: use `npm config get prefix` like VSCode does
+    // This is more reliable on Windows where the path structure is different
+    const prefix = run('npm', ['config', 'get', 'prefix'], tracer);
+    if (!prefix || prefix.length === 0) {
+        return undefined;
+    }
+
+    // On Windows: prefix\node_modules
+    // On Unix: prefix/lib/node_modules
+    const candidate = isWindows ? join(prefix, 'node_modules') : join(prefix, 'lib', 'node_modules');
+
+    if (existsSync(candidate)) {
+        if (tracer) {
+            tracer(`Found npm global node_modules via prefix at: ${candidate}`);
+        }
+        return candidate;
+    }
+
+    return undefined;
 }
 
 /**
@@ -60,13 +126,13 @@ export function findNpmRoot(tracer?: TraceFunction) {
 export function findYarnRoot(tracer?: TraceFunction) {
     // Yarn Classic: `yarn global dir` prints the global node_modules directory
     // Yarn Berry still supports global installs via plugin; fall back to config if needed
-    const dir = run('yarn global dir', tracer);
+    const dir = run('yarn', ['global', 'dir'], tracer);
     if (dir) {
         return dir;
     }
 
     // Yarn Berry: try reading the configured global folder (if present)
-    const berry = run('yarn config get globalFolder', tracer);
+    const berry = run('yarn', ['config', 'get', 'globalFolder'], tracer);
     if (berry && existsSync(berry)) {
         const candidate = join(berry, 'global', 'node_modules');
 
@@ -86,7 +152,7 @@ export function findYarnRoot(tracer?: TraceFunction) {
  */
 export function findPnpmRoot(tracer?: TraceFunction) {
     // pnpm: `pnpm root -g` prints the global node_modules directory
-    return run('pnpm root -g', tracer);
+    return run('pnpm', ['root', '-g'], tracer);
 }
 
 /**
@@ -98,7 +164,7 @@ export function findPnpmRoot(tracer?: TraceFunction) {
  */
 export function findPnpmBin(tracer?: TraceFunction) {
     // pnpm: `pnpm bin -g` prints the global bin dir (may require `pnpm setup` first)
-    return run('pnpm bin -g', tracer);
+    return run('pnpm', ['bin', '-g'], tracer);
 }
 
 /**

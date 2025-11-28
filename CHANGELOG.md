@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [2.0.4] (prerelease) - 2025-11-28
+
+### Changed
+
+- Improved logging.
+
+### Fixed
+
+- Loading AGLint on Windows.
+
 ## [2.0.3] (prerelease) - 2025-11-28
 
 ### Added

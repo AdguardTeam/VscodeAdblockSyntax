@@ -45,6 +45,11 @@ export class LoadedAglint {
     public version: string;
 
     /**
+     * Path to the loaded AGLint module.
+     */
+    public modulePath: string;
+
+    /**
      * Cache of loaded linter rules for this instance.
      */
     private ruleCache: Record<string, AGLintLinterModule.LinterRule> = {};
@@ -71,6 +76,7 @@ export class LoadedAglint {
      * @param cli AGLint CLI module.
      * @param presetsRoot Root directory of the AGLint presets.
      * @param version Version of the loaded AGLint module.
+     * @param modulePath Path to the loaded AGLint module.
      * @param connection Language server connection.
      * @param dir Workspace directory.
      * @param packageManager Preferred package manager name.
@@ -80,6 +86,7 @@ export class LoadedAglint {
         cli: typeof AGLintCliModule,
         presetsRoot: string,
         version: string,
+        modulePath: string,
         connection: Connection,
         dir: string,
         packageManager: PackageManager,
@@ -88,6 +95,7 @@ export class LoadedAglint {
         this.cli = cli;
         this.presetsRoot = presetsRoot;
         this.version = version;
+        this.modulePath = modulePath;
         this.connection = connection;
         this.dir = dir;
         this.packageManager = packageManager;
@@ -103,29 +111,35 @@ export class LoadedAglint {
      * @throws If the rule cannot be loaded.
      */
     public loadRule: AGLintLinterModule.LinterRunOptions['loadRule'] = async (name: string) => {
-        if (this.ruleCache[name]) {
-            return this.ruleCache[name];
+        try {
+            if (this.ruleCache[name]) {
+                return this.ruleCache[name];
+            }
+
+            const path = await resolveModulePath(
+                this.dir,
+                `${AGLINT_PACKAGE_NAME}/rules/${name}`,
+                this.packageManager,
+                (message: string) => {
+                    this.connection.tracer.log(message);
+                },
+            );
+
+            if (!path) {
+                throw new Error(`Failed to resolve AGLint rule: ${name}`);
+            }
+
+            // Convert file path to file:// URL for dynamic import (required on Windows)
+            const ruleUrl = pathToFileURL(path).toString();
+
+            const rule = await importModule(ruleUrl);
+            this.ruleCache[name] = rule;
+
+            return rule;
+        } catch (error: unknown) {
+            this.connection.console.error(`Failed to load rule '${name}': ${String(error)}`);
+            throw error;
         }
-
-        const path = await resolveModulePath(
-            this.dir,
-            `${AGLINT_PACKAGE_NAME}/rules/${name}`,
-            this.packageManager,
-            (message: string, verbose?: string | undefined) => {
-                this.connection.tracer.log(message, verbose);
-            },
-        );
-
-        if (!path) {
-            throw new Error(`Failed to resolve AGLint rule: ${name}`);
-        }
-
-        this.connection.console.info(`Loading AGLint rule '${name}' from: ${path}`);
-
-        const rule = await importModule(path);
-        this.ruleCache[name] = rule;
-
-        return rule;
     };
 }
 
@@ -141,15 +155,9 @@ export async function loadAglintModule(
     connection: Connection,
     dir: string,
 ): Promise<LoadedAglint | undefined> {
-    connection.console.info(`Loading AGLint module for the directory: ${dir}`);
-
     let preferredPackageManager = await preferredPM(dir);
 
-    if (preferredPackageManager) {
-        // eslint-disable-next-line max-len
-        connection.console.info(`Detected preferred package manager: ${preferredPackageManager.name} ${preferredPackageManager.version}`);
-    } else {
-        connection.console.info('Preferred package manager not found, falling back to npm');
+    if (!preferredPackageManager) {
         preferredPackageManager = {
             name: NPM,
             version: 'unknown',
@@ -160,8 +168,8 @@ export async function loadAglintModule(
         dir,
         AGLINT_PACKAGE_NAME,
         preferredPackageManager.name,
-        (message: string, verbose?: string | undefined) => {
-            connection.tracer.log(message, verbose);
+        (message: string) => {
+            connection.tracer.log(message);
         },
     );
 
@@ -176,18 +184,11 @@ export async function loadAglintModule(
         return undefined;
     }
 
-    connection.console.info(`Found external AGLint at: ${aglintPath}`);
-
     // Dynamic import requires a URL, not a path
     const externalAglintUrlPath = pathToFileURL(aglintPath).toString();
 
-    connection.console.info(`Loading external AGLint module from: ${aglintPath}`);
-
     try {
         const aglint = await importModule(externalAglintUrlPath) as typeof AGLint;
-
-        connection.console.info('Successfully loaded external AGLint module');
-        connection.console.info('Checking the version of external AGLint module');
 
         const suffix = `version: ${aglint.version}, minimum required version: ${MIN_AGLINT_VERSION}`;
 
@@ -197,51 +198,50 @@ export async function loadAglintModule(
             );
             return undefined;
         }
-
-        connection.console.info(
-            `External AGLint module version is compatible with the VSCode extension (${suffix})`,
-        );
-
-        connection.console.info('Resolving AGLint linter module');
         const linterPath = await resolveModulePath(
             dir,
             `${AGLINT_PACKAGE_NAME}/linter`,
             preferredPackageManager.name,
-            (message: string, verbose?: string | undefined) => {
-                connection.tracer.log(message, verbose);
+            (message: string) => {
+                connection.tracer.log(message);
             },
         );
         if (!linterPath) {
             connection.console.error('Failed to resolve AGLint linter module');
             return undefined;
         }
-        connection.console.info(`Found external AGLint linter at: ${linterPath}`);
-
-        connection.console.info('Resolving AGLint CLI module');
         const cliPath = await resolveModulePath(
             dir,
             `${AGLINT_PACKAGE_NAME}/cli`,
             preferredPackageManager.name,
-            (message: string, verbose?: string | undefined) => {
-                connection.tracer.log(message, verbose);
+            (message: string) => {
+                connection.tracer.log(message);
             },
         );
         if (!cliPath) {
             connection.console.error('Failed to resolve AGLint CLI module');
             return undefined;
         }
-        connection.console.info(`Found external AGLint CLI at: ${cliPath}`);
 
-        const cli = await importModule(cliPath) as typeof AGLintCliModule;
+        // Convert file paths to file:// URLs for dynamic import (required on Windows)
+        const linterUrl = pathToFileURL(linterPath).toString();
+        const cliUrl = pathToFileURL(cliPath).toString();
+
+        const cli = await importModule(cliUrl) as typeof AGLintCliModule;
         const pathAdapter = new cli.NodePathAdapter();
-        const linter = await importModule(linterPath) as typeof AGLintLinterModule;
-        const presetsRoot = pathAdapter.join(pathAdapter.dirname(aglintPath), '../config-presets');
+        const linter = await importModule(linterUrl) as typeof AGLintLinterModule;
+
+        // aglintPath points to .../dist/index.js, we need to go up to the package root
+        // and then to config-presets directory
+        const packageRoot = pathAdapter.dirname(pathAdapter.dirname(aglintPath));
+        const presetsRoot = pathAdapter.join(packageRoot, 'config-presets');
 
         return new LoadedAglint(
             linter,
             cli,
             presetsRoot,
             aglint.version,
+            aglintPath,
             connection,
             dir,
             preferredPackageManager.name as PackageManager,

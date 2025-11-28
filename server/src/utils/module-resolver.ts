@@ -2,7 +2,8 @@
  * @file Utility functions to find module installations.
  */
 
-import resolveFrom from 'resolve-from';
+import { createRequire } from 'node:module';
+
 import { Files } from 'vscode-languageserver/node';
 
 import { findGlobalPathForPackageManager, type PackageManager, type TraceFunction } from './package-managers';
@@ -25,37 +26,51 @@ export async function resolveModulePath(
     packageManager: PackageManager,
     tracer: TraceFunction,
 ): Promise<string | undefined> {
+    tracer(`Resolving module path for "${packageName}" using package manager: ${packageManager}`);
+    tracer(`Current working directory: ${cwd}`);
+
     // First, try to find the module in the current working directory
+    // Use Node's native createRequire which properly handles "exports" field
     try {
-        const modulePath = resolveFrom(cwd, packageName);
+        // Create a require function from the cwd context
+        const requireFromCwd = createRequire(`${cwd}/package.json`);
+        const modulePath = requireFromCwd.resolve(packageName);
 
         // If we found it, return the path and abort the search
         if (modulePath) {
+            tracer(`Found module "${packageName}" in local directory: ${modulePath}`);
             return modulePath;
         }
-    } catch {
+    } catch (error: unknown) {
+        tracer(`Module "${packageName}" not found in local directory: ${String(error)}`);
         // Continue searching in the global path
     }
 
     // Find the global path for the actual package manager
-    // eslint-disable-next-line no-await-in-loop
+    tracer(`Searching for global path using package manager: ${packageManager}`);
     const globalPath = await findGlobalPathForPackageManager(packageManager, tracer);
 
     // If we didn't find the global path, continue with the next package manager,
     // because the current one seems to be not installed
     if (!globalPath) {
+        tracer(`No global path found for package manager: ${packageManager}`);
         return undefined;
     }
 
+    tracer(`Found global path for ${packageManager}: ${globalPath}`);
+
     // Otherwise, try to find the module in the found global path
     try {
-        // eslint-disable-next-line no-await-in-loop
+        tracer(`Attempting to resolve "${packageName}" from global path: ${globalPath}`);
         const modulePath = await Files.resolve(packageName, globalPath, cwd, tracer);
 
         if (modulePath) {
+            tracer(`Found module "${packageName}" in global path: ${modulePath}`);
             return modulePath;
         }
+        tracer(`Module "${packageName}" not found in global path`);
     } catch (error: unknown) {
+        tracer(`Error resolving "${packageName}" from global path: ${String(error)}`);
         // Error tolerance: if the function throws an error, we ignore it,
         // and continue with the next package manager. In the worst case,
         // we will return undefined, which means that the module is not installed

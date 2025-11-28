@@ -86,7 +86,7 @@ export class AglintContext {
             return undefined;
         }
 
-        connection.console.info(`AGLint module loaded (version: ${aglint.version})`);
+        connection.console.info(`AGLint module loaded from ${aglint.modulePath} (version: ${aglint.version})`);
 
         const pathAdapter = new aglint.cli.NodePathAdapter();
         const fsAdapter = new LSPFileSystemAdapter(documents);
@@ -96,7 +96,7 @@ export class AglintContext {
             printTimestamps: false,
             printElapsed: false,
             colors: false,
-            logger: (message) => connection.console.info(`[AGLint debug] ${message}`),
+            logger: (message) => connection.console.debug(`[AGLint debugger] ${message}`),
         });
 
         const configResolver = new aglint.cli.ConfigResolver(
