@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   This removed `useExternalAglintPackages` setting.
 - `packageManager` setting. It is now detected automatically.
 
-[2.0.0]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/1.1.17...2.0.0
+[2.0.1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/1.1.17...2.0.1
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
 [#117]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/117
 [#126]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/126
