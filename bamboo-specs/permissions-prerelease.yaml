@@ -1,0 +1,22 @@
+---
+version: 2
+deployment:
+  name: VSCode Adblock Syntax - Deploy Prerelease
+deployment-permissions:
+  - groups:
+      - extensions-developers
+    permissions:
+      - view
+environment-permissions:
+  - marketplace.visualstudio.com:
+      - groups:
+          - extensions-developers
+        permissions:
+          - view
+          - deploy
+  - open-vsx.org:
+      - groups:
+          - extensions-developers
+        permissions:
+          - view
+          - deploy
