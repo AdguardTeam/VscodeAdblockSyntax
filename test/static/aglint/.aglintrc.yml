@@ -3,9 +3,9 @@ syntax: ['AdGuard']
 extends:
   - aglint:recommended
 rules:
-  single-selector: warn
+  max-css-selectors: [warn, { maxSelectors: 1 }]
   no-excluded-rules:
     - error
-    - regexp-patterns:
+    - excludedRegExpPatterns:
         # Do not forget to escape special regex characters
         - example\.com\/bad\/query\/

@@ -59,3 +59,14 @@ function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
 export function getErrorMessage(error: unknown): string {
     return toErrorWithMessage(error).message;
 }
+
+/**
+ * Converts error object to error with stack. This method might be helpful to handle thrown errors.
+ *
+ * @param error Error object.
+ *
+ * @returns Stack of the error.
+ */
+export function getErrorStack(error: unknown): string | undefined {
+    return toErrorWithMessage(error).stack;
+}

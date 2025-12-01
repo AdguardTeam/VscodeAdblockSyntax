@@ -1,15 +1,16 @@
 {
-	"compilerOptions": {
-		"target": "es2020",
-		"lib": ["es2020"],
-		"module": "CommonJS",
-		"moduleResolution": "node",
-		"sourceMap": true,
-		"strict": true,
-		"outDir": "out",
-		"rootDir": "src",
-		"esModuleInterop": true
-	},
-	"include": ["src"],
-	"exclude": ["node_modules", ".vscode-test"]
+    "compilerOptions": {
+        "target": "es2020",
+        "lib": ["es2020"],
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "sourceMap": true,
+        "strict": true,
+        "outDir": "out",
+        "rootDir": "src",
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", ".vscode-test"]
 }

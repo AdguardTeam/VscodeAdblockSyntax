@@ -79,19 +79,16 @@ to read.
 
 ### AGLint integration (linter)
 
-We integrated [AGLint][aglint] into this extension, that makes it able to check your rules for various issues, such as
-invalid syntax, invalid domains, invalid / incompatible CSS selectors, unknown / incompatible scriptlets, bad practices,
-etc. For more information about AGLint, please refer to its [repository][aglint].
+This extension integrates [AGLint][aglint] to check your rules for syntax errors, invalid domains,
+incompatible CSS selectors, unknown scriptlets, and other issues. For more details, see the [AGLint repository][aglint].
 
-AGLint integration is done in the following way:
+The extension automatically searches for AGLint installations in this order:
 
-1. Extension will search local AGLint installation (if it is installed) and use it for linting. First, it will search
-   for local installation in the current workspace, and if it is not found, it will search for a global installation.
-   This is an ideal behavior, because if you have a local installation, it guarantees that you will use the same version
-   of AGLint, and the results will be the same.
-2. If the extension doesn't find any installation, it will use the bundled version of AGLint, which is included in the
-   extension itself. Usually, it is the latest version of AGLint. The advantage of this approach is that you don't need
-   to install AGLint manually, and you can start using the extension immediately after installation.
+1. Local workspace installation
+2. Global installation
+3. Prompts to install if not found
+
+Using a local installation ensures consistent results with your project's AGLint version.
 
 > [!WARNING]
 > Please note that the linter is under active development, so it may not work properly for some rules. If you
@@ -106,9 +103,12 @@ This extension provides the following configuration options:
 | Option | Description | Default value | Possible values |
 | ------ | ----------- | ------------- | --------------- |
 | `adblock.enableAglint` | Enable or disable AGLint integration. If disabled, only syntax highlighting and other language features will be available. | `true` | `true`, `false` |
-| `adblock.useExternalAglintPackages` | If enabled, extension will search for AGLint installations in the system. If disabled, extension will use its own AGLint installation, which is included in the extension (integrated AGLint bundle). If you have AGLint installed in your system / project, it is recommended to enable this option in order to provide consistent results. | `true` | `true`, `false` |
-| `adblock.packageManager` | Package manager to use for searching global AGLint installations. Set it to your preferred package manager. | `npm` | `npm`, `yarn`, `pnpm` |
-<!--markdownlint-enable MD013-->
+| `adblock.enableInMemoryAglintCache` | ⚠️ **Experimental**: Enable or disable in-memory caching of linting results for better performance. | `false` | `true`, `false` |
+
+**Note:** AGLint debug logging is automatically enabled when VSCode's log level is set to "Debug" or "Trace" via "Developer: Set Log Level".
+
+> **💡 Tip**: To control AGLint logging verbosity, use VSCode's built-in log level control:
+> Open Command Palette (**Cmd+Shift+P**) → **Developer: Set Log Level...** → Select **AGLint**
 
 ### GitHub Linguist support
 

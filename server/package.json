@@ -1,6 +1,6 @@
 {
     "name": "aglint-server",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "license": "MIT",
     "author": "AdGuard Software Ltd.",
     "private": true,
@@ -8,17 +8,20 @@
         "node": ">=16"
     },
     "dependencies": {
-        "vscode-languageserver": "^8.0.2",
+        "debounce": "^3.0.0",
+        "fast-glob": "^3.3.3",
+        "preferred-pm": "^4.1.1",
+        "resolve": "^1.22.11",
+        "vscode-languageserver": "10.0.0-next.13",
         "vscode-languageserver-textdocument": "^1.0.8",
-        "vscode-uri": "^3.1.0"
+        "vscode-uri": "^3.1.0",
+        "yaml": "^2.7.1"
     },
     "devDependencies": {
-        "@adguard/aglint": "2.1.5",
+        "@adguard/aglint": "catalog:",
         "@adguard/agtree": "^2.3.0",
-        "@adguard/ecss-tree": "^1.1.0",
-        "@types/clone-deep": "^4.0.1",
+        "@types/resolve": "^1.20.6",
         "@types/semver": "^7.5.0",
-        "clone-deep": "^4.0.1",
         "semver": "^7.5.4"
     }
 }

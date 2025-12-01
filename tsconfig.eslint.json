@@ -1,12 +1,13 @@
 {
     "extends": "./tsconfig.json",
     "include": [
-      ".eslintrc.cjs",
-      "client/**/*.ts",
-      "jest.config.ts",
-      "server/**/*.ts",
-      "test/**/*.ts",
-      "tools/**/*.ts",
-      "tools/**/*.mjs"
+        ".eslintrc.cjs",
+        "client/**/*.ts",
+        "jest.config.ts",
+        "server/**/*.ts",
+        "test/**/*.ts",
+        "tools/**/*.ts",
+        "tools/**/*.mjs",
+        "server/.eslintrc.cjs"
     ]
 }

@@ -4,6 +4,7 @@ import * as v from 'valibot';
 import {
     commands,
     type ExtensionContext,
+    LogLevel,
     RelativePattern,
     StatusBarAlignment,
     type StatusBarItem,
@@ -96,6 +97,20 @@ let defaultClient: LanguageClient | undefined;
  * This allows us to manage multiple clients for different folders in the workspace.
  */
 const clients = new Map<string, LanguageClient>();
+
+/**
+ * Convert VSCode LogLevel to a simple boolean for AGLint debug mode.
+ * Enable AGLint debugger only when VSCode log level is Debug or Trace.
+ *
+ * @param logLevel VSCode log level.
+ *
+ * @returns Whether AGLint debug mode should be enabled.
+ */
+function shouldEnableAglintDebug(logLevel: LogLevel): boolean {
+    // LogLevel enum: Off = 0, Trace = 1, Debug = 2, Info = 3, Warning = 4, Error = 5
+    // Enable AGLint debug when log level is Trace (1) or Debug (2)
+    return logLevel <= LogLevel.Debug;
+}
 
 /**
  * Status bar item to show the AGLint status.
@@ -220,25 +235,44 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
 
     const rootFs = folder.uri.fsPath;
 
+    // Create output channel - this makes the extension appear in "Developer: Set Log Level"
+    const outputChannel = Window.createOutputChannel(`${CLIENT_NAME} (${folder.name})`, { log: true });
+
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: DOCUMENT_SCHEME, language: LANGUAGE_ID }],
 
         workspaceFolder: folder,
         initializationOptions: {
             workspaceFolder: { uri: folder.uri.toString(), name: folder.name },
+            enableAglintDebug: shouldEnableAglintDebug(outputChannel.logLevel),
         },
+
+        outputChannel,
 
         synchronize: {
             fileEvents: [
                 Workspace.createFileSystemWatcher(
-                    new RelativePattern(folder, `**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}}`),
+                    new RelativePattern(
+                        folder,
+                        `{**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}},!**/node_modules/**}`,
+                    ),
                     false,
                     true,
                     false,
                 ),
-                // eslint-disable-next-line max-len
-                Workspace.createFileSystemWatcher(new RelativePattern(folder, `**/{${Array.from(CONFIG_FILE_NAMES).join(',')}}`)),
-                Workspace.createFileSystemWatcher(new RelativePattern(folder, `**/${IGNORE_FILE_NAME}`)),
+                Workspace.createFileSystemWatcher(
+                    new RelativePattern(
+                        folder,
+                        `{**/{${Array.from(CONFIG_FILE_NAMES).join(',')}},!**/node_modules/**}`,
+                    ),
+                ),
+                Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, `{**/${IGNORE_FILE_NAME},!**/node_modules/**}`),
+                ),
+                // Watch package.json for AGLint installation changes (only root, not node_modules)
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, 'package.json')),
+                // Watch node_modules directory itself for package installation/updates
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, 'node_modules')),
             ],
         },
 
@@ -298,6 +332,15 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
         updateStatusBarForFolder(folder, params);
     });
 
+    // Listen for log level changes and notify the server
+    outputChannel.onDidChangeLogLevel((newLogLevel) => {
+        const enableDebug = shouldEnableAglintDebug(newLogLevel);
+        // Send notification to server about log level change
+        client.sendNotification('client/logLevelChanged', { enableAglintDebug: enableDebug }).catch(() => {
+            // Ignore errors - server might not be ready yet
+        });
+    });
+
     return client;
 }
 
@@ -316,9 +359,16 @@ function ensureDefaultClient(serverModule: string) {
         debug: { module: serverModule, transport: TransportKind.ipc },
     };
 
+    // Create output channel - this makes the extension appear in "Developer: Set Log Level"
+    const outputChannel = Window.createOutputChannel(`${CLIENT_NAME} (untitled)`, { log: true });
+
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: FileScheme.Untitled, language: LANGUAGE_ID }],
         progressOnInitialization: true,
+        outputChannel,
+        initializationOptions: {
+            enableAglintDebug: shouldEnableAglintDebug(outputChannel.logLevel),
+        },
     };
 
     // Give the untitled client a unique ID too
@@ -328,6 +378,16 @@ function ensureDefaultClient(serverModule: string) {
         serverOptions,
         clientOptions,
     );
+
+    // Listen for log level changes and notify the server
+    outputChannel.onDidChangeLogLevel((newLogLevel) => {
+        const enableDebug = shouldEnableAglintDebug(newLogLevel);
+        // Send notification to server about log level change
+        defaultClient?.sendNotification('client/logLevelChanged', { enableAglintDebug: enableDebug }).catch(() => {
+            // Ignore errors - server might not be ready yet
+        });
+    });
+
     defaultClient.start();
 }
 

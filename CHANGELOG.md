@@ -7,20 +7,44 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
-## Unreleased
+## [2.0.4] (prerelease) - 2025-11-28
+
+### Changed
+
+- Improved logging.
+
+### Fixed
+
+- Loading AGLint on Windows.
+
+## [2.0.3] (prerelease) - 2025-11-28
 
 ### Added
 
 - Support for multi-root workspaces [#112].
 - `Remove this rule` quick fix option [#126].
+- Support for applying various fixes offered by AGLint [#127].
+- Support for detecting package manager automatically [#117].
+- `enableAglintDebug` and `enableInMemoryAglintCache` (experimental, disabled by default) settings.
 
 ### Changed
 
+- Updated extension for AGLint `v4.0.0`.
 - Updated `husky` dependency to version `9.0.1` [#129].
 
+### Removed
+
+- Integrated version of AGLint. From now on, AGLint only works if it is installed separately.
+  This provides more consistent behavior.
+  This removed `useExternalAglintPackages` setting.
+- `packageManager` setting. It is now detected automatically.
+
+[2.0.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/1.1.17...2.0.3
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
-[#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
+[#117]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/117
 [#126]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/126
+[#127]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/127
+[#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
 
 ## 1.1.17 - 2024-05-05
 
