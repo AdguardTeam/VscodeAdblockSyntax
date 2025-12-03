@@ -1,7 +1,15 @@
 packages:
-  - server
   - client
+  - server
+  - shared
+  - syntaxes
   - test/static/aglint
 
 catalog:
   '@adguard/aglint': ^4.0.0-beta.1
+  '@types/node': ^20.19.9
+  esbuild: ^0.25.10
+  tsc-files: 1.1.4
+  tsx: ^4.20.3
+  typescript: ^5.9.2
+  vitest: ^3.2.4

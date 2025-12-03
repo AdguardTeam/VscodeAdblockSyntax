@@ -1,15 +1,8 @@
 /**
  * @file Utility functions for working with URIs.
  */
+import { FileScheme } from '@vscode-adblock-syntax/shared';
 import { URI } from 'vscode-uri';
-
-/**
- * Schemes for file documents.
- */
-// TODO: Add more schemes if needed
-const enum FileScheme {
-    File = 'file',
-}
 
 /**
  * Checks if the given URI is a file URI.

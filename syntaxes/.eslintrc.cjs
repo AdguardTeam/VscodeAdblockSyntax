@@ -86,9 +86,10 @@ const TYPESCRIPT_ESLINT_RULES = {
  */
 const IMPORT_PLUGIN_RULES = {
     'import/prefer-default-export': 'off',
+    // In this repo we do not have real dependencies, all of them are dev dependencies
+    'import/no-extraneous-dependencies': 'off',
 
     'import-newlines/enforce': ['error', 3, MAX_LINE_LENGTH],
-    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     // Split external and internal imports with an empty line
     'import/order': [
         'error',
@@ -221,28 +222,6 @@ const N_PLUGIN_RULES = {
 };
 
 /**
- * Boundaries plugin rules.
- *
- * @see {@link https://github.com/javierbrea/eslint-plugin-boundaries#readme}
- */
-const BOUNDARIES_PLUGIN_RULES = {
-    'boundaries/element-types': ['error', {
-        default: 'allow',
-        rules: [
-            {
-                from: 'client',
-                allow: ['client'],
-            },
-            {
-                from: 'server',
-                allow: ['server'],
-            },
-            // TODO: Add more rules, like helpers only can import helpers, etc.
-        ],
-    }],
-};
-
-/**
  * Merges multiple rule sets into a single object.
  *
  * @param ruleSets The rule sets to merge.
@@ -267,14 +246,13 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
         tsconfigRootDir: path.join(__dirname),
-        project: 'tsconfig.eslint.json',
+        project: 'tsconfig.json',
     },
     plugins: [
         'import',
         'import-newlines',
         '@typescript-eslint',
         'n',
-        'boundaries',
     ],
     extends: [
         'airbnb-base',
@@ -288,26 +266,11 @@ module.exports = {
         'out',
         'coverage',
     ],
-    settings: {
-        'boundaries/elements': [
-            {
-                type: 'client',
-                pattern: 'client',
-                mode: 'folder',
-            },
-            {
-                type: 'server',
-                pattern: 'server',
-                mode: 'folder',
-            },
-        ],
-    },
     rules: mergeRules(
         ESLINT_RULES,
         TYPESCRIPT_ESLINT_RULES,
         IMPORT_PLUGIN_RULES,
         JSDOC_PLUGIN_RULES,
         N_PLUGIN_RULES,
-        BOUNDARIES_PLUGIN_RULES,
     ),
 };

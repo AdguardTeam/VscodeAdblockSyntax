@@ -14,10 +14,16 @@
     "exclude": ["node_modules", ".vscode-test"],
     "references": [
         {
+            "path": "./shared"
+        },
+        {
             "path": "./client"
         },
         {
             "path": "./server"
+        },
+        {
+            "path": "./syntaxes"
         }
     ],
     "ts-node": {

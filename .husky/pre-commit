@@ -1,6 +1,4 @@
-pnpm test:compile
 pnpm lint:staged
-pnpm test
 
 if git diff --cached --name-only | grep -q "package.json"; then
     echo "package.json is being committed. Checking if packageManager field is present..."

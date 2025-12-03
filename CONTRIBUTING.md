@@ -43,16 +43,31 @@ After cloning the repository, follow these steps to initialize the project:
 
 ## Project structure
 
-The most important folders in the project are:
+This project uses a **monorepo structure** with **pnpm workspaces**. Each package is independent with its own
+`package.json`, build system, and tests.
+
+### Main packages
 
 - [**client**][client-dir]: VSCode extension code which has access to all VS Code Namespace API.
-- [**server**][server-dir]: Language analysis tool running in a separate process.
+    - Built with ESBuild
+    - Contains the extension activation logic and VSCode integration
+- [**server**][server-dir]: Language server running in a separate process.
+    - Built with ESBuild
+    - Handles AGLint integration, diagnostics, and language features
+- [**shared**][shared-dir]: Shared utilities used by both client and server packages.
+    - Built with TypeScript compiler
+    - Contains common types and utilities
 - [**syntaxes**][syntaxes-dir]: TextMate grammars for syntax highlighting.
-- [**test**][test-dir]: Various tests for the extension.
-    - [**grammar**][test-grammar-dir]: Unit tests for the TextMate grammar.
-    - [**static**][test-static-dir]: Static test files for testing the extension in development mode.
-        - [**aglint**][test-static-aglint-dir]: AGLint test project.
-        - [**rules**][test-static-rules-dir]: Rules for testing the syntax highlighting visually.
+    - Converts YAML grammar to PList format for VSCode
+    - Contains grammar tests and utilities
+
+### Supporting folders
+
+- [**test**][test-dir]: Static test files and test workspaces.
+    - [**static/aglint**][test-static-aglint-dir]: AGLint test project workspace.
+    - [**static/rules**][test-static-rules-dir]: Rules for testing the syntax highlighting visually.
+- [**tools**][tools-dir]: Build and utility scripts for the project.
+- [**bamboo-specs**][bamboo-specs-dir]: CI/CD pipeline configurations.
 
 > [!NOTE]
 > To learn more about the client-server architecture of VSCode extensions, refer to the [VSCode Language Server
@@ -87,10 +102,11 @@ To create a production build of the extension:
 
 ## Updating syntax highlighting
 
-1. Update the TM grammar in the `syntaxes/adblock.yaml-tmLanguage` file.
+1. Update the TM grammar in the `syntaxes/adblock.yaml-tmlanguage` file.
 1. Create/modify example rules in the `test/static/rules` folder. Add link for GitHub issues to rules if related to some
    issue.
-1. Create/modify unit tests in `test/grammar`. Ensure tests pass by running `pnpm test`.
+1. Create/modify unit tests in `syntaxes/test/adblock`. Ensure tests pass by running
+   `pnpm --filter @vscode-adblock-syntax/syntaxes test`.
 
 > [!TIP]
 > Open the `test/static` folder in the "Extension Development Host" window and you can check the syntax highlighting
@@ -103,35 +119,55 @@ To create a production build of the extension:
 
 During development, you can use the following commands (listed in `package.json`).
 
+### Build commands
+
 - `pnpm build:grammar` - Compiles the TextMate (TM) grammar into a PList format, since VSCode does not natively support
   YAML grammars.
 - `pnpm build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
   VSCode installation.
+- `pnpm build:prerelease` - Generates a prerelease build with the `--pre-release` flag.
+- `pnpm build:clean` - Removes all generated files in the output directories (`client/out`, `server/out`,
+  `syntaxes/out`, `out`).
+- `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
+- `pnpm build:vsix-prerelease` - Produces a prerelease `.vsix` file.
 - `pnpm build:txt` - Creates a `build.txt` file in the out directory containing the current version number, primarily
   for Continuous Integration (CI) purposes.
-- `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
-- `pnpm clean` - Removes all generated files in the output directories, cleaning up the build results.
-- `pnpm esbuild:server` - Base ESBuild command for building the server with the common options.
-- `pnpm esbuild:client` - Base ESBuild command for building the client with the common options.
-- `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically, this is used by
-  CI.
-- `pnpm increment` - Increment the patch version number of the extension in the `package.json` file. Typically, this is
-  used by CI.
+
+### Package-level build commands
+
+Each package can be built independently using pnpm workspace filters:
+
+- `pnpm --filter @vscode-adblock-syntax/shared build` - Build the shared package.
+- `pnpm --filter @vscode-adblock-syntax/client build` - Build the client package with ESBuild.
+- `pnpm --filter @vscode-adblock-syntax/server build` - Build the server package with ESBuild.
+- `pnpm --filter @vscode-adblock-syntax/syntaxes build` - Build the syntaxes package.
+
+Add `--watch` flag for watch mode, or `--minify` for production builds.
+
+### Utility commands
+
+- `pnpm clean` - Removes all generated files using the clean utility script.
+- `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically used by CI.
+- `pnpm increment` - Increment the patch version number in the `package.json` file. Typically used by CI.
+
+### Linting & testing commands
+
+- `pnpm lint` - Run all linters (TypeScript + Markdown).
+- `pnpm lint:ts` - Lint the TypeScript code with [ESLint][eslint].
 - `pnpm lint:md` - Lint the markdown files with [markdownlint][markdownlint].
-- `pnpm lint:staged` - Run linters on staged files. Typically, this is used by Husky Git hooks.
-- `pnpm lint:ts` - Lint the *ts* code with [ESLint][eslint].
-- `pnpm lint` - Run all linters.
-- `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
-- `pnpm test` - Run tests with [Jest][jest].
-- `pnpm watch:client` - Watch for changes in the client code and create a development build automatically.
-- `pnpm watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
-- `pnpm watch:server` - Watch for changes in the server code and create a development build automatically.
+- `pnpm lint:staged` - Run linters on staged files. Used by Husky Git hooks.
+- `pnpm test` - Run tests with [Vitest][vitest] (replaced Jest).
+
+You can also run tests for individual packages:
+
+- `pnpm --filter @vscode-adblock-syntax/client test`
+- `pnpm --filter @vscode-adblock-syntax/server test`
+- `pnpm --filter @vscode-adblock-syntax/syntaxes test`
 
 > [!NOTE]
-> Watch commands (e.g., `pnpm watch:client`) are typically used by VSCode tasks (see
-> [`.vscode/tasks.json`][vscode-tasks-file] file and
-> [*Running the extension in development mode*](#running-the-extension-in-development-mode) section).
-> In most cases, you don't need to run them manually.
+> Watch builds are handled automatically by VSCode tasks when you start debugging (see
+> [`.vscode/tasks.json`][vscode-tasks-file] file). Each package (shared, client, server, syntaxes) has its own watch
+> task that rebuilds on file changes.
 
 > [!NOTE]
 > Linting and testing commands are called automatically by Husky Git hooks and CI. You can run them manually if needed.
@@ -146,22 +182,22 @@ Explore the following links for more information on development:
 - [VSCode Extension Samples](https://github.com/microsoft/vscode-extension-samples)
 - [Online test page for TextMate grammars][nova-light-show]
 
+[bamboo-specs-dir]: ./bamboo-specs
 [client-dir]: ./client
 [contribute]: https://adguard.com/contribute.html
 [esbuild-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers
 [eslint]: https://eslint.org/
 [husky]: https://typicode.github.io/husky
-[jest]: https://jestjs.io/
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [nova-light-show]: https://novalightshow.netlify.app/
 [server-dir]: ./server
+[shared-dir]: ./shared
 [syntaxes-dir]: ./syntaxes
 [test-dir]: ./test
-[test-grammar-dir]: ./test/grammar
 [test-static-aglint-dir]: ./test/static/aglint
-[test-static-dir]: ./test/static
 [test-static-rules-dir]: ./test/static/rules
-[typescript]: https://www.typescriptlang.org/
+[tools-dir]: ./tools
+[vitest]: https://vitest.dev/
 [vscode-extensions-file]: ./.vscode/extensions.json
 [vscode-ls-extension-guide]: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
 [vscode-problem-matcher-docs]: https://code.visualstudio.com/docs/editor/tasks#_processing-task-output-with-problem-matchers
