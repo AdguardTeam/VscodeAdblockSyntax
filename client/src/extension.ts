@@ -1,5 +1,6 @@
 import { join } from 'node:path';
 
+import { FileScheme } from '@vscode-adblock-syntax/shared';
 import * as v from 'valibot';
 import {
     commands,
@@ -22,14 +23,6 @@ import {
 } from 'vscode-languageclient/node';
 
 import { fileInFolder, getOuterMostWorkspaceFolder } from './workspace-folders';
-
-/**
- * Schemes for file documents.
- */
-const enum FileScheme {
-    File = 'file',
-    Untitled = 'untitled',
-}
 
 const SERVER_PATH = join('server', 'out', 'server.js');
 const DOCUMENT_SCHEME = FileScheme.File;
