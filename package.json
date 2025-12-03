@@ -90,13 +90,14 @@
         "lint:md": "markdownlint .",
         "lint:staged": "lint-staged",
         "lint:ts": "eslint . --cache --ext .ts",
-        "prepare": "husky"
+        "prepare": "node .husky/install.mjs"
     },
     "devDependencies": {
         "@types/node": "catalog:",
         "@typescript-eslint/eslint-plugin": "^7.5.0",
         "@typescript-eslint/parser": "^7.5.0",
         "@vscode/vsce": "^3.6.2",
+        "ci-info": "^4.3.1",
         "commander": "^11.1.0",
         "esbuild": "^0.17.17",
         "esbuild-register": "^3.5.0",

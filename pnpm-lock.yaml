@@ -44,6 +44,9 @@ importers:
       '@vscode/vsce':
         specifier: ^3.6.2
         version: 3.7.1
+      ci-info:
+        specifier: ^4.3.1
+        version: 4.3.1
       commander:
         specifier: ^11.1.0
         version: 11.1.0
@@ -1993,6 +1996,10 @@ packages:
 
   ci-info@2.0.0:
     resolution: {integrity: sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==}
+
+  ci-info@4.3.1:
+    resolution: {integrity: sha512-Wdy2Igu8OcBpI2pZePZ5oWjPC38tmDVx5WKUXKwlLYkA0ozo85sLsLvkBbBn/sZaSCMFOGZJ14fvW9t5/d7kdA==}
+    engines: {node: '>=8'}
 
   cli-cursor@5.0.0:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
@@ -6087,6 +6094,8 @@ snapshots:
     optional: true
 
   ci-info@2.0.0: {}
+
+  ci-info@4.3.1: {}
 
   cli-cursor@5.0.0:
     dependencies:
