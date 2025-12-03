@@ -8,10 +8,9 @@
 		"scripts/**/*.ts",
 		"scripts/.eslintrc.cjs",
 		"src/**/*.ts",
-		"test/.eslintrc.cjs",
+		"tests/.eslintrc.cjs",
+		"tests/**/*.ts",
 		"vitest.config.ts",
-		"vitest.config.ts",
-        "test/**/*.ts",
 	],
 	"exclude": [
 		"node_modules",

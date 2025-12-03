@@ -9,5 +9,9 @@ export default defineConfig({
                 'src/**/*.ts',
             ],
         },
+        alias: {
+            // Mock the vscode module for testing
+            vscode: new URL('./tests/__mocks__/vscode.ts', import.meta.url).pathname,
+        },
     },
 });
