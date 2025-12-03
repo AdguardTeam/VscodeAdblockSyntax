@@ -38,6 +38,9 @@ jobs:
       - name: List files
         run: ls -alt
 
+      - name: Build shared library
+        run: pnpm --filter @vscode-adblock-syntax/shared build
+
       - name: Check TypeScript types
         run: pnpm test:compile
 
