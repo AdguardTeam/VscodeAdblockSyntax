@@ -1,7 +1,15 @@
+/* eslint-disable @typescript-eslint/no-restricted-imports */
 /**
  * @file Tests for diagnostic conversion utilities.
  */
 
+import {
+    type LinterFixCommand,
+    type LinterResult,
+    type LinterRuleSeverity,
+    LinterRuleType,
+    type LinterSuggestion,
+} from '@adguard/aglint/linter';
 import { describe, expect, it } from 'vitest';
 import { DiagnosticSeverity } from 'vscode-languageserver/node';
 
@@ -64,12 +72,12 @@ describe('convertLinterResultToDiagnostics', () => {
     } as any;
 
     it('should convert AGLint problems to VSCode diagnostics', () => {
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     ruleId: 'test-rule',
                     message: 'Test error message',
-                    severity: 2, // Error
+                    severity: 2 as LinterRuleSeverity, // Error
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 10 },
@@ -92,11 +100,11 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should convert warning severity correctly', () => {
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     message: 'Warning message',
-                    severity: 1, // Warning
+                    severity: 1 as LinterRuleSeverity, // Warning
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -115,12 +123,12 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should include code description with documentation URL', () => {
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     ruleId: 'test-rule',
                     message: 'Test error',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -129,7 +137,11 @@ describe('convertLinterResultToDiagnostics', () => {
             ],
             metadata: {
                 'test-rule': {
+                    type: LinterRuleType.Layout,
                     docs: {
+                        name: 'test-rule',
+                        description: 'Test rule',
+                        recommended: false,
                         url: 'https://example.com/rules/test-rule',
                     },
                 },
@@ -147,12 +159,12 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should not include code description if URL is missing', () => {
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     ruleId: 'test-rule',
                     message: 'Test error',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -171,16 +183,16 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should attach fix data when available', () => {
-        const fixCommand = {
+        const fixCommand: LinterFixCommand = {
             range: [0, 10],
             text: 'fixed text',
         };
 
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     message: 'Test error',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -200,16 +212,16 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should attach suggestions data when available', () => {
-        const suggestions = [
-            { desc: 'Suggestion 1', fix: { range: [0, 5], text: 'fix1' } },
-            { desc: 'Suggestion 2', fix: { range: [0, 5], text: 'fix2' } },
+        const suggestions: LinterSuggestion[] = [
+            { message: 'Suggestion 1', fix: { range: [0, 5], text: 'fix1' } },
+            { message: 'Suggestion 2', fix: { range: [0, 10], text: 'fix2' } },
         ];
 
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     message: 'Test error',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -229,14 +241,14 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should attach both fix and suggestions when available', () => {
-        const fix = { range: [0, 10], text: 'fixed' };
-        const suggestions = [{ desc: 'Suggestion', fix: { range: [0, 5], text: 'fix' } }];
+        const fix: LinterFixCommand = { range: [0, 10], text: 'fixed' };
+        const suggestions: LinterSuggestion[] = [{ message: 'Suggestion', fix: { range: [0, 5], text: 'fix' } }];
 
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     message: 'Test error',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -257,7 +269,7 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should handle empty problems array', () => {
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [],
             metadata: {},
             warningCount: 0,
@@ -271,11 +283,11 @@ describe('convertLinterResultToDiagnostics', () => {
     });
 
     it('should handle multiple problems', () => {
-        const linterResult = {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     message: 'Error 1',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },
@@ -283,7 +295,7 @@ describe('convertLinterResultToDiagnostics', () => {
                 },
                 {
                     message: 'Error 2',
-                    severity: 1,
+                    severity: 1 as LinterRuleSeverity,
                     position: {
                         start: { line: 2, column: 0 },
                         end: { line: 2, column: 5 },
@@ -291,7 +303,7 @@ describe('convertLinterResultToDiagnostics', () => {
                 },
                 {
                     message: 'Error 3',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 3, column: 0 },
                         end: { line: 3, column: 5 },
@@ -312,12 +324,12 @@ describe('convertLinterResultToDiagnostics', () => {
         expect(diagnostics[2].message).toBe('Error 3');
     });
 
-    it('should handle problems without ruleId', () => {
-        const linterResult = {
+    it('should not include code when ruleId is missing', () => {
+        const linterResult: LinterResult = {
             problems: [
                 {
                     message: 'Error without rule',
-                    severity: 2,
+                    severity: 2 as LinterRuleSeverity,
                     position: {
                         start: { line: 1, column: 0 },
                         end: { line: 1, column: 5 },

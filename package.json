@@ -90,7 +90,9 @@
         "lint:md": "markdownlint .",
         "lint:staged": "lint-staged",
         "lint:ts": "eslint . --cache --ext .ts",
-        "prepare": "node .husky/install.mjs"
+        "prepare": "node .husky/install.mjs",
+        "test": "pnpm --recursive --parallel test --run",
+        "test:compile": "pnpm --recursive --parallel exec tsc --noEmit"
     },
     "devDependencies": {
         "@types/node": "catalog:",

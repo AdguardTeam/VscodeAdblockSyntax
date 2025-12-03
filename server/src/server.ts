@@ -15,7 +15,7 @@ import type {
     LinterResult,
     LinterRunOptions,
 } from '@adguard/aglint/linter';
-import { CommentMarker, type ConfigCommentRule, ConfigCommentRuleParser } from '@adguard/agtree';
+import { type ConfigCommentRule, ConfigCommentRuleParser } from '@adguard/agtree';
 import debounce from 'debounce';
 import {
     CodeAction,
@@ -494,7 +494,7 @@ connection.onCodeAction((params) => {
 
     // Make '! aglint-disable-next-line' prefix
     const aglintDisableNextLinePrefix = [
-        CommentMarker.Regular,
+        '!', // CommentMarker.Regular
         SPACE,
         aglintContext?.aglint.linter.LinterConfigCommentType.DisableNextLine,
     ].join(EMPTY);
