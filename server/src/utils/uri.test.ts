@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isFileUri } from '../../src/utils/uri';
+import { isFileUri } from './uri';
 
 describe('isFileUri', () => {
     it('returns true for a valid file URI', () => {
