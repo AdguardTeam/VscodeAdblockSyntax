@@ -118,6 +118,7 @@ const IMPORT_PLUGIN_RULES = {
 const JSDOC_PLUGIN_RULES = {
     // Types are described in TypeScript
     'jsdoc/require-param-type': 'off',
+    'jsdoc/require-throws-type': 'off',
     'jsdoc/no-undefined-types': 'off',
     'jsdoc/require-returns-type': 'off',
 
