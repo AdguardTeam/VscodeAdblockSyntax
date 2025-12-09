@@ -4,12 +4,56 @@ packages:
   - shared
   - syntaxes
   - test/static/aglint
-
 catalog:
-  '@adguard/aglint': ^4.0.0-beta.1
-  '@types/node': ^20.19.9
-  esbuild: 0.25.12
+  "@adguard/aglint": ^4.0.0-beta.1
+  "@adguard/agtree": ^2.3.0
+  "@adguard/changelog-tools": ^0.0.1
+  "@types/fs-extra": ^11.0.4
+  "@types/node": ^20.19.9
+  "@types/plist": ^3.0.5
+  "@types/resolve": ^1.20.6
+  "@types/semver": ^7.5.0
+  "@types/vscode": ^1.74.0
+  "@typescript-eslint/eslint-plugin": ^7.5.0
+  "@typescript-eslint/parser": ^7.5.0
+  "@vitest/coverage-v8": ^3.2.4
+  "@vitest/expect": ^3.2.4
+  "@vscode/vsce": ^3.6.2
+  chokidar: ^4.0.3
+  ci-info: ^4.3.1
+  debounce: ^3.0.0
+  esbuild: ^0.17.17
+  eslint-config-airbnb-base: ^15.0.0
+  eslint-config-airbnb-typescript: ^18.0.0
+  eslint-plugin-boundaries: ^5.0.1
+  eslint-plugin-import-newlines: ^1.4.0
+  eslint-plugin-import: ^2.32.0
+  eslint-plugin-jsdoc: ^60.8.0
+  eslint-plugin-n: ^17.23.1
+  eslint: 8.57.1
+  fast-glob: ^3.3.3
+  fs-extra: ^11.3.1
+  husky: ^9.0.1
+  jsdoc: ^4.0.4
+  lint-staged: ^15.1.0
+  markdownlint-cli: ^0.35.0
+  markdownlint: ^0.30.0
+  mkdirp: ^3.0.1
+  ovsx: ^0.10.6
+  plist: ^3.1.0
+  preferred-pm: ^4.1.1
+  resolve: ^1.22.11
+  rimraf: ^4.4.1
+  semver: ^7.5.4
   tsc-files: 1.1.4
-  tsx: ^4.20.3
+  tsx: ^4.7.0
   typescript: ^5.9.2
+  valibot: ^1.1.0
   vitest: ^3.2.4
+  vscode-languageclient: 10.0.0-next.15
+  vscode-languageserver-textdocument: ^1.0.12
+  vscode-languageserver: 10.0.0-next.13
+  vscode-oniguruma: ^2.0.1
+  vscode-textmate: ^9.2.0
+  vscode-uri: ^3.1.0
+  yaml: ^2.8.1

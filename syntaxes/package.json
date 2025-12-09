@@ -14,18 +14,18 @@
         "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "devDependencies": {
-        "@types/fs-extra": "^11.0.4",
+        "@types/fs-extra": "catalog:",
         "@types/node": "catalog:",
-        "@types/plist": "^3.0.5",
-        "@vitest/expect": "^3.2.4",
-        "chokidar": "^4.0.3",
-        "fs-extra": "^11.3.1",
-        "plist": "^3.1.0",
-        "rimraf": "^6.1.2",
-        "valibot": "^1.1.0",
+        "@types/plist": "catalog:",
+        "@vitest/expect": "catalog:",
+        "chokidar": "catalog:",
+        "fs-extra": "catalog:",
+        "plist": "catalog:",
+        "rimraf": "catalog:",
+        "valibot": "catalog:",
         "vitest": "catalog:",
-        "vscode-oniguruma": "^2.0.1",
-        "vscode-textmate": "^9.2.0",
-        "yaml": "^2.8.1"
+        "vscode-oniguruma": "catalog:",
+        "vscode-textmate": "catalog:",
+        "yaml": "catalog:"
     }
 }
