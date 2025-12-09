@@ -22,7 +22,7 @@ catalog:
   chokidar: ^4.0.3
   ci-info: ^4.3.1
   debounce: ^3.0.0
-  esbuild: ^0.17.17
+  esbuild: ^0.27.1
   eslint-config-airbnb-base: ^15.0.0
   eslint-config-airbnb-typescript: ^18.0.0
   eslint-plugin-boundaries: ^5.0.1
