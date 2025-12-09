@@ -49,7 +49,7 @@ jobs:
         run: pnpm build:prod
 
       - name: Create build.txt with version
-        run: pnpm build:txt
+        run: pnpm exec tsx tools/build-txt.ts
 
       - name: Extract changelog
         run: |

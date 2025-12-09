@@ -11,10 +11,16 @@ Table of Contents:
 - [Prerequisites](#prerequisites)
 - [Initial setup](#initial-setup)
 - [Project structure](#project-structure)
+    - [Main packages](#main-packages)
+    - [Supporting folders](#supporting-folders)
 - [Running the extension in development mode](#running-the-extension-in-development-mode)
 - [Creating a production build](#creating-a-production-build)
 - [Updating syntax highlighting](#updating-syntax-highlighting)
 - [Available commands](#available-commands)
+    - [Build commands](#build-commands)
+    - [Package-level build commands](#package-level-build-commands)
+    - [Utility commands](#utility-commands)
+    - [Linting \& testing commands](#linting--testing-commands)
 - [Useful links](#useful-links)
 
 ## Prerequisites
@@ -130,8 +136,6 @@ During development, you can use the following commands (listed in `package.json`
   `syntaxes/out`, `out`).
 - `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
 - `pnpm build:vsix-prerelease` - Produces a prerelease `.vsix` file.
-- `pnpm build:txt` - Creates a `build.txt` file in the out directory containing the current version number, primarily
-  for Continuous Integration (CI) purposes.
 
 ### Package-level build commands
 

@@ -62,7 +62,7 @@ Build:
             pnpm build:prod
 
             # Create build.txt file with version
-            pnpm build:txt
+            pnpm exec tsx tools/build-txt.ts
     - inject-variables:
         file: out/build.txt
         scope: RESULT
