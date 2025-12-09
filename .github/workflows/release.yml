@@ -47,18 +47,10 @@ jobs:
       - name: Create production build
         run: pnpm build
 
-      - name: Pack build into .vsix file
-        run: pnpm package
-
-      - name: Create build.txt with version
-        run: pnpm exec tsx tools/build-txt.ts
-
       - name: Extract changelog
         run: |
-          # Import version from package.json using pnpm
-          export VERSION=$(pnpm pkg get version | tr -d '"')
-
-          npx changelog-tools --extract-version $VERSION
+          export VERSION=$(pnpm pkg get version --json | jq -r)
+          pnpm exec changelog-tools extract --extract-version $VERSION > ./EXTRACTED_CHANGES.md
 
       - name: Set up variables
         uses: actions/github-script@v7
@@ -93,6 +85,14 @@ jobs:
               core.exportVariable('TAG_NAME', tag);
               core.exportVariable('IS_PRERELEASE', isPreRelease.toString());
 
+      - name: Pack build into .vsix file
+        run: |
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            pnpm package:pre
+          else
+            pnpm package
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -101,7 +101,7 @@ jobs:
             out/vscode-adblock.vsix
           draft: false
           prerelease: ${{ env.IS_PRERELEASE }}
-          body_path: ./out/TEMP_CHANGES.md
+          body_path: ./EXTRACTED_CHANGES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
