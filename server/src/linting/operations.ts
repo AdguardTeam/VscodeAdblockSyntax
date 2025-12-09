@@ -11,11 +11,11 @@ import type { Connection, TextDocuments } from 'vscode-languageserver/node';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import type { ServerContext } from '../context/server-context';
-import { createLintCacheKey } from '../linting/cache';
-import { convertLinterResultToDiagnostics } from '../linting/diagnostics';
+import { getErrorMessage, getErrorStack } from '../utils/error';
+import { isFileUri } from '../utils/uri';
 
-import { getErrorMessage, getErrorStack } from './error';
-import { isFileUri } from './uri';
+import { createLintCacheKey } from './cache';
+import { convertLinterResultToDiagnostics } from './diagnostics';
 
 /**
  * Debounce delay for linting files.

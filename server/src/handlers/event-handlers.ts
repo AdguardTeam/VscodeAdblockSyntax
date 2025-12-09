@@ -10,9 +10,9 @@ import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { handleCodeAction } from '../code-actions';
 import type { ServerContext } from '../context/server-context';
+import { createDebouncedLintFile, refreshLinter, removeAllDiagnostics } from '../linting/operations';
 
-import { createDebouncedLintFile, refreshLinter, removeAllDiagnostics } from './linting-operations';
-import { createRetryAglintLoading, pullSettings } from './settings-operations';
+import { createRetryAglintLoading, pullSettings } from './configuration';
 
 /**
  * Register all event handlers for the language server.

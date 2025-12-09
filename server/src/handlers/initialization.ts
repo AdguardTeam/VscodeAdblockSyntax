@@ -6,8 +6,7 @@ import type { InitializeParams, InitializeResult } from 'vscode-languageserver/n
 import { TextDocumentSyncKind } from 'vscode-languageserver/node';
 
 import type { ServerContext } from '../context/server-context';
-
-import { extractWorkspaceRootUri, getWorkspaceRootFromRootUri } from './workspace';
+import { extractWorkspaceRootUri, getWorkspaceRootFromRootUri } from '../utils/workspace';
 
 /**
  * Handle the server initialization request.

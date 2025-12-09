@@ -6,8 +6,8 @@ import { createConnection, ProposedFeatures, TextDocuments } from 'vscode-langua
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { ServerContext } from './context/server-context';
-import { registerEventHandlers, setupWorkspaceFolderHandler } from './utils/event-handlers';
-import { handleInitialize } from './utils/initialization';
+import { registerEventHandlers, setupWorkspaceFolderHandler } from './handlers/event-handlers';
+import { handleInitialize } from './handlers/initialization';
 
 /**
  * Create a connection for the server, using Node's IPC as a transport.

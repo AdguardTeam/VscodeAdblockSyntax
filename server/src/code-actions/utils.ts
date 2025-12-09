@@ -5,7 +5,12 @@
 import type { LinterFixCommand, LinterOffsetRange } from '@adguard/aglint/linter';
 import type { ConfigCommentRule } from '@adguard/agtree';
 import { ConfigCommentRuleParser } from '@adguard/agtree';
-import { Position, Range, TextEdit } from 'vscode-languageserver/node';
+import {
+    Position,
+    Range,
+    TextEdit,
+    uinteger,
+} from 'vscode-languageserver/node';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { getErrorMessage } from '../utils/error';
@@ -83,7 +88,7 @@ export function getPreviousLineText(textDocument: TextDocument, line: number): s
         Range.create(
             Position.create(previousLine, 0),
             // Note: we do not know the length of the previous line, so we use the max value
-            Position.create(previousLine, 2147483647), // uinteger.MAX_VALUE
+            Position.create(previousLine, uinteger.MAX_VALUE),
         ),
     );
 }

@@ -12,12 +12,11 @@ import { satisfies } from 'semver';
 import { type Connection } from 'vscode-languageserver';
 
 import { AGLINT_PACKAGE_NAME } from '../common/constants';
-
-import { getErrorMessage } from './error';
-import { fileExists } from './file-exists';
-import { importModule } from './import';
-import { resolveModulePath } from './module-resolver';
-import { findGlobalPathForPackageManager, NPM, type PackageManager } from './package-managers';
+import { getErrorMessage } from '../utils/error';
+import { fileExists } from '../utils/file-exists';
+import { importModule } from '../utils/import';
+import { resolveModulePath } from '../utils/module-resolver';
+import { findGlobalPathForPackageManager, NPM, type PackageManager } from '../utils/package-managers';
 
 /**
  * Minimum version of the external AGLint module that is supported by the VSCode extension.

@@ -1,141 +1,152 @@
 /**
- * @file Configuration and settings handlers.
+ * @file Settings operations - configuration and settings management for the language server.
  */
 
 import { pathToFileURL } from 'node:url';
 
 import debounce from 'debounce';
+import type { Connection } from 'vscode-languageserver/node';
 
 import { AglintContext } from '../context/aglint-context';
 import type { ServerContext } from '../context/server-context';
-import { clearLintCache, lintFile, removeAllDiagnostics } from '../linting/linter';
+import { refreshLinter, removeAllDiagnostics } from '../linting/operations';
+import { defaultSettings } from '../settings';
 
 /**
- * Rebuild the cached paths and revalidate any open text documents.
+ * Pull the settings from VSCode and update the settings variable. It also
+ * re-builts the cached paths and revalidates any open text documents.
  *
- * @param context Server context.
- */
-export async function refreshLinter(context: ServerContext): Promise<void> {
-    if (!context.settings.enableAglint || !context.workspaceRoot) {
-        removeAllDiagnostics(context);
-        return;
-    }
-
-    // Revalidate any open text documents
-    // Note: No need to clear cache here - cache keys include AGLint version,
-    // so version changes are handled automatically
-    context.documents.all().forEach((doc) => lintFile(doc, context));
-}
-
-/**
- * Pull the settings from VSCode and update the settings variable.
- * Also rebuilds the cached paths and revalidates any open text documents.
+ * "In this model the clients simply sends an empty change event to signal that the settings have
+ * changed and must be reread".
  *
- * @param context Server context.
+ * @see https://github.com/microsoft/vscode-languageserver-node/issues/380#issuecomment-414691493
+ *
+ * @param serverContext Server context.
+ * @param connection Language server connection.
  */
-export async function pullSettings(context: ServerContext): Promise<void> {
-    const previousEnableAglint = context.settings.enableAglint;
-    const previousEnableCache = context.settings.enableInMemoryAglintCache;
+// eslint-disable-next-line no-param-reassign -- serverContext is a mutable state container
+export async function pullSettings(serverContext: ServerContext, connection: Connection): Promise<void> {
+    const previousEnableAglint = serverContext.settings.enableAglint;
+    const previousEnableCache = serverContext.settings.enableInMemoryAglintCache;
 
-    if (context.hasConfigurationCapability) {
-        const scopeUri = context.workspaceRoot ? pathToFileURL(context.workspaceRoot).toString() : undefined;
-        const receivedSettings = await context.connection.workspace.getConfiguration({
-            scopeUri,
-            section: 'adblock',
-        });
+    if (serverContext.hasConfigurationCapability) {
+        const scopeUri = serverContext.workspaceRoot
+            ? pathToFileURL(serverContext.workspaceRoot).toString()
+            : undefined;
+        const receivedSettings = await connection.workspace.getConfiguration({ scopeUri, section: 'adblock' });
 
-        // Update the settings. No need to validate them, VSCode does this for us
-        context.settings = receivedSettings || context.settings;
+        // Update the settings. No need to validate them, VSCode does this for us based on the schema
+        // specified in the package.json
+        // If we didn't receive any settings, use the default ones
+        // eslint-disable-next-line no-param-reassign
+        serverContext.settings = receivedSettings || defaultSettings;
+    } else {
+        // eslint-disable-next-line no-param-reassign
+        serverContext.settings = defaultSettings;
     }
 
     // If nothing changed and AGLint is already initialized OR loading failed, skip heavy work
     if (
-        (context.aglintContext || context.aglintLoadingFailed)
-        && previousEnableAglint === context.settings.enableAglint
-        && previousEnableCache === context.settings.enableInMemoryAglintCache
+        (serverContext.aglintContext || serverContext.aglintLoadingFailed)
+        && previousEnableAglint === serverContext.settings.enableAglint
+        && previousEnableCache === serverContext.settings.enableInMemoryAglintCache
     ) {
         return;
     }
 
     // Clear cache if caching was disabled
-    if (previousEnableCache && !context.settings.enableInMemoryAglintCache) {
-        clearLintCache();
-        context.connection.console.info('[lsp] AGLint cache cleared (caching disabled)');
+    if (previousEnableCache && !serverContext.settings.enableInMemoryAglintCache) {
+        serverContext.lintingCache.clear();
+        connection.console.info('[lsp] AGLint cache cleared (caching disabled)');
     }
 
     // Send status notification about AGLint being enabled/disabled
-    context.connection.sendNotification('aglint/status', { aglintEnabled: context.settings.enableAglint });
+    connection.sendNotification('aglint/status', { aglintEnabled: serverContext.settings.enableAglint });
 
     // If AGLint is disabled, clean up and return early
-    if (!context.settings.enableAglint) {
-        removeAllDiagnostics(context);
-        context.connection.console.debug('[lsp] AGLint is disabled');
+    if (!serverContext.settings.enableAglint) {
+        removeAllDiagnostics(serverContext.documents, connection);
+        connection.console.debug('[lsp] AGLint is disabled');
         return;
     }
 
-    context.connection.console.debug('[lsp] AGLint integration is enabled');
+    connection.console.debug('[lsp] AGLint integration is enabled');
 
     // Initialize AGLint context if not already initialized
-    if (!context.aglintContext && !context.aglintLoadingFailed && !context.aglintLoading) {
-        if (!context.workspaceRoot) {
-            context.connection.console.error('[lsp] Workspace root is not defined');
-            removeAllDiagnostics(context);
+    if (
+        !serverContext.aglintContext
+        && !serverContext.aglintLoadingFailed
+        && !serverContext.aglintLoading
+    ) {
+        if (!serverContext.workspaceRoot) {
+            connection.console.error('[lsp] Workspace root is not defined');
+            removeAllDiagnostics(serverContext.documents, connection);
             return;
         }
 
         // Set loading flag to prevent concurrent initialization
-        context.aglintLoading = true;
+        // eslint-disable-next-line no-param-reassign
+        serverContext.aglintLoading = true;
 
         try {
-            context.aglintContext = await AglintContext.create(
-                context.connection,
-                context.documents,
-                context.workspaceRoot,
-                context.initialDebugMode,
+            // eslint-disable-next-line no-param-reassign
+            serverContext.aglintContext = await AglintContext.create(
+                connection,
+                serverContext.documents,
+                serverContext.workspaceRoot,
+                serverContext.initialDebugMode,
             );
 
-            if (!context.aglintContext) {
-                context.aglintLoadingFailed = true;
-                context.connection.console.info(
+            if (!serverContext.aglintContext) {
+                // eslint-disable-next-line no-param-reassign
+                serverContext.aglintLoadingFailed = true;
+                connection.console.info(
                     '[lsp] AGLint loading failed. Will retry when package.json or node_modules changes.',
                 );
-                removeAllDiagnostics(context);
+                removeAllDiagnostics(serverContext.documents, connection);
                 return;
             }
         } finally {
             // Always clear loading flag
-            context.aglintLoading = false;
+            // eslint-disable-next-line no-param-reassign
+            serverContext.aglintLoading = false;
         }
     }
 
     // Log cache setting changes
-    if (previousEnableCache !== context.settings.enableInMemoryAglintCache) {
-        if (context.settings.enableInMemoryAglintCache) {
-            context.connection.console.info('[lsp] In-memory linting cache enabled');
+    if (previousEnableCache !== serverContext.settings.enableInMemoryAglintCache) {
+        if (serverContext.settings.enableInMemoryAglintCache) {
+            connection.console.info('[lsp] In-memory linting cache enabled');
         } else {
-            context.connection.console.info('[lsp] In-memory linting cache disabled');
-            clearLintCache();
-            context.connection.console.debug('[lsp] Cache cleared');
+            connection.console.info('[lsp] In-memory linting cache disabled');
+            serverContext.lintingCache.clear();
+            connection.console.debug('[lsp] Cache cleared');
         }
     }
 
-    await refreshLinter(context);
+    await refreshLinter(serverContext, connection);
 }
 
 /**
- * Debounced function to retry AGLint loading after package.json or node_modules changes.
+ * Create a debounced function to retry AGLint loading after package.json or node_modules changes.
  * Waits 2 seconds for file system operations to settle before attempting reload.
  *
- * @param context Server context.
+ * @param serverContext Server context.
+ * @param connection Language server connection.
  *
  * @returns Debounced retry function.
  */
-export function createRetryAglintLoading(context: ServerContext) {
+// eslint-disable-next-line no-param-reassign -- serverContext is a mutable state container
+export function createRetryAglintLoading(
+    serverContext: ServerContext,
+    connection: Connection,
+): ReturnType<typeof debounce<() => Promise<void>>> {
     return debounce(async () => {
-        if (context.aglintLoadingFailed && !context.aglintLoading) {
-            context.connection.console.info('[lsp] Retrying AGLint loading after package changes settled');
-            context.aglintLoadingFailed = false;
-            await pullSettings(context);
+        if (serverContext.aglintLoadingFailed && !serverContext.aglintLoading) {
+            connection.console.info('[lsp] Retrying AGLint loading after package changes settled');
+            // eslint-disable-next-line no-param-reassign
+            serverContext.aglintLoadingFailed = false;
+            await pullSettings(serverContext, connection);
         }
     }, 2000);
 }
