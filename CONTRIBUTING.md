@@ -93,11 +93,8 @@ If you've made changes to the extension code and want to test them, follow these
 
 > [!IMPORTANT]
 > When you start the debugging, VSCode starts the watch build commands in separate terminals. To interpret the terminal
-> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs]. Since Rspack is not supported by
-> VSCode by default, you need to install the [TypeScript + Webpack Problem Matchers][tsl-problem-matcher-extension]
-> extension to make able VSCode to parse its output (Rspack has webpack-compatible output).
-> Without this extension, VSCode cannot recognize when Rspack completes its build or encounters errors. This results in
-> an endless run, preventing the opening of the Extension Development Host.
+> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs],
+> otherwise the watch build will not stop when it encounters an error.
 
 ## Creating a production build
 
@@ -190,7 +187,6 @@ Explore the following links for more information on development:
 [bamboo-specs-dir]: ./bamboo-specs
 [client-dir]: ./client
 [contribute]: https://adguard.com/contribute.html
-[tsl-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=amodio.tsl-problem-matcher
 [eslint]: https://eslint.org/
 [husky]: https://typicode.github.io/husky
 [markdownlint]: https://github.com/DavidAnson/markdownlint

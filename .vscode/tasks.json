@@ -15,7 +15,39 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$ts-checker-webpack-watch"
+            "problemMatcher": {
+                "owner": "rspack",
+                "source": "rspack",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/shared"
+                ],
+                "pattern": [
+                    {
+                        // ERROR in ./src/server.ts 8:0-25
+                        "regexp": "^(ERROR|WARNING) in\\s+(.+)\\s+(\\d+):(\\d+)(?:-\\d+)?",
+                        "severity": 1, // ERROR | WARNING
+                        "file": 2, // ./src/server.ts
+                        "line": 3, // 8
+                        "column": 4 // 0
+                    },
+                    {
+                        //   × Module not found: ...
+                        "regexp": "^\\s+×\\s+(.*)$",
+                        "message": 1
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": ".*"
+                    },
+                    // e.g.: "Rspack 1.6.7 compiled with 1 error in 71 ms"
+                    "endsPattern": {
+                        "regexp": "Rspack .* compiled .*"
+                    }
+                }
+            },
         },
         {
             "label": "Shared lib tsc build (watch)",
@@ -54,7 +86,39 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$ts-checker-webpack-watch",
+            "problemMatcher": {
+                "owner": "rspack",
+                "source": "rspack",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/server"
+                ],
+                "pattern": [
+                    {
+                        // ERROR in ./src/server.ts 8:0-25
+                        "regexp": "^(ERROR|WARNING) in\\s+(.+)\\s+(\\d+):(\\d+)(?:-\\d+)?",
+                        "severity": 1, // ERROR | WARNING
+                        "file": 2, // ./src/server.ts
+                        "line": 3, // 8
+                        "column": 4 // 0
+                    },
+                    {
+                        //   × Module not found: ...
+                        "regexp": "^\\s+×\\s+(.*)$",
+                        "message": 1
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": ".*"
+                    },
+                    // e.g.: "Rspack 1.6.7 compiled with 1 error in 71 ms"
+                    "endsPattern": {
+                        "regexp": "Rspack .* compiled .*"
+                    }
+                }
+            },
             "dependsOn": [
                 "Shared lib dev build (watch)"
             ]
@@ -73,7 +137,39 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$ts-checker-webpack-watch",
+            "problemMatcher": {
+                "owner": "rspack",
+                "source": "rspack",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/client"
+                ],
+                "pattern": [
+                    {
+                        // ERROR in ./src/server.ts 8:0-25
+                        "regexp": "^(ERROR|WARNING) in\\s+(.+)\\s+(\\d+):(\\d+)(?:-\\d+)?",
+                        "severity": 1, // ERROR | WARNING
+                        "file": 2, // ./src/server.ts
+                        "line": 3, // 8
+                        "column": 4 // 0
+                    },
+                    {
+                        //   × Module not found: ...
+                        "regexp": "^\\s+×\\s+(.*)$",
+                        "message": 1
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": ".*"
+                    },
+                    // e.g.: "Rspack 1.6.7 compiled with 1 error in 71 ms"
+                    "endsPattern": {
+                        "regexp": "Rspack .* compiled .*"
+                    }
+                }
+            },
             "dependsOn": [
                 "Shared lib dev build (watch)"
             ]
