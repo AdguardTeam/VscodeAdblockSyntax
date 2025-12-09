@@ -15,7 +15,9 @@
             "details",
             "summary",
             "img",
-            "pre"
+            "pre",
+            "div",
+            "p"
         ]
     },
     "no-duplicate-heading": {
