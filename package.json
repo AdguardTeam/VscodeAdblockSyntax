@@ -83,7 +83,6 @@
         "build:vsix-prerelease": "mkdirp out && vsce package --out out/vscode-adblock.vsix --pre-release",
         "build:clean": "rimraf ./client/out && rimraf ./server/out && rimraf ./syntaxes/out && rimraf ./out",
         "clean": "tsx tools/clean.ts",
-        "extract-changelog": "node -r esbuild-register tools/changelog-extractor.ts",
         "increment": "pnpm version patch --no-git-tag-version",
         "lint": "pnpm lint:ts && pnpm lint:md",
         "lint:md": "markdownlint .",

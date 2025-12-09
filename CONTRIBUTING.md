@@ -151,7 +151,6 @@ Add `--watch` flag for watch mode, or `--minify` for production builds.
 ### Utility commands
 
 - `pnpm clean` - Removes all generated files using the clean utility script.
-- `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically used by CI.
 - `pnpm increment` - Increment the patch version number in the `package.json` file. Typically used by CI.
 
 ### Linting & testing commands
