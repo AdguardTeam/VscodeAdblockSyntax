@@ -17,7 +17,7 @@ import { defaultSettings } from '../../src/settings';
 import { createMockConnection, createMockServerContext } from '../helpers';
 
 // Mock the linting operations
-vi.mock('../../src/linting/linting-orchestration', () => ({
+vi.mock('../../src/linting/orchestration', () => ({
     refreshLinter: vi.fn(),
     removeAllDiagnostics: vi.fn(),
 }));

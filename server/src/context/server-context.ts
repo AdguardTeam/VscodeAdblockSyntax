@@ -81,4 +81,76 @@ export class ServerContext {
         this.documents = documents;
         this.lintingCache = new LintingCache();
     }
+
+    /**
+     * Update the extension settings.
+     *
+     * @param settings New settings to apply.
+     */
+    public updateSettings(settings: ExtensionSettings): void {
+        this.settings = settings;
+    }
+
+    /**
+     * Update the initial debug mode flag.
+     *
+     * @param enabled Whether debug mode is enabled.
+     */
+    public updateInitialDebugMode(enabled: boolean): void {
+        this.initialDebugMode = enabled;
+    }
+
+    /**
+     * Update the AGLint context.
+     *
+     * @param context New AGLint context or undefined to clear.
+     */
+    public updateAglintContext(context: AglintContext | undefined): void {
+        this.aglintContext = context;
+    }
+
+    /**
+     * Set the AGLint loading state.
+     *
+     * @param loading Whether AGLint is currently loading.
+     */
+    public setAglintLoading(loading: boolean): void {
+        this.aglintLoading = loading;
+    }
+
+    /**
+     * Set the AGLint loading failed state.
+     *
+     * @param failed Whether AGLint loading has failed.
+     */
+    public setAglintLoadingFailed(failed: boolean): void {
+        this.aglintLoadingFailed = failed;
+    }
+
+    /**
+     * Set the workspace root path.
+     *
+     * @param root Workspace root path or undefined.
+     */
+    public setWorkspaceRoot(root: string | undefined): void {
+        this.workspaceRoot = root;
+    }
+
+    /**
+     * Set whether the client supports configuration capability.
+     *
+     * @param hasCapability Whether the capability is supported.
+     */
+    public setConfigurationCapability(hasCapability: boolean): void {
+        this.hasConfigurationCapability = hasCapability;
+    }
+
+    /**
+     * Set whether the client supports workspace folder capability.
+     *
+     * @param hasCapability Whether the capability is supported.
+     */
+    public setWorkspaceFolderCapability(hasCapability: boolean): void {
+        this.hasWorkspaceFolderCapability = hasCapability;
+    }
 }

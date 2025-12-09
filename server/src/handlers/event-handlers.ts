@@ -41,7 +41,6 @@ export function registerEventHandlers(
     });
 
     // Log level change handler
-    // eslint-disable-next-line no-param-reassign -- serverContext is a mutable state container
     connection.onNotification('client/logLevelChanged', (params: { enableAglintDebug: boolean }) => {
         const requestedDebugMode = params.enableAglintDebug;
 
@@ -64,8 +63,7 @@ export function registerEventHandlers(
             }
         } else {
             // AGLint not initialized yet, just store the initial state for when it is created
-            // eslint-disable-next-line no-param-reassign
-            serverContext.initialDebugMode = requestedDebugMode;
+            serverContext.updateInitialDebugMode(requestedDebugMode);
         }
     });
 

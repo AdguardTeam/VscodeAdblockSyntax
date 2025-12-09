@@ -28,11 +28,9 @@ async function fetchSettings(serverContext: ServerContext, connection: Connectio
         // Update the settings. No need to validate them, VSCode does this for us based on the schema
         // specified in the package.json
         // If we didn't receive any settings, use the default ones
-        // eslint-disable-next-line no-param-reassign
-        serverContext.settings = receivedSettings || defaultSettings;
+        serverContext.updateSettings(receivedSettings || defaultSettings);
     } else {
-        // eslint-disable-next-line no-param-reassign
-        serverContext.settings = defaultSettings;
+        serverContext.updateSettings(defaultSettings);
     }
 }
 
@@ -119,21 +117,20 @@ async function ensureAglintContext(
     }
 
     // Set loading flag to prevent concurrent initialization
-    // eslint-disable-next-line no-param-reassign
-    serverContext.aglintLoading = true;
+    serverContext.setAglintLoading(true);
 
     try {
-        // eslint-disable-next-line no-param-reassign
-        serverContext.aglintContext = await AglintContext.create(
+        const context = await AglintContext.create(
             connection,
             serverContext.documents,
             serverContext.workspaceRoot,
             serverContext.initialDebugMode,
         );
 
+        serverContext.updateAglintContext(context);
+
         if (!serverContext.aglintContext) {
-            // eslint-disable-next-line no-param-reassign
-            serverContext.aglintLoadingFailed = true;
+            serverContext.setAglintLoadingFailed(true);
             connection.console.info(
                 '[lsp] AGLint loading failed. Will retry when package.json or node_modules changes.',
             );
@@ -144,8 +141,7 @@ async function ensureAglintContext(
         return true;
     } finally {
         // Always clear loading flag
-        // eslint-disable-next-line no-param-reassign
-        serverContext.aglintLoading = false;
+        serverContext.setAglintLoading(false);
     }
 }
 
@@ -161,7 +157,6 @@ async function ensureAglintContext(
  * @param serverContext Server context.
  * @param connection Language server connection.
  */
-// eslint-disable-next-line no-param-reassign -- serverContext is a mutable state container
 export async function pullSettings(serverContext: ServerContext, connection: Connection): Promise<void> {
     const previousEnableAglint = serverContext.settings.enableAglint;
     const previousEnableCache = serverContext.settings.enableInMemoryAglintCache;
@@ -207,7 +202,6 @@ export async function pullSettings(serverContext: ServerContext, connection: Con
  *
  * @returns Debounced retry function.
  */
-// eslint-disable-next-line no-param-reassign -- serverContext is a mutable state container
 export function createRetryAglintLoading(
     serverContext: ServerContext,
     connection: Connection,
@@ -215,8 +209,7 @@ export function createRetryAglintLoading(
     return debounce(async () => {
         if (serverContext.aglintLoadingFailed && !serverContext.aglintLoading) {
             connection.console.info('[lsp] Retrying AGLint loading after package changes settled');
-            // eslint-disable-next-line no-param-reassign
-            serverContext.aglintLoadingFailed = false;
+            serverContext.setAglintLoadingFailed(false);
             await pullSettings(serverContext, connection);
         }
     }, 2000);

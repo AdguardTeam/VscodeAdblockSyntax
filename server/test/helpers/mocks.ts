@@ -39,7 +39,7 @@ export function createMockConnection() {
  * @returns Mock server context.
  */
 export function createMockServerContext(overrides?: Partial<ServerContext>): ServerContext {
-    return {
+    const mockContext = {
         connection: createMockConnection(),
         documents: {
             all: vi.fn(() => []),
@@ -55,6 +55,33 @@ export function createMockServerContext(overrides?: Partial<ServerContext>): Ser
         aglintLoading: false,
         aglintLoadingFailed: false,
         lintingCache: new Map(),
+        // Add mutation methods
+        updateSettings: vi.fn((settings) => {
+            mockContext.settings = settings;
+        }),
+        updateInitialDebugMode: vi.fn((enabled) => {
+            mockContext.initialDebugMode = enabled;
+        }),
+        updateAglintContext: vi.fn((context) => {
+            mockContext.aglintContext = context;
+        }),
+        setAglintLoading: vi.fn((loading) => {
+            mockContext.aglintLoading = loading;
+        }),
+        setAglintLoadingFailed: vi.fn((failed) => {
+            mockContext.aglintLoadingFailed = failed;
+        }),
+        setWorkspaceRoot: vi.fn((root) => {
+            mockContext.workspaceRoot = root;
+        }),
+        setConfigurationCapability: vi.fn((hasCapability) => {
+            mockContext.hasConfigurationCapability = hasCapability;
+        }),
+        setWorkspaceFolderCapability: vi.fn((hasCapability) => {
+            mockContext.hasWorkspaceFolderCapability = hasCapability;
+        }),
         ...overrides,
     } as any;
+
+    return mockContext;
 }
