@@ -425,6 +425,8 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.3(@types/node@20.19.25)(typescript@5.9.2)
 
+  tools: {}
+
 packages:
 
   '@adguard/aglint@4.0.0-beta.3':

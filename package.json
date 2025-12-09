@@ -87,7 +87,7 @@
         "package:pre": "pnpm package --pre-release",
         "prepare": "node .husky/install.mjs",
         "test": "pnpm --recursive test --run",
-        "test:compile": "pnpm --recursive --parallel exec tsc --noEmit"
+        "test:compile": "pnpm --recursive --parallel --filter='!aglint-test-project' exec tsc --noEmit"
     },
     "devDependencies": {
         "@adguard/changelog-tools": "catalog:",

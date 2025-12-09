@@ -1,0 +1,6 @@
+{
+    "name": "@vscode-adblock-syntax/tools",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Build and utility scripts for vscode-adblock-syntax"
+}

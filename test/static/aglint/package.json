@@ -1,5 +1,9 @@
 {
     "name": "aglint-test-project",
+    "private": true,
+    "scripts": {
+        "tsc": "echo 'Test fixture - no TypeScript files to compile'"
+    },
     "dependencies": {
         "@adguard/aglint": "catalog:"
     }

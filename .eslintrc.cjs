@@ -265,10 +265,6 @@ function mergeRules(...ruleSets) {
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
-    parserOptions: {
-        tsconfigRootDir: path.join(__dirname),
-        project: 'tsconfig.eslint.json',
-    },
     plugins: [
         'import',
         'import-newlines',
