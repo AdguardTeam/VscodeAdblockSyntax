@@ -10,7 +10,7 @@ import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { handleCodeAction } from '../code-actions';
 import type { ServerContext } from '../context/server-context';
-import { createDebouncedLintFile, refreshLinter, removeAllDiagnostics } from '../linting/operations';
+import { createDebouncedLintFile, refreshLinter, removeAllDiagnostics } from '../linting/orchestration';
 
 import { createRetryAglintLoading, pullSettings } from './configuration';
 

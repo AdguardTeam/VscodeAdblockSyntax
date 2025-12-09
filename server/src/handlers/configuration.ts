@@ -9,7 +9,7 @@ import type { Connection } from 'vscode-languageserver/node';
 
 import { AglintContext } from '../context/aglint-context';
 import type { ServerContext } from '../context/server-context';
-import { refreshLinter, removeAllDiagnostics } from '../linting/operations';
+import { refreshLinter, removeAllDiagnostics } from '../linting/orchestration';
 import { defaultSettings } from '../settings';
 
 /**

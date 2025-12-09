@@ -12,12 +12,12 @@ import {
 
 import { AglintContext } from '../../src/context/aglint-context';
 import { createRetryAglintLoading, pullSettings } from '../../src/handlers/configuration';
-import * as lintingOperations from '../../src/linting/operations';
+import * as lintingOperations from '../../src/linting/orchestration';
 import { defaultSettings } from '../../src/settings';
 import { createMockConnection, createMockServerContext } from '../helpers';
 
 // Mock the linting operations
-vi.mock('../../src/linting/operations', () => ({
+vi.mock('../../src/linting/linting-orchestration', () => ({
     refreshLinter: vi.fn(),
     removeAllDiagnostics: vi.fn(),
 }));
