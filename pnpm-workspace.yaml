@@ -5,7 +5,7 @@ packages:
   - syntaxes
   - test/static/aglint
 catalog:
-  "@adguard/aglint": ^4.0.0-beta.1
+  "@adguard/aglint": ^4.0.0-beta.3
   "@adguard/agtree": ^2.3.0
   "@adguard/changelog-tools": ^0.0.1
   "@types/fs-extra": ^11.0.4
