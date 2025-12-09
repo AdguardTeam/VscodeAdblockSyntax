@@ -76,19 +76,17 @@
         }
     },
     "scripts": {
-        "build:prod": "pnpm build:clean && pnpm --silent --filter @vscode-adblock-syntax/shared build && pnpm --silent --filter @vscode-adblock-syntax/server build --minify && pnpm --silent --filter @vscode-adblock-syntax/client build --minify && pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --minify && pnpm build:vsix",
-        "build:prerelease": "pnpm build:clean && pnpm --silent --filter @vscode-adblock-syntax/shared build && pnpm --silent --filter @vscode-adblock-syntax/server build --minify && pnpm --silent --filter @vscode-adblock-syntax/client build --minify && pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --minify && pnpm build:vsix-prerelease",
-        "build:vsix": "mkdirp out && vsce package --out out/vscode-adblock.vsix",
-        "build:vsix-prerelease": "mkdirp out && vsce package --out out/vscode-adblock.vsix --pre-release",
-        "build:clean": "rimraf ./client/out && rimraf ./server/out && rimraf ./syntaxes/out && rimraf ./out",
+        "build": "pnpm --recursive build --minify",
         "clean": "tsx tools/clean.ts",
         "increment": "pnpm version patch --no-git-tag-version",
-        "lint": "pnpm lint:ts && pnpm lint:md",
+        "lint": "pnpm --recursive lint",
         "lint:md": "markdownlint .",
-        "lint:staged": "lint-staged",
-        "lint:ts": "eslint . --cache --ext .ts",
+        "lint:code": "eslint . --cache --ext .ts --ext .js",
+        "prepackage": "rimraf out && mkdirp out",
+        "package": "vsce package --out out/vscode-adblock.vsix",
+        "package:pre": "pnpm package --pre-release",
         "prepare": "node .husky/install.mjs",
-        "test": "pnpm --recursive --parallel test --run",
+        "test": "pnpm --recursive test --run",
         "test:compile": "pnpm --recursive --parallel exec tsc --noEmit"
     },
     "devDependencies": {

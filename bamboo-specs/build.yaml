@@ -53,13 +53,16 @@ Build:
             pnpm lint:md
 
             # Run ESLint
-            pnpm lint:ts
+            pnpm lint:code
 
             # Run Jest tests
             pnpm test
 
             # Create production build
-            pnpm build:prod
+            pnpm build
+
+            # Package build into .vsix file
+            pnpm package
 
             # Create build.txt file with version
             pnpm exec tsx tools/build-txt.ts

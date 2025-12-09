@@ -79,17 +79,17 @@ const TYPESCRIPT_ESLINT_RULES = {
         },
     ],
     // Only allow type imports from aglint
-     '@typescript-eslint/no-restricted-imports': [
-            'error',
-            {
-                patterns: [
-                    {
-                        group: ['@adguard/aglint', '@adguard/aglint/*'],
-                        allowTypeImports: true,
-                    },
-                ],
-            },
-        ],
+    '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+            patterns: [
+                {
+                    group: ['@adguard/aglint', '@adguard/aglint/*'],
+                    allowTypeImports: true,
+                },
+            ],
+        },
+    ],
 };
 
 /**

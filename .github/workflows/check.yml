@@ -48,7 +48,7 @@ jobs:
         run: pnpm lint:md
 
       - name: Run ESLint
-        run: pnpm lint:ts
+        run: pnpm lint:code
 
       - name: Run Jest tests
         run: pnpm test

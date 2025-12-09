@@ -42,11 +42,13 @@ jobs:
         run: pnpm lint:md
 
       - name: Run ESLint
-        run: pnpm lint:ts
+        run: pnpm lint:code
 
-      # Convert grammar to PList format & Test compile & Run ESBuild & Generate VSIX file
       - name: Create production build
-        run: pnpm build:prod
+        run: pnpm build
+
+      - name: Pack build into .vsix file
+        run: pnpm package
 
       - name: Create build.txt with version
         run: pnpm exec tsx tools/build-txt.ts

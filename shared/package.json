@@ -25,14 +25,17 @@
         "node": ">=20.0.0"
     },
     "scripts": {
-        "build": "tsc --project tsconfig.build.json",
+        "prebuild": "rimraf out",
+        "build": "tsx scripts/build.ts",
+        "postbuild": "tsc --project tsconfig.build.json --emitDeclarationOnly",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
         "lint:md": "markdownlint .",
-        "lint": "pnpm run lint:code && pnpm run lint:md",
-        "lint:staged": "lint-staged"
+        "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "devDependencies": {
+        "esbuild": "catalog:",
+        "rimraf": "^6.1.2",
         "tsc-files": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:"

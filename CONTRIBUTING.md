@@ -18,6 +18,7 @@ Table of Contents:
 - [Updating syntax highlighting](#updating-syntax-highlighting)
 - [Available commands](#available-commands)
     - [Build commands](#build-commands)
+    - [Package commands](#package-commands)
     - [Package-level build commands](#package-level-build-commands)
     - [Utility commands](#utility-commands)
     - [Linting \& testing commands](#linting--testing-commands)
@@ -102,8 +103,9 @@ If you've made changes to the extension code and want to test them, follow these
 
 To create a production build of the extension:
 
-1. Run `pnpm build:prod` command. This generates a production build and a `.vsix` file in the `out` folder.
-1. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
+1. Run `pnpm build` command to build packages.
+2. Run `pnpm package` command to package the extension into a `.vsix` file.
+3. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
    (`Ctrl + Shift + P`), select "Extensions: Install from VSIX...", and choose the `vscode-adblock.vsix` file.
 
 ## Updating syntax highlighting
@@ -127,13 +129,12 @@ During development, you can use the following commands (listed in `package.json`
 
 ### Build commands
 
-- `pnpm build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
-  VSCode installation.
-- `pnpm build:prerelease` - Generates a prerelease build with the `--pre-release` flag.
-- `pnpm build:clean` - Removes all generated files in the output directories (`client/out`, `server/out`,
-  `syntaxes/out`, `out`).
-- `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
-- `pnpm build:vsix-prerelease` - Produces a prerelease `.vsix` file.
+- `pnpm build` - Build all packages recursively with minification enabled.
+
+### Package commands
+
+- `pnpm package` - Package the extension into a `.vsix` file in the `out` directory.
+- `pnpm package:pre` - Package the extension with the `--pre-release` flag for prerelease builds.
 
 ### Package-level build commands
 
@@ -142,7 +143,7 @@ Each package can be built independently using pnpm workspace filters:
 - `pnpm --filter @vscode-adblock-syntax/shared build` - Build the shared package.
 - `pnpm --filter @vscode-adblock-syntax/client build` - Build the client package with ESBuild.
 - `pnpm --filter @vscode-adblock-syntax/server build` - Build the server package with ESBuild.
-- `pnpm --filter @vscode-adblock-syntax/syntaxes build` - Build the syntaxes package.
+- `pnpm --filter @vscode-adblock-syntax/syntaxes build` - Build the syntaxes package (converts grammar to PList format).
 
 Add `--watch` flag for watch mode, or `--minify` for production builds.
 
@@ -153,17 +154,18 @@ Add `--watch` flag for watch mode, or `--minify` for production builds.
 
 ### Linting & testing commands
 
-- `pnpm lint` - Run all linters (TypeScript + Markdown).
-- `pnpm lint:ts` - Lint the TypeScript code with [ESLint][eslint].
+- `pnpm lint` - Run all linters recursively across all packages.
+- `pnpm lint:code` - Lint the code with [ESLint][eslint].
 - `pnpm lint:md` - Lint the markdown files with [markdownlint][markdownlint].
-- `pnpm lint:staged` - Run linters on staged files. Used by Husky Git hooks.
-- `pnpm test` - Run tests with [Vitest][vitest] (replaced Jest).
+- `pnpm test` - Run tests recursively across all packages with [Vitest][vitest].
+- `pnpm test:compile` - Type-check all packages without emitting files.
 
-You can also run tests for individual packages:
+You can also run linting and tests for individual packages:
 
-- `pnpm --filter @vscode-adblock-syntax/client test`
-- `pnpm --filter @vscode-adblock-syntax/server test`
-- `pnpm --filter @vscode-adblock-syntax/syntaxes test`
+- `pnpm --filter @vscode-adblock-syntax/shared lint` / `test`
+- `pnpm --filter @vscode-adblock-syntax/client lint` / `test`
+- `pnpm --filter @vscode-adblock-syntax/server lint` / `test`
+- `pnpm --filter @vscode-adblock-syntax/syntaxes lint` / `test`
 
 > [!NOTE]
 > Watch builds are handled automatically by VSCode tasks when you start debugging (see

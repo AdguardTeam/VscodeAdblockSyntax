@@ -51,7 +51,7 @@ Build:
             pnpm lint:md
 
             # Run ESLint
-            pnpm lint:ts
+            pnpm lint:code
 
             # Run Jest tests
             pnpm test

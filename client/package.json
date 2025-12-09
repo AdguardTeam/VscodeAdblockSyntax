@@ -6,12 +6,12 @@
     "author": "AdGuard Software Ltd.",
     "private": true,
     "scripts": {
+        "prebuild": "rimraf out",
         "build": "tsx scripts/build.ts",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
         "lint:md": "markdownlint .",
-        "lint": "pnpm run lint:code && pnpm run lint:md",
-        "lint:staged": "lint-staged"
+        "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "dependencies": {
         "@vscode-adblock-syntax/shared": "workspace:^",
@@ -21,6 +21,7 @@
     "devDependencies": {
         "@types/vscode": "^1.74.0",
         "esbuild": "catalog:",
+        "rimraf": "^6.1.2",
         "tsc-files": "catalog:",
         "tsx": "catalog:",
         "vitest": "catalog:"

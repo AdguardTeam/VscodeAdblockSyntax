@@ -6,12 +6,12 @@
     "author": "AdGuard Software Ltd.",
     "private": true,
     "scripts": {
+        "prebuild": "rimraf out",
         "build": "tsx scripts/build.ts",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
         "lint:md": "markdownlint .",
-        "lint": "pnpm run lint:code && pnpm run lint:md",
-        "lint:staged": "lint-staged"
+        "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
@@ -21,6 +21,7 @@
         "chokidar": "^4.0.3",
         "fs-extra": "^11.3.1",
         "plist": "^3.1.0",
+        "rimraf": "^6.1.2",
         "valibot": "^1.1.0",
         "vitest": "catalog:",
         "vscode-oniguruma": "^2.0.1",
