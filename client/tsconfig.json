@@ -5,8 +5,7 @@
     },
     "include": [
 		".eslintrc.cjs",
-		"scripts/**/*.ts",
-		"scripts/.eslintrc.cjs",
+		"rspack.config.ts",
 		"src/**/*.ts",
 		"tests/.eslintrc.cjs",
 		"tests/**/*.ts",

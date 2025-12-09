@@ -7,7 +7,7 @@
     "private": true,
     "scripts": {
         "prebuild": "rimraf out",
-        "build": "tsx scripts/build.ts",
+        "build": "rspack",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
         "lint:md": "markdownlint .",
@@ -19,8 +19,9 @@
         "vscode-languageclient": "catalog:"
     },
     "devDependencies": {
+        "@rspack/cli": "catalog:",
+        "@rspack/core": "catalog:",
         "@types/vscode": "catalog:",
-        "esbuild": "catalog:",
         "rimraf": "catalog:",
         "tsc-files": "catalog:",
         "tsx": "catalog:",

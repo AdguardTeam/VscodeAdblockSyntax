@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Shared lib dev build (watch)",
+            "label": "Shared lib rspack build (watch)",
             "type": "shell",
-            "command": "pnpm --silent --filter @vscode-adblock-syntax/shared build --watch",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/shared rspack --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -15,12 +15,35 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$tsc-watch",
+            "problemMatcher": "$ts-checker-webpack-watch"
+        },
+        {
+            "label": "Shared lib tsc build (watch)",
+            "type": "shell",
+            "command": "pnpm --silent --filter @vscode-adblock-syntax/shared exec tsc --project tsconfig.build.json --emitDeclarationOnly --watch --preserveWatchOutput",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": "$tsc-watch"
+        },
+        {
+            "label": "Shared lib dev build (watch)",
+            "dependsOn": [
+                "Shared lib rspack build (watch)",
+                "Shared lib tsc build (watch)"
+            ]
         },
         {
             "label": "Server dev build (watch)",
             "type": "shell",
-            "command": "pnpm --silent --filter @vscode-adblock-syntax/server build --watch",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/server build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -31,15 +54,15 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$esbuild-watch",
+            "problemMatcher": "$ts-checker-webpack-watch",
             "dependsOn": [
                 "Shared lib dev build (watch)"
-            ],
+            ]
         },
         {
             "label": "Client dev build (watch)",
             "type": "shell",
-            "command": "pnpm --silent --filter @vscode-adblock-syntax/client build --watch",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/client build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -50,15 +73,15 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$esbuild-watch",
+            "problemMatcher": "$ts-checker-webpack-watch",
             "dependsOn": [
                 "Shared lib dev build (watch)"
-            ],
+            ]
         },
         {
             "label": "Grammar dev build (watch)",
             "type": "shell",
-            "command": "pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --watch",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -102,15 +125,19 @@
                 "Grammar dev build (watch)",
                 "Server dev build (watch)",
                 "Client dev build (watch)"
-            ],
+            ]
         },
         // Terminate watch tasks after debugging
         // https://github.com/microsoft/vscode/issues/90786#issuecomment-587415345
         {
             "label": "Terminate All Tasks",
-            "command": "echo ${input:terminateAllTasks}",
+            "command": "echo '${input:terminateAllTasks}'",
             "type": "shell",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "close": true
+            }
         }
     ],
     "inputs": [

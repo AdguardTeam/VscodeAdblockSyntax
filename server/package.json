@@ -10,7 +10,7 @@
     },
     "scripts": {
         "prebuild": "rimraf out",
-        "build": "tsx scripts/build.ts",
+        "build": "rspack",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
         "lint:md": "markdownlint .",
@@ -31,10 +31,11 @@
     "devDependencies": {
         "@adguard/aglint": "catalog:",
         "@adguard/agtree": "catalog:",
+        "@rspack/cli": "catalog:",
+        "@rspack/core": "catalog:",
         "@types/resolve": "catalog:",
         "@types/semver": "catalog:",
         "@vitest/coverage-v8": "catalog:",
-        "esbuild": "catalog:",
         "rimraf": "catalog:",
         "tsc-files": "catalog:",
         "tsx": "catalog:",

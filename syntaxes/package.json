@@ -22,6 +22,7 @@
         "fs-extra": "catalog:",
         "plist": "catalog:",
         "rimraf": "catalog:",
+        "tsc-files": "catalog:",
         "valibot": "catalog:",
         "vitest": "catalog:",
         "vscode-oniguruma": "catalog:",

@@ -26,7 +26,7 @@
     },
     "scripts": {
         "prebuild": "rimraf out",
-        "build": "tsx scripts/build.ts",
+        "build": "rspack",
         "postbuild": "tsc --project tsconfig.build.json --emitDeclarationOnly",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
@@ -34,7 +34,8 @@
         "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "devDependencies": {
-        "esbuild": "catalog:",
+        "@rspack/cli": "catalog:",
+        "@rspack/core": "catalog:",
         "rimraf": "catalog:",
         "tsc-files": "catalog:",
         "typescript": "catalog:",

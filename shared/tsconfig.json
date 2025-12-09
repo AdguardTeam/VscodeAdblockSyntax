@@ -8,8 +8,7 @@
         "test/**/*.ts",
 		".eslintrc.cjs",
 		"vitest.config.ts",
-		"scripts/**/*.ts",
-		"scripts/.eslintrc.cjs",
+		"rspack.config.ts",
 	],
 	"exclude": [
 		"node_modules",

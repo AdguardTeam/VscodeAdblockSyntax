@@ -24,6 +24,8 @@ const DEST_GRAMMAR_PATH = join(OUT_FOLDER, DEST_GRAMMAR_FILENAME);
 
 const args = process.argv.slice(2);
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 /**
  * Builds the source grammar file into a PList representation.
  *
@@ -52,7 +54,7 @@ async function build() {
 
     try {
         await ensureDir(OUT_FOLDER);
-        await buildGrammar(args.includes('--minify'));
+        await buildGrammar(isProduction);
 
         // eslint-disable-next-line no-console
         console.log(`Grammar file written to ${join(OUT_FOLDER, DEST_GRAMMAR_FILENAME)}`);

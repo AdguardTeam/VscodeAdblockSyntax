@@ -17,10 +17,17 @@ module.exports = {
     '**/*.js': 'eslint --cache',
     '**/*.ts': [
         // Type-check only the staged TS files while still honoring tsconfig
-        'tsc-files --noEmit',
+        // Exclude config files that import build tools (they're checked by tsconfig.json)
+        (files) => {
+            const filesToCheck = files.filter(file => !file.includes('vitest.config.ts'));
+            return filesToCheck.length > 0 ? `tsc-files --noEmit ${filesToCheck.join(' ')}` : 'echo "No files to type-check"';
+        },
 
         // Run tests that are related to those changed files
-        (files) => `vitest related --run ${files.map(makeRelative).join(' ')}`,
+        (files) => {
+            const testableFiles = files.filter(file => !file.includes('vitest.config.ts'));
+            return testableFiles.length > 0 ? `vitest related --run ${testableFiles.map(makeRelative).join(' ')}` : 'echo "No test files"';
+        },
 
         // Lint the staged TS files
         'eslint --cache',

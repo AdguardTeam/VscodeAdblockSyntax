@@ -56,13 +56,13 @@ This project uses a **monorepo structure** with **pnpm workspaces**. Each packag
 ### Main packages
 
 - [**client**][client-dir]: VSCode extension code which has access to all VS Code Namespace API.
-    - Built with ESBuild
+    - Built with Rspack
     - Contains the extension activation logic and VSCode integration
 - [**server**][server-dir]: Language server running in a separate process.
-    - Built with ESBuild
+    - Built with Rspack with code splitting for large dependencies
     - Handles AGLint integration, diagnostics, and language features
 - [**shared**][shared-dir]: Shared utilities used by both client and server packages.
-    - Built with TypeScript compiler
+    - Built with Rspack
     - Contains common types and utilities
 - [**syntaxes**][syntaxes-dir]: TextMate grammars for syntax highlighting.
     - Converts YAML grammar to PList format for VSCode
@@ -93,10 +93,10 @@ If you've made changes to the extension code and want to test them, follow these
 
 > [!IMPORTANT]
 > When you start the debugging, VSCode starts the watch build commands in separate terminals. To interpret the terminal
-> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs]. Since ESBuild is not supported by
-> VSCode by default, you need to install the [ESBuild Problem Matchers][esbuild-problem-matcher-extension] extension to
-> make able VSCode to parse its output.
-> Without this extension, VSCode cannot recognize when ESBuild completes its build or encounters errors. This results in
+> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs]. Since Rspack is not supported by
+> VSCode by default, you need to install the [TypeScript + Webpack Problem Matchers][tsl-problem-matcher-extension]
+> extension to make able VSCode to parse its output (Rspack has webpack-compatible output).
+> Without this extension, VSCode cannot recognize when Rspack completes its build or encounters errors. This results in
 > an endless run, preventing the opening of the Extension Development Host.
 
 ## Creating a production build
@@ -140,12 +140,14 @@ During development, you can use the following commands (listed in `package.json`
 
 Each package can be built independently using pnpm workspace filters:
 
-- `pnpm --filter @vscode-adblock-syntax/shared build` - Build the shared package.
-- `pnpm --filter @vscode-adblock-syntax/client build` - Build the client package with ESBuild.
-- `pnpm --filter @vscode-adblock-syntax/server build` - Build the server package with ESBuild.
+- `pnpm --filter @vscode-adblock-syntax/shared build` - Build the shared package with Rspack.
+- `pnpm --filter @vscode-adblock-syntax/client build` - Build the client package with Rspack.
+- `pnpm --filter @vscode-adblock-syntax/server build` - Build the server package with Rspack (includes code splitting).
 - `pnpm --filter @vscode-adblock-syntax/syntaxes build` - Build the syntaxes package (converts grammar to PList format).
 
-Add `--watch` flag for watch mode, or `--minify` for production builds.
+> [!NOTE]
+> Rspack builds are configured via `rspack.config.ts` files in each package. Production mode is enabled via
+> `NODE_ENV=production` environment variable, which is set automatically by the root `pnpm build` command.
 
 ### Utility commands
 
@@ -188,7 +190,7 @@ Explore the following links for more information on development:
 [bamboo-specs-dir]: ./bamboo-specs
 [client-dir]: ./client
 [contribute]: https://adguard.com/contribute.html
-[esbuild-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers
+[tsl-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=amodio.tsl-problem-matcher
 [eslint]: https://eslint.org/
 [husky]: https://typicode.github.io/husky
 [markdownlint]: https://github.com/DavidAnson/markdownlint

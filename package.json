@@ -76,7 +76,7 @@
         }
     },
     "scripts": {
-        "build": "pnpm --recursive build --minify",
+        "build": "cross-env NODE_ENV=production pnpm --recursive build",
         "clean": "tsx tools/clean.ts",
         "increment": "pnpm version patch --no-git-tag-version",
         "lint": "pnpm --recursive lint",
@@ -96,7 +96,7 @@
         "@typescript-eslint/parser": "catalog:",
         "@vscode/vsce": "catalog:",
         "ci-info": "catalog:",
-        "esbuild": "catalog:",
+        "cross-env": "catalog:",
         "eslint": "catalog:",
         "eslint-config-airbnb-base": "catalog:",
         "eslint-config-airbnb-typescript": "catalog:",
