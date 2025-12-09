@@ -95,6 +95,7 @@
         "test:compile": "pnpm --recursive --parallel exec tsc --noEmit"
     },
     "devDependencies": {
+        "@adguard/changelog-tools": "^0.0.1",
         "@types/node": "catalog:",
         "@typescript-eslint/eslint-plugin": "^7.5.0",
         "@typescript-eslint/parser": "^7.5.0",

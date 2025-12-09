@@ -56,7 +56,7 @@ jobs:
           # Import version from package.json using pnpm
           export VERSION=$(pnpm pkg get version | tr -d '"')
 
-          pnpm extract-changelog -e $VERSION
+          npx changelog-tools --extract-version $VERSION
 
       - name: Set up variables
         uses: actions/github-script@v7
