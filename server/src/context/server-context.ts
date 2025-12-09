@@ -5,6 +5,7 @@
 import type { Connection, TextDocuments } from 'vscode-languageserver/node';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { LintingCache } from '../linting/cache';
 import type { ExtensionSettings } from '../settings';
 import { defaultSettings } from '../settings';
 
@@ -65,6 +66,11 @@ export class ServerContext {
     public aglintLoading = false;
 
     /**
+     * Cache for linting results.
+     */
+    public lintingCache: LintingCache;
+
+    /**
      * Creates a new server context.
      *
      * @param connection Language server connection.
@@ -73,5 +79,6 @@ export class ServerContext {
     constructor(connection: Connection, documents: TextDocuments<TextDocument>) {
         this.connection = connection;
         this.documents = documents;
+        this.lintingCache = new LintingCache();
     }
 }
