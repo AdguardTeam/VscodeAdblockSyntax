@@ -15,8 +15,8 @@ module.exports = {
     'tools/**/*.{ts,js,cjs,mjs}': 'eslint --cache',
 
     // Delegate to workspace configs (they have tsc-files + vitest related)
-    'client/**/*.{ts,js,md}': () => 'pnpm --filter client exec lint-staged',
-    'server/**/*.{ts,js,md}': () => 'pnpm --filter server exec lint-staged',
-    'shared/**/*.{ts,js,md}': () => 'pnpm --filter shared exec lint-staged',
-    'syntaxes/**/*.{ts,js,md,yaml-tmlanguage}': () => 'pnpm --filter syntaxes exec lint-staged',
+    'client/**/*.{ts,js,md}': () => 'pnpm --filter @vscode-adblock-syntax/client exec lint-staged',
+    'server/**/*.{ts,js,md}': () => 'pnpm --filter @vscode-adblock-syntax/server exec lint-staged',
+    'shared/**/*.{ts,js,md}': () => 'pnpm --filter @vscode-adblock-syntax/shared exec lint-staged',
+    'syntaxes/**/*.{ts,js,md,yaml-tmlanguage}': () => 'pnpm --filter @vscode-adblock-syntax/syntaxes exec lint-staged',
 };
