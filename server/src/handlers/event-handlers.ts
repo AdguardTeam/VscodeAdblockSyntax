@@ -73,18 +73,38 @@ export function registerEventHandlers(
     connection.onDidChangeWatchedFiles(async (events) => {
         const { changes } = events;
         let shouldRetryAglint = false;
+        let hasConfigChanges = false;
+
+        connection.console.debug(`[lsp] Watched files changed: ${changes.length} file(s)`);
 
         for (const change of changes) {
             const filePath = fileURLToPath(change.uri);
-            connection.console.info(`[lsp] Configuration file changed: ${filePath}`);
+            connection.console.info(`[lsp] File changed: ${filePath} (type: ${change.type})`);
 
             // Check if package.json or node_modules changed (for AGLint installation detection)
             if (filePath.endsWith('package.json') || filePath.endsWith('node_modules')) {
                 shouldRetryAglint = true;
             }
 
-            // eslint-disable-next-line no-await-in-loop
-            await serverContext.aglintContext?.linterTree.changed(filePath);
+            // Check if it's a config file change
+            const isConfigFile = filePath.includes('.aglintrc') || filePath.includes('aglint.config');
+            if (isConfigFile) {
+                hasConfigChanges = true;
+                connection.console.debug(`[lsp] Config file detected: ${filePath}`);
+            }
+
+            // Notify AGLint's linter tree about the change
+            if (serverContext.aglintContext) {
+                try {
+                    // eslint-disable-next-line no-await-in-loop
+                    await serverContext.aglintContext.linterTree.changed(filePath);
+                    connection.console.debug(`[lsp] Notified linterTree about change: ${filePath}`);
+                } catch (error) {
+                    connection.console.error(`[lsp] Error notifying linterTree: ${String(error)}`);
+                }
+            } else {
+                connection.console.warn('[lsp] AGLint context not initialized, skipping linterTree notification');
+            }
         }
 
         // If package.json or node_modules changed and loading previously failed, schedule a retry
@@ -96,12 +116,16 @@ export function registerEventHandlers(
             retryAglintLoading();
         }
 
-        // Reset current file diagnostics
-        removeAllDiagnostics(documents, connection);
+        // If config files changed, refresh all diagnostics
+        if (hasConfigChanges) {
+            connection.console.info('[lsp] Config file changed, refreshing linter');
+            // Reset current file diagnostics
+            removeAllDiagnostics(documents, connection);
 
-        // Note: No need to clear cache here - cache keys include config hash,
-        // so config changes are handled automatically
-        await refreshLinter(serverContext, connection);
+            // Note: No need to clear cache here - cache keys include config hash,
+            // so config changes are handled automatically
+            await refreshLinter(serverContext, connection);
+        }
     });
 
     // Document content change handler

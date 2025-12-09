@@ -156,29 +156,42 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
         outputChannel,
 
         synchronize: {
+            // File watchers are configured to explicitly avoid node_modules.
+            // VSCode's createFileSystemWatcher respects 'files.watcherExclude' by default,
+            // but we also structure patterns to be explicit about what we want to watch.
             fileEvents: [
+                // Watch filter list files (but ignore changes, only watch create/delete)
+                // Pattern avoids node_modules by using VSCode's default exclusions
                 Workspace.createFileSystemWatcher(
                     new RelativePattern(
                         folder,
-                        `{**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}},!**/node_modules/**}`,
+                        `**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}}`,
                     ),
-                    false,
-                    true,
-                    false,
+                    false, // ignoreCreateEvents
+                    true, // ignoreChangeEvents
+                    false, // ignoreDeleteEvents
                 ),
-                Workspace.createFileSystemWatcher(
-                    new RelativePattern(
-                        folder,
-                        `{**/{${Array.from(CONFIG_FILE_NAMES).join(',')}},!**/node_modules/**}`,
-                    ),
-                ),
-                Workspace.createFileSystemWatcher(
-                    new RelativePattern(folder, `{**/${IGNORE_FILE_NAME},!**/node_modules/**}`),
-                ),
-                // Watch package.json for AGLint installation changes (only root, not node_modules)
+                // Watch AGLint config files at workspace root
+                ...Array.from(CONFIG_FILE_NAMES).map((configName) => Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, configName),
+                )),
+                // Watch AGLint config files in subdirectories (VSCode excludes node_modules by default)
+                ...Array.from(CONFIG_FILE_NAMES).map((configName) => Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, `*/${configName}`),
+                )),
+                // Watch .aglintignore file at workspace root
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, IGNORE_FILE_NAME)),
+                // Watch .aglintignore in subdirectories
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, `*/${IGNORE_FILE_NAME}`)),
+                // Watch package.json ONLY at workspace root for AGLint installation detection
                 Workspace.createFileSystemWatcher(new RelativePattern(folder, 'package.json')),
-                // Watch node_modules directory itself for package installation/updates
-                Workspace.createFileSystemWatcher(new RelativePattern(folder, 'node_modules')),
+                // Watch node_modules directory itself (creation/deletion) for package installation detection
+                Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, 'node_modules'),
+                    false, // ignoreCreateEvents
+                    false, // ignoreChangeEvents
+                    false, // ignoreDeleteEvents
+                ),
             ],
         },
 
