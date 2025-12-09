@@ -14,7 +14,7 @@ module.exports = {
     // run tests if the grammar file are changed
     'adblock.yaml-tmlanguage': 'vitest run',
     '**/*.md': 'markdownlint',
-    '**/*.js': 'eslint',
+    '**/*.js': 'eslint --cache',
     '**/*.ts': [
         // Type-check only the staged TS files while still honoring tsconfig
         'tsc-files --noEmit',
@@ -23,6 +23,6 @@ module.exports = {
         (files) => `vitest related --run ${files.map(makeRelative).join(' ')}`,
 
         // Lint the staged TS files
-        'eslint',
+        'eslint --cache',
     ],
 };

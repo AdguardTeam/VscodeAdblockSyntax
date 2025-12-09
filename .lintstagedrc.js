@@ -12,11 +12,11 @@ module.exports = {
     '*.md': 'markdownlint',
 
     // Root-level tools and scripts
-    'tools/**/*.{ts,js,cjs,mjs}': 'eslint',
+    'tools/**/*.{ts,js,cjs,mjs}': 'eslint --cache',
 
     // Delegate to workspace configs (they have tsc-files + vitest related)
-    'client/**/*.{ts,js,md}': () => 'cd client && pnpm exec lint-staged',
-    'server/**/*.{ts,js,md}': () => 'cd server && pnpm exec lint-staged',
-    'shared/**/*.{ts,js,md}': () => 'cd shared && pnpm exec lint-staged',
-    'syntaxes/**/*.{ts,js,md,yaml-tmlanguage}': () => 'cd syntaxes && pnpm exec lint-staged',
+    'client/**/*.{ts,js,md}': () => 'pnpm --filter client exec lint-staged',
+    'server/**/*.{ts,js,md}': () => 'pnpm --filter server exec lint-staged',
+    'shared/**/*.{ts,js,md}': () => 'pnpm --filter shared exec lint-staged',
+    'syntaxes/**/*.{ts,js,md,yaml-tmlanguage}': () => 'pnpm --filter syntaxes exec lint-staged',
 };

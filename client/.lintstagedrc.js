@@ -12,7 +12,7 @@ const makeRelative = (file) => path.relative(process.cwd(), file);
 
 module.exports = {
     '**/*.md': 'markdownlint',
-    '**/*.js': 'eslint',
+    '**/*.js': 'eslint --cache',
     '**/*.ts': [
         // Type-check only the staged TS files while still honoring tsconfig
         'tsc-files --noEmit',
@@ -21,6 +21,6 @@ module.exports = {
         (files) => `vitest related --run ${files.map(makeRelative).join(' ')}`,
 
         // Lint the staged TS files
-        'eslint',
+        'eslint --cache',
     ],
 };
