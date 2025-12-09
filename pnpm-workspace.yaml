@@ -42,7 +42,7 @@ catalog:
   markdownlint: ^0.30.0
   markdownlint-cli: ^0.35.0
   mkdirp: ^3.0.1
-  ovsx: ^0.10.6
+  ovsx: ^0.10.7
   plist: ^3.1.0
   preferred-pm: ^4.1.1
   resolve: ^1.22.11

@@ -115,7 +115,7 @@ catalogs:
       specifier: ^3.0.1
       version: 3.0.1
     ovsx:
-      specifier: ^0.10.6
+      specifier: ^0.10.7
       version: 0.10.7
     plist:
       specifier: ^3.1.0
