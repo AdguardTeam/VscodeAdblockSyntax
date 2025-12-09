@@ -10,37 +10,10 @@ import {
 } from 'vitest';
 import { TextDocumentSyncKind } from 'vscode-languageserver/node';
 
-import type { ServerContext } from '../../src/context/server-context';
 import { handleInitialize } from '../../src/handlers/initialization';
+import { createMockServerContext } from '../helpers';
 
 describe('handleInitialize', () => {
-    /**
-     * Creates a mock ServerContext for testing.
-     *
-     * @returns Mock server context.
-     */
-    function createMockServerContext(): ServerContext {
-        return {
-            connection: {
-                console: {
-                    debug: vi.fn(),
-                    info: vi.fn(),
-                    error: vi.fn(),
-                },
-            },
-            documents: {} as any,
-            settings: {} as any,
-            workspaceRoot: undefined,
-            initialDebugMode: false,
-            hasConfigurationCapability: false,
-            hasWorkspaceFolderCapability: false,
-            aglintContext: null,
-            aglintLoading: false,
-            aglintLoadingFailed: false,
-            lintingCache: new Map(),
-        } as any;
-    }
-
     describe('server capabilities', () => {
         it('should return correct server capabilities', () => {
             const params = {
