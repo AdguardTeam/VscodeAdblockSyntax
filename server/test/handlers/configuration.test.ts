@@ -3,6 +3,7 @@
  */
 
 import {
+    afterEach,
     beforeEach,
     describe,
     expect,
@@ -408,6 +409,12 @@ describe('pullSettings', () => {
 describe('createRetryAglintLoading', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        vi.useRealTimers();
     });
 
     it('should return a debounced function', () => {
@@ -434,9 +441,9 @@ describe('createRetryAglintLoading', () => {
 
         const retryFn = createRetryAglintLoading(context, connection);
 
-        // Call and wait for debounce + execution
+        // Call and advance timers to trigger debounce
         retryFn();
-        await new Promise((resolve) => { setTimeout(resolve, 2100); });
+        await vi.advanceTimersByTimeAsync(2000);
 
         expect(connection.console.info).toHaveBeenCalledWith(
             '[lsp] Retrying AGLint loading after package changes settled',
@@ -452,7 +459,7 @@ describe('createRetryAglintLoading', () => {
         const retryFn = createRetryAglintLoading(context, connection);
 
         retryFn();
-        await new Promise((resolve) => { setTimeout(resolve, 2100); });
+        await vi.advanceTimersByTimeAsync(2000);
 
         expect(connection.console.info).not.toHaveBeenCalled();
         expect(AglintContext.create).not.toHaveBeenCalled();
@@ -467,7 +474,7 @@ describe('createRetryAglintLoading', () => {
         const retryFn = createRetryAglintLoading(context, connection);
 
         retryFn();
-        await new Promise((resolve) => { setTimeout(resolve, 2100); });
+        await vi.advanceTimersByTimeAsync(2000);
 
         expect(AglintContext.create).not.toHaveBeenCalled();
     });
@@ -488,13 +495,13 @@ describe('createRetryAglintLoading', () => {
 
         // Call multiple times quickly
         retryFn();
-        await new Promise((resolve) => { setTimeout(resolve, 100); });
+        await vi.advanceTimersByTimeAsync(100);
         retryFn();
-        await new Promise((resolve) => { setTimeout(resolve, 100); });
+        await vi.advanceTimersByTimeAsync(100);
         retryFn();
 
-        // Wait for debounce to settle
-        await new Promise((resolve) => { setTimeout(resolve, 2100); });
+        // Advance to trigger debounce
+        await vi.advanceTimersByTimeAsync(2000);
 
         // Should execute, but due to debouncing, multiple quick calls result in one execution
         expect(connection.console.info).toHaveBeenCalled();
