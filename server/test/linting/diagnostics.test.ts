@@ -13,7 +13,7 @@ import {
 import { describe, expect, it } from 'vitest';
 import { DiagnosticSeverity } from 'vscode-languageserver/node';
 
-import { convertAglintPositionToVscodeRange, convertLinterResultToDiagnostics } from './diagnostics';
+import { convertAglintPositionToVscodeRange, convertLinterResultToDiagnostics } from '../../src/linting/diagnostics';
 
 describe('convertAglintPositionToVscodeRange', () => {
     it('should convert AGLint 1-based positions to VSCode 0-based positions', () => {

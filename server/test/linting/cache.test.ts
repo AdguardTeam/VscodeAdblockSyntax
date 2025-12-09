@@ -9,7 +9,7 @@ import {
     it,
 } from 'vitest';
 
-import { createLintCacheKey, LintingCache } from './cache';
+import { createLintCacheKey, LintingCache } from '../../src/linting/cache';
 
 describe('createLintCacheKey', () => {
     it('should create a unique key from uri, version, document version, and config hash', () => {

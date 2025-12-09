@@ -10,7 +10,7 @@ import {
     convertAglintOffsetRangeToVscodeRange,
     getPreviousLineText,
     parseConfigCommentTolerant,
-} from './utils';
+} from '../../src/code-actions/utils';
 
 describe('parseConfigCommentTolerant', () => {
     it('should parse valid config comment rules', () => {
