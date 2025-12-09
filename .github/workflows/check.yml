@@ -50,7 +50,7 @@ jobs:
       - name: Run ESLint
         run: pnpm lint:code
 
-      - name: Run Jest tests
+      - name: Run Vitest tests
         run: pnpm test
 
   notify:

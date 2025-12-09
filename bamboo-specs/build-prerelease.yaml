@@ -52,7 +52,7 @@ Build:
             # Run ESLint
             pnpm lint:code
 
-            # Run Jest tests
+            # Run Vitest tests
             pnpm test
 
             # Create production build
