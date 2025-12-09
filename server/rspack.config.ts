@@ -57,6 +57,7 @@ export default defineConfig({
             chunks: 'all',
             minSize: 20000,
             cacheGroups: {
+                // Manually split agtree compatibility tables (important to separate)
                 agtreeCompatibilityTablesData: {
                     test: /[\\/]node_modules[\\/]@adguard[\\/]agtree[\\/]dist[\\/]compatibility-table-data\.js/,
                     name: 'vendors/agtree-compatibility-tables-data',
@@ -65,6 +66,7 @@ export default defineConfig({
                     reuseExistingChunk: true,
                     enforce: true,
                 },
+                // Manually split agtree (important package)
                 agtreeVendor: {
                     test: /[\\/]node_modules[\\/]@adguard[\\/]agtree[\\/]/,
                     name: 'vendors/agtree',
@@ -72,25 +74,44 @@ export default defineConfig({
                     priority: 35,
                     reuseExistingChunk: true,
                 },
-                tldtsVendor: {
-                    test: /[\\/]node_modules[\\/]tldts[\\/]/,
-                    name: 'vendors/tldts',
-                    chunks: 'all',
-                    priority: 35,
-                    reuseExistingChunk: true,
-                },
-                vendors: {
+                // Automatically split all other vendors by package name
+                defaultVendors: {
                     test: /[\\/]node_modules[\\/]/,
-                    name: 'vendors/vendors',
+                    name(module: any) {
+                        const { context } = module;
+
+                        // Handle pnpm's .pnpm directory structure
+                        // pnpm creates these paths:
+                        // - node_modules/.pnpm/<package>@<version>/node_modules/<package>
+                        // - node_modules/.pnpm/@scope+package@<version>/node_modules/@scope/package
+                        // - node_modules/.pnpm/node_modules/<package> (edge case)
+                        const pnpmMatch = context.match(
+                            /[\\/]\.pnpm[\\/](?:@?[^@/\\]+@[^/\\]+[\\/])?node_modules[\\/]((?:@[^/\\]+[\\/])?[^/\\]+)/,
+                        );
+                        if (pnpmMatch) {
+                            const packageName = pnpmMatch[1]
+                                .replace('@', '')
+                                .replace(/\//g, '-');
+                            return `vendors/${packageName}`;
+                        }
+
+                        // Standard node_modules structure (npm/yarn)
+                        // - node_modules/<package>
+                        // - node_modules/@scope/package
+                        const packageNameMatch = context.match(
+                            /[\\/]node_modules[\\/]((?:@[^/\\]+[\\/])?[^/\\]+)/,
+                        );
+                        if (packageNameMatch) {
+                            const packageName = packageNameMatch[1]
+                                .replace('@', '')
+                                .replace(/\//g, '-');
+                            return `vendors/${packageName}`;
+                        }
+
+                        return 'vendors/vendor';
+                    },
                     chunks: 'all',
                     priority: 10,
-                    reuseExistingChunk: true,
-                },
-                common: {
-                    minChunks: 2,
-                    name: 'common',
-                    chunks: 'all',
-                    priority: 0,
                     reuseExistingChunk: true,
                 },
             },
