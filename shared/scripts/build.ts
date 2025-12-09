@@ -3,15 +3,12 @@ import * as esbuild from 'esbuild';
 const args = process.argv.slice(2);
 
 const buildOptions: esbuild.BuildOptions = {
-    entryPoints: ['src/index.ts'],
-    bundle: true,
+    entryPoints: ['src/**/*.ts'],
+    bundle: false, // Keep file structure matching .d.ts files
     outdir: 'out',
     platform: 'node',
     // TODO: Switch to ESM, once https://github.com/microsoft/vscode/issues/130367 is fixed
     format: 'cjs',
-    external: [
-        'vscode',
-    ],
     logLevel: 'info',
     minify: args.includes('--minify'),
 };
