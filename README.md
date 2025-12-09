@@ -87,10 +87,10 @@ See [AGLint Configuration](#-aglint-configuration) for setup details.
 
 ## ⚙️ Configuration
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| `adblock.enableAglint` | Enable AGLint linting | `true` |
-| `adblock.enableInMemoryAglintCache` | Cache linting results for performance | `false` |
+| Setting                               | Description                             | Default |
+|---------------------------------------|-----------------------------------------|---------|
+| `adblock.enableAglint`                | Enable AGLint linting                   | `true`  |
+| `adblock.enableInMemoryAglintCache`   | Cache linting results for performance   | `false` |
 
 **💡 Tip**: Control AGLint logging via VSCode's built-in log level:
 Command Palette → **Developer: Set Log Level** → **AGLint**

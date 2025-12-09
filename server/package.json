@@ -13,7 +13,7 @@
         "build": "rspack",
         "test": "vitest",
         "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
-        "lint:md": "markdownlint .",
+        "lint:md": "markdownlint . --ignore-path ../.markdownlintignore",
         "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "dependencies": {
