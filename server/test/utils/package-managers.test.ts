@@ -2,7 +2,12 @@
  * @file Tests for package manager utilities.
  */
 
-import { describe, expect, it } from 'vitest';
+import {
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest';
 
 import {
     BUN,
@@ -12,6 +17,16 @@ import {
     PNPM,
     YARN,
 } from '../../src/utils/package-managers';
+
+// Mock the internal 'run' function that spawns child processes
+// This prevents actual shell command execution during tests
+vi.mock('node:child_process', () => ({
+    spawnSync: vi.fn(() => ({
+        status: 0,
+        stdout: Buffer.from('/mock/global/path\n'),
+        stderr: Buffer.from(''),
+    })),
+}));
 
 describe('package manager constants', () => {
     it('should export correct package manager constants', () => {
