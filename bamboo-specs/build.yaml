@@ -64,6 +64,9 @@ Build:
             # Package build into .vsix file
             pnpm package
 
+            # Show tree of files in .vsix file
+            pnpm exec vsce ls --tree
+
             # Create build.txt file with version
             pnpm exec tsx tools/build-txt.ts
     - inject-variables:
