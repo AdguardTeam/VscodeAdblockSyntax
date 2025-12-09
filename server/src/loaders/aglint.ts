@@ -205,6 +205,166 @@ export class LoadedAglint {
 }
 
 /**
+ * Diagnose why AGLint package couldn't be loaded.
+ *
+ * @param connection Language server connection.
+ * @param localPackageJsonPath Path to the local package.json.
+ */
+async function diagnoseLoadFailure(
+    connection: Connection,
+    localPackageJsonPath: string,
+): Promise<void> {
+    try {
+        const packageJsonContent = await readFile(localPackageJsonPath, 'utf-8');
+        const packageJson = JSON.parse(packageJsonContent);
+        const installedVersion = packageJson.version as string;
+
+        // Check if it's a version issue
+        if (!satisfies(installedVersion, `>=${MIN_AGLINT_VERSION}`)) {
+            connection.console.error(
+                // eslint-disable-next-line max-len
+                `[lsp] AGLint ${installedVersion} is not compatible with the VSCode extension (minimum required: ${MIN_AGLINT_VERSION})`,
+            );
+        } else if (!packageJson.exports || packageJson.type !== 'module') {
+            connection.console.error(
+                `[lsp] AGLint ${installedVersion} is not an ESM package (corrupted or incompatible)`,
+            );
+        } else {
+            connection.console.error(
+                `[lsp] AGLint ${installedVersion} cannot be loaded (incompatible package structure)`,
+            );
+        }
+    } catch (error) {
+        // Can't read package.json - corrupted installation
+        connection.console.error(`[lsp] AGLint package.json is unreadable: ${getErrorMessage(error)}`);
+    }
+}
+
+/**
+ * Try to resolve AGLint using fallback method with global paths.
+ *
+ * @param connection Language server connection.
+ * @param dir Workspace root path.
+ * @param packageManager Package manager name.
+ *
+ * @returns Undefined (logs diagnostic info).
+ */
+async function tryFallbackResolution(
+    connection: Connection,
+    dir: string,
+    packageManager: PackageManager,
+): Promise<undefined> {
+    // Get global node_modules path if available
+    const globalPath = await findGlobalPathForPackageManager(packageManager);
+    const aglintPackageDir = tryResolveAglintPackage(dir, globalPath);
+    const localPackageJsonPath = aglintPackageDir ? join(aglintPackageDir, 'package.json') : undefined;
+
+    if (aglintPackageDir) {
+        connection.console.info(`[lsp] AGLint found at: ${aglintPackageDir}`);
+    }
+
+    if (localPackageJsonPath) {
+        // Package exists locally - read it to diagnose the issue
+        await diagnoseLoadFailure(connection, localPackageJsonPath);
+        return undefined;
+    }
+
+    // Try to check if package.json can be resolved (for better error messages)
+    const aglintPackageJsonPath = await resolveModulePath(
+        dir,
+        `${AGLINT_PACKAGE_NAME}/package.json`,
+        packageManager,
+        (message: string) => {
+            connection.tracer.log(`[lsp] ${message}`);
+        },
+    );
+
+    if (aglintPackageJsonPath && (await fileExists(aglintPackageJsonPath))) {
+        // Package exists globally but can't be loaded
+        connection.console.error(
+            '[lsp] AGLint is installed globally but cannot be loaded (likely incompatible version)',
+        );
+    } else {
+        // Package is truly not installed
+        connection.console.info('[lsp] AGLint package is not installed');
+    }
+
+    return undefined;
+}
+
+/**
+ * Load AGLint submodules (linter and CLI).
+ *
+ * @param connection Language server connection.
+ * @param dir Workspace root path.
+ * @param packageManager Package manager name.
+ * @param aglint Main AGLint module.
+ * @param aglintPath Path to AGLint main module.
+ *
+ * @returns LoadedAglint instance or undefined if loading failed.
+ */
+async function loadAglintSubmodules(
+    connection: Connection,
+    dir: string,
+    packageManager: PackageManager,
+    aglint: typeof AGLint,
+    aglintPath: string,
+): Promise<LoadedAglint | undefined> {
+    // Resolve linter module
+    const linterPath = await resolveModulePath(
+        dir,
+        `${AGLINT_PACKAGE_NAME}/linter`,
+        packageManager,
+        (message: string) => {
+            connection.tracer.log(`[lsp] ${message}`);
+        },
+    );
+    if (!linterPath) {
+        connection.console.error('[lsp] Failed to resolve AGLint linter module');
+        return undefined;
+    }
+
+    // Resolve CLI module
+    const cliPath = await resolveModulePath(
+        dir,
+        `${AGLINT_PACKAGE_NAME}/cli`,
+        packageManager,
+        (message: string) => {
+            connection.tracer.log(`[lsp] ${message}`);
+        },
+    );
+    if (!cliPath) {
+        connection.console.error('[lsp] Failed to resolve AGLint CLI module');
+        return undefined;
+    }
+
+    // Convert file paths to file:// URLs for dynamic import (required on Windows)
+    const linterUrl = pathToFileURL(linterPath).toString();
+    const cliUrl = pathToFileURL(cliPath).toString();
+
+    // Load the submodules
+    const cli = await importModule(cliUrl) as typeof AGLintCliModule;
+    const pathAdapter = new cli.NodePathAdapter();
+    const linter = await importModule(linterUrl) as typeof AGLintLinterModule;
+
+    // aglintPath points to .../dist/index.js, we need to go up to the package root
+    // and then to config-presets directory
+    const packageRoot = pathAdapter.dirname(pathAdapter.dirname(aglintPath));
+    const presetsRoot = pathAdapter.join(packageRoot, 'config-presets');
+
+    return new LoadedAglint(
+        linter,
+        cli,
+        presetsRoot,
+        aglint.version,
+        aglintPath,
+        connection,
+        dir,
+        packageManager,
+    );
+}
+
+/**
  * Load the installed AGLint module.
  *
  * @param connection Language server connection.
@@ -216,8 +376,8 @@ export async function loadAglintModule(
     connection: Connection,
     dir: string,
 ): Promise<LoadedAglint | undefined> {
+    // Detect package manager
     let preferredPackageManager = await preferredPM(dir);
-
     if (!preferredPackageManager) {
         preferredPackageManager = {
             name: NPM,
@@ -225,11 +385,13 @@ export async function loadAglintModule(
         };
     }
 
+    const packageManager = preferredPackageManager.name as PackageManager;
+
     // Try to resolve the main AGLint module
     const aglintPath = await resolveModulePath(
         dir,
         AGLINT_PACKAGE_NAME,
-        preferredPackageManager.name,
+        packageManager,
         (message: string) => {
             connection.tracer.log(`[lsp] ${message}`);
         },
@@ -239,138 +401,39 @@ export async function loadAglintModule(
         connection.console.info(`[lsp] AGLint found at: ${aglintPath}`);
     }
 
+    // If resolution failed, try fallback methods and return early
     if (!aglintPath) {
-        // Failed to resolve - try using resolve package with global path support
-        // Get global node_modules path if available
-        const globalPath = await findGlobalPathForPackageManager(preferredPackageManager.name);
-        const aglintPackageDir = tryResolveAglintPackage(dir, globalPath);
-        const localPackageJsonPath = aglintPackageDir ? join(aglintPackageDir, 'package.json') : undefined;
-
-        if (aglintPackageDir) {
-            connection.console.info(`[lsp] AGLint found at: ${aglintPackageDir}`);
-        }
-
-        if (localPackageJsonPath) {
-            // Package exists locally - read it to diagnose the issue
-            try {
-                const packageJsonContent = await readFile(localPackageJsonPath, 'utf-8');
-                const packageJson = JSON.parse(packageJsonContent);
-                const installedVersion = packageJson.version as string;
-
-                // Check if it's a version issue
-                if (!satisfies(installedVersion, `>=${MIN_AGLINT_VERSION}`)) {
-                    connection.console.error(
-                        // eslint-disable-next-line max-len
-                        `[lsp] AGLint ${installedVersion} is not compatible with the VSCode extension (minimum required: ${MIN_AGLINT_VERSION})`,
-                    );
-                } else if (!packageJson.exports || packageJson.type !== 'module') {
-                    connection.console.error(
-                        `[lsp] AGLint ${installedVersion} is not an ESM package (corrupted or incompatible)`,
-                    );
-                } else {
-                    connection.console.error(
-                        `[lsp] AGLint ${installedVersion} cannot be loaded (incompatible package structure)`,
-                    );
-                }
-            } catch (error) {
-                // Can't read package.json - corrupted installation
-                connection.console.error(`[lsp] AGLint package.json is unreadable: ${getErrorMessage(error)}`);
-            }
-            return undefined;
-        }
-
-        // Try to check if package.json can be resolved (for better error messages)
-        const aglintPackageJsonPath = await resolveModulePath(
-            dir,
-            `${AGLINT_PACKAGE_NAME}/package.json`,
-            preferredPackageManager.name,
-            (message: string) => {
-                connection.tracer.log(`[lsp] ${message}`);
-            },
-        );
-
-        if (aglintPackageJsonPath && (await fileExists(aglintPackageJsonPath))) {
-            // Package exists globally but can't be loaded
-            connection.console.error(
-                '[lsp] AGLint is installed globally but cannot be loaded (likely incompatible version)',
-            );
-        } else {
-            // Package is truly not installed
-            connection.console.info('[lsp] AGLint package is not installed');
-        }
-
-        return undefined;
+        return tryFallbackResolution(connection, dir, packageManager);
     }
 
-    // Dynamic import requires a URL, not a path
+    // Load the main AGLint module
     const externalAglintUrlPath = pathToFileURL(aglintPath).toString();
 
     try {
         const aglint = await importModule(externalAglintUrlPath) as typeof AGLint;
 
-        const suffix = `version: ${aglint.version}, minimum required version: ${MIN_AGLINT_VERSION}`;
-
+        // Check version compatibility
         if (!satisfies(aglint.version, `>=${MIN_AGLINT_VERSION}`)) {
+            const suffix = `version: ${aglint.version}, minimum required version: ${MIN_AGLINT_VERSION}`;
             connection.console.error(
                 `[lsp] External AGLint module version is not compatible with the VSCode extension (${suffix})`,
             );
             return undefined;
         }
 
-        const linterPath = await resolveModulePath(
-            dir,
-            `${AGLINT_PACKAGE_NAME}/linter`,
-            preferredPackageManager.name,
-            (message: string) => {
-                connection.tracer.log(`[lsp] ${message}`);
-            },
-        );
-        if (!linterPath) {
-            connection.console.error('[lsp] Failed to resolve AGLint linter module');
-            return undefined;
-        }
-        const cliPath = await resolveModulePath(
-            dir,
-            `${AGLINT_PACKAGE_NAME}/cli`,
-            preferredPackageManager.name,
-            (message: string) => {
-                connection.tracer.log(`[lsp] ${message}`);
-            },
-        );
-        if (!cliPath) {
-            connection.console.error('[lsp] Failed to resolve AGLint CLI module');
-            return undefined;
-        }
-
-        // Convert file paths to file:// URLs for dynamic import (required on Windows)
-        const linterUrl = pathToFileURL(linterPath).toString();
-        const cliUrl = pathToFileURL(cliPath).toString();
-
-        const cli = await importModule(cliUrl) as typeof AGLintCliModule;
-        const pathAdapter = new cli.NodePathAdapter();
-        const linter = await importModule(linterUrl) as typeof AGLintLinterModule;
-
-        // aglintPath points to .../dist/index.js, we need to go up to the package root
-        // and then to config-presets directory
-        const packageRoot = pathAdapter.dirname(pathAdapter.dirname(aglintPath));
-        const presetsRoot = pathAdapter.join(packageRoot, 'config-presets');
-
-        return new LoadedAglint(
-            linter,
-            cli,
-            presetsRoot,
-            aglint.version,
-            aglintPath,
+        // Load submodules (linter and CLI)
+        return await loadAglintSubmodules(
             connection,
             dir,
-            preferredPackageManager.name as PackageManager,
+            packageManager,
+            aglint,
+            aglintPath,
         );
     } catch (error: unknown) {
         connection.console.error(
             // eslint-disable-next-line max-len
             `[lsp] Failed to load external AGLint module from: ${aglintPath}, because of the following error: ${getErrorMessage(error)}`,
         );
+        return undefined;
     }
-
-    return undefined;
 }

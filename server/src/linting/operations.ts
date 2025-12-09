@@ -18,6 +18,125 @@ import { createLintCacheKey } from './cache';
 import { convertLinterResultToDiagnostics } from './diagnostics';
 
 /**
+ * Check if a document should be linted.
+ *
+ * @param textDocument Document to check.
+ * @param serverContext Server context.
+ *
+ * @returns True if document should be linted.
+ */
+async function shouldLintDocument(
+    textDocument: TextDocument,
+    serverContext: ServerContext,
+): Promise<boolean> {
+    if (
+        !isFileUri(textDocument.uri)
+        || !serverContext.workspaceRoot
+        || !serverContext.settings.enableAglint
+        || !serverContext.aglintContext
+    ) {
+        return false;
+    }
+
+    const documentPath = fileURLToPath(textDocument.uri);
+    const isIgnored = await serverContext.aglintContext.linterTree.isIgnored(documentPath);
+    return !isIgnored;
+}
+
+/**
+ * Try to get diagnostics from cache.
+ *
+ * @param textDocument Document to lint.
+ * @param serverContext Server context.
+ * @param connection Language server connection.
+ * @param config Linter config.
+ *
+ * @returns Cached diagnostics if found, undefined otherwise.
+ */
+function tryGetCachedDiagnostics(
+    textDocument: TextDocument,
+    serverContext: ServerContext,
+    connection: Connection,
+    config: LinterConfig,
+): ReturnType<typeof convertLinterResultToDiagnostics> | undefined {
+    if (!serverContext.settings.enableInMemoryAglintCache) {
+        return undefined;
+    }
+
+    const configHash = serverContext.aglintContext!.aglint.cli.getLinterConfigHash(config);
+    const cacheKey = createLintCacheKey(
+        textDocument.uri,
+        serverContext.aglintContext!.aglint.version,
+        textDocument.version,
+        configHash,
+    );
+
+    const cachedDiagnostics = serverContext.lintingCache.get(cacheKey);
+    if (cachedDiagnostics) {
+        connection.console.debug(
+            `[lsp] Linting completed for: ${fileURLToPath(textDocument.uri)} (from cache)`,
+        );
+    }
+
+    return cachedDiagnostics;
+}
+
+/**
+ * Perform actual linting of the document.
+ *
+ * @param textDocument Document to lint.
+ * @param serverContext Server context.
+ * @param connection Language server connection.
+ * @param config Linter config.
+ *
+ * @returns Diagnostics from linting.
+ */
+async function performLinting(
+    textDocument: TextDocument,
+    serverContext: ServerContext,
+    connection: Connection,
+    config: LinterConfig,
+): Promise<ReturnType<typeof convertLinterResultToDiagnostics>> {
+    const documentPath = fileURLToPath(textDocument.uri);
+    const text = textDocument.getText();
+
+    connection.console.debug(`[lsp] Linting file: ${documentPath}`);
+
+    const linterRunOptions: LinterRunOptions = {
+        fileProps: {
+            filePath: documentPath,
+            content: text,
+            cwd: serverContext.workspaceRoot!,
+        },
+        config,
+        subParsers: serverContext.aglintContext!.aglint.linter.defaultSubParsers,
+        loadRule: serverContext.aglintContext!.aglint.loadRule,
+        // Need to include metadata to get the rule documentation
+        includeMetadata: true,
+        debug: serverContext.aglintContext!.debuggerInstance.module('linter-core'),
+    };
+
+    const linterResult = await serverContext.aglintContext!.aglint.linter.lint(linterRunOptions);
+    const diagnostics = convertLinterResultToDiagnostics(linterResult, serverContext.aglintContext!);
+
+    // Store result in cache if caching is enabled
+    if (serverContext.settings.enableInMemoryAglintCache) {
+        const configHash = serverContext.aglintContext!.aglint.cli.getLinterConfigHash(config);
+        const cacheKey = createLintCacheKey(
+            textDocument.uri,
+            serverContext.aglintContext!.aglint.version,
+            textDocument.version,
+            configHash,
+        );
+        serverContext.lintingCache.set(cacheKey, diagnostics);
+    }
+
+    connection.console.debug(`[lsp] Linting completed for: ${documentPath}`);
+
+    return diagnostics;
+}
+
+/**
  * Debounce delay for linting files.
  * It is used to avoid too frequent linting when the user modifies the file.
  */
@@ -57,85 +176,47 @@ export async function lintFile(
     serverContext: ServerContext,
     connection: Connection,
 ): Promise<void> {
-    if (
-        !isFileUri(textDocument.uri)
-        || !serverContext.workspaceRoot
-        || !serverContext.settings.enableAglint
-        || !serverContext.aglintContext
-        || await serverContext.aglintContext.linterTree.isIgnored(fileURLToPath(textDocument.uri))
-    ) {
+    // Check if document should be linted
+    if (!(await shouldLintDocument(textDocument, serverContext))) {
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
         return;
     }
 
-    const documentPath = fileURLToPath(textDocument.uri);
-    const startTime = Date.now();
-
     try {
+        // Get linter config
         const config = await getLinterConfig(textDocument, serverContext);
-
         if (!config) {
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: [] });
             return;
         }
 
-        const text = textDocument.getText();
-
-        // Normalize config for linting (this is what will actually be used)
+        // Normalize config for linting
         const normalizedConfig: LinterConfig = {
             platforms: config.platforms,
             rules: config.rules ?? {},
             allowInlineConfig: true,
         };
 
-        // Create cache key using document version and config hash
-        const configHash = serverContext.aglintContext.aglint.cli.getLinterConfigHash(normalizedConfig);
-        const cacheKey = createLintCacheKey(
-            textDocument.uri,
-            serverContext.aglintContext.aglint.version,
-            textDocument.version,
-            configHash,
+        // Try to get from cache first
+        const cachedDiagnostics = tryGetCachedDiagnostics(
+            textDocument,
+            serverContext,
+            connection,
+            normalizedConfig,
         );
 
-        // Check cache first if caching is enabled
-        if (serverContext.settings.enableInMemoryAglintCache) {
-            const cachedDiagnostics = serverContext.lintingCache.get(cacheKey);
-            if (cachedDiagnostics) {
-                const duration = Date.now() - startTime;
-                connection.console.debug(
-                    `[lsp] Linting completed for: ${documentPath} (from cache, ${duration}ms)`,
-                );
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: cachedDiagnostics });
-                return;
-            }
+        if (cachedDiagnostics) {
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: cachedDiagnostics });
+            return;
         }
 
-        connection.console.debug(`[lsp] Linting file: ${documentPath}`);
-
-        const linterRunOptions: LinterRunOptions = {
-            fileProps: {
-                filePath: documentPath,
-                content: text,
-                cwd: serverContext.workspaceRoot,
-            },
-            config: normalizedConfig,
-            subParsers: serverContext.aglintContext.aglint.linter.defaultSubParsers,
-            loadRule: serverContext.aglintContext.aglint.loadRule,
-            // Need to include metadata to get the rule documentation
-            includeMetadata: true,
-            debug: serverContext.aglintContext.debuggerInstance.module('linter-core'),
-        };
-
-        const linterResult = await serverContext.aglintContext.aglint.linter.lint(linterRunOptions);
-        const diagnostics = convertLinterResultToDiagnostics(linterResult, serverContext.aglintContext);
-
-        // Store result in cache if caching is enabled
-        if (serverContext.settings.enableInMemoryAglintCache) {
-            serverContext.lintingCache.set(cacheKey, diagnostics);
-        }
-
-        const duration = Date.now() - startTime;
-        connection.console.debug(`[lsp] Linting completed for: ${documentPath} (${duration}ms)`);
+        // Perform actual linting
+        const diagnostics = await performLinting(
+            textDocument,
+            serverContext,
+            connection,
+            normalizedConfig,
+        );
 
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     } catch (error: unknown) {
