@@ -76,7 +76,6 @@
         }
     },
     "scripts": {
-        "build:grammar": "pnpm --silent --filter @vscode-adblock-syntax/syntaxes build",
         "build:prod": "pnpm build:clean && pnpm --silent --filter @vscode-adblock-syntax/shared build && pnpm --silent --filter @vscode-adblock-syntax/server build --minify && pnpm --silent --filter @vscode-adblock-syntax/client build --minify && pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --minify && pnpm build:vsix",
         "build:prerelease": "pnpm build:clean && pnpm --silent --filter @vscode-adblock-syntax/shared build && pnpm --silent --filter @vscode-adblock-syntax/server build --minify && pnpm --silent --filter @vscode-adblock-syntax/client build --minify && pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --minify && pnpm build:vsix-prerelease",
         "build:vsix": "mkdirp out && vsce package --out out/vscode-adblock.vsix",

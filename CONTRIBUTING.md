@@ -127,8 +127,6 @@ During development, you can use the following commands (listed in `package.json`
 
 ### Build commands
 
-- `pnpm build:grammar` - Compiles the TextMate (TM) grammar into a PList format, since VSCode does not natively support
-  YAML grammars.
 - `pnpm build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
   VSCode installation.
 - `pnpm build:prerelease` - Generates a prerelease build with the `--pre-release` flag.
