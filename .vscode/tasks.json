@@ -85,9 +85,13 @@
         // https://github.com/microsoft/vscode/issues/90786#issuecomment-587415345
         {
             "label": "Terminate All Tasks",
-            "command": "echo ${input:terminateAllTasks}",
+            "command": "echo '${input:terminateAllTasks}'",
             "type": "shell",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "never",
+                "close": true
+            },
         }
     ],
     "inputs": [
