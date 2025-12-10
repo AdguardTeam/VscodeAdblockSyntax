@@ -1,18 +1,15 @@
 {
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "noEmit": true,
+        "noEmit": true
     },
     "include": [
-		".eslintrc.cjs",
-		"rspack.config.ts",
-		"src/**/*.ts",
-		"tests/.eslintrc.cjs",
-		"tests/**/*.ts",
-		"vitest.config.ts",
-	],
-	"exclude": [
-		"node_modules",
-		".vscode-test"
-	],
+        ".eslintrc.cjs",
+        "rspack.config.ts",
+        "src/**/*.ts",
+        "tests/.eslintrc.cjs",
+        "tests/**/*.ts",
+        "vitest.config.ts"
+    ],
+    "exclude": ["node_modules", ".vscode-test"]
 }

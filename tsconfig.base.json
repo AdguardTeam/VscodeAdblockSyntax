@@ -3,9 +3,7 @@
         "target": "ESNext",
         "module": "ESNext",
         "moduleResolution": "bundler",
-        "types": [
-            "node"
-        ],
+        "types": ["node"],
         "resolveJsonModule": true,
         "allowJs": true,
         "esModuleInterop": true,
