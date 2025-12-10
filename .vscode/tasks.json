@@ -233,7 +233,7 @@
             "presentation": {
                 "reveal": "never",
                 "close": true
-            }
+            },
         }
     ],
     "inputs": [
