@@ -22,6 +22,9 @@ Table of Contents:
     - [Package-level build commands](#package-level-build-commands)
     - [Utility commands](#utility-commands)
     - [Linting \& testing commands](#linting--testing-commands)
+- [Versioning policy](#versioning-policy)
+    - [VS Code extension versioning requirements](#vs-code-extension-versioning-requirements)
+    - [Pre-release versioning strategy](#pre-release-versioning-strategy)
 - [Useful links](#useful-links)
 
 ## Prerequisites
@@ -174,6 +177,34 @@ You can also run linting and tests for individual packages:
 > [!NOTE]
 > Linting and testing commands are called automatically by Husky Git hooks and CI. You can run them manually if needed.
 
+## Versioning policy
+
+This project follows [Semantic Versioning (SemVer)][semver] with specific requirements for VS Code extensions.
+See [VS Code pre-release extensions documentation][vscode-prerelease] for more details.
+
+### VS Code extension versioning requirements
+
+> [!IMPORTANT]
+> VS Code Marketplace and Open VSX **only support `major.minor.patch` format**. Pre-release tags like `1.0.0-alpha` or
+> `1.0.0-beta` are **NOT supported** and will be rejected by the stores.
+
+### Pre-release versioning strategy
+
+To support pre-release versions while maintaining compatibility, we use an **odd/even minor version scheme**:
+
+- **Release versions**: `major.EVEN.patch` → e.g., `2.0.0`, `2.0.1`, `2.2.0`
+- **Pre-release versions**: `major.ODD.patch` → e.g., `2.1.0`, `2.1.1`, `2.3.0`
+
+**Version progression example:**
+
+```text
+2.0.0 → 2.1.0 (start pre-release)  → 2.1.1 (pre-release update)  → 2.2.0 (promote to release)
+```
+
+> [!WARNING]
+> VS Code auto-updates to the highest version. Always ensure pre-release versions are higher than release versions to
+> prevent downgrading pre-release users.
+
 ## Useful links
 
 Explore the following links for more information on development:
@@ -191,6 +222,7 @@ Explore the following links for more information on development:
 [husky]: https://typicode.github.io/husky
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [nova-light-show]: https://novalightshow.netlify.app/
+[semver]: https://semver.org/
 [server-dir]: ./server
 [shared-dir]: ./shared
 [syntaxes-dir]: ./syntaxes
@@ -201,6 +233,7 @@ Explore the following links for more information on development:
 [vitest]: https://vitest.dev/
 [vscode-extensions-file]: ./.vscode/extensions.json
 [vscode-ls-extension-guide]: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
+[vscode-prerelease]: https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
 [vscode-problem-matcher-docs]: https://code.visualstudio.com/docs/editor/tasks#_processing-task-output-with-problem-matchers
 [vscode-tasks-file]: ./.vscode/tasks.json
 [vscode]: https://code.visualstudio.com/
