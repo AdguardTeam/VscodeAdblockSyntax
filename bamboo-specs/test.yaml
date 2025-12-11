@@ -68,12 +68,18 @@ Build:
     - script:
         interpreter: SHELL
         scripts:
-          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix"
+          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix syntaxes/out/adblock.plist"
   artifacts:
-    - name: vscode-adblock-vsix
-      pattern: out/vscode-adblock.vsix
+    - name: vscode-adblock.vsix
+      location: out
+      pattern: vscode-adblock.vsix
       shared: true
-      required: false
+      required: true
+    - name: adblock.plist
+      location: syntaxes/out
+      pattern: adblock.plist
+      shared: true
+      required: true
   requirements:
     - adg-docker: true
 
