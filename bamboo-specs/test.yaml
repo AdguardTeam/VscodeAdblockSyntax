@@ -88,7 +88,7 @@ Test Shared:
             pnpm --filter @vscode-adblock-syntax/shared lint:md
 
             # Run tests
-            pnpm --filter @vscode-adblock-syntax/shared test --run
+            pnpm --filter @vscode-adblock-syntax/shared test --run --no-color
   final-tasks:
     - script: &cleanup-script
         interpreter: SHELL
@@ -123,7 +123,7 @@ Test Syntaxes:
             pnpm --filter @vscode-adblock-syntax/syntaxes lint:md
 
             # Run tests
-            pnpm --filter @vscode-adblock-syntax/syntaxes test --run
+            pnpm --filter @vscode-adblock-syntax/syntaxes test --run --no-color
   final-tasks:
     - script: *cleanup-script
   requirements: *requirements
@@ -157,7 +157,7 @@ Test Client:
             pnpm --filter @vscode-adblock-syntax/client lint:md
 
             # Run tests
-            pnpm --filter @vscode-adblock-syntax/client test --run
+            pnpm --filter @vscode-adblock-syntax/client test --run --no-color
   final-tasks:
     - script: *cleanup-script
   requirements: *requirements
@@ -191,7 +191,7 @@ Test Server:
             pnpm --filter @vscode-adblock-syntax/server lint:md
 
             # Run tests
-            pnpm --filter @vscode-adblock-syntax/server test --run
+            pnpm --filter @vscode-adblock-syntax/server test --run --no-color
   final-tasks:
     - script: *cleanup-script
   requirements: *requirements
