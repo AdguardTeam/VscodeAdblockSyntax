@@ -7,6 +7,7 @@ release-naming: ${bamboo.inject.version}
 environments:
   - marketplace.visualstudio.com
   - open-vsx.org
+  - GitHub
 
 marketplace.visualstudio.com:
   docker:
@@ -93,6 +94,45 @@ open-vsx.org:
         interpreter: SHELL
         scripts:
           - "./bamboo-specs/scripts/cleanup.sh"
+  requirements:
+    - adg-docker: 'true'
+  notifications:
+    - events:
+        - deployment-started-and-finished
+      recipients:
+        - webhook:
+            name: Deploy webhook
+            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
+
+GitHub:
+  triggers: []
+  tasks:
+    - clean
+    - checkout:
+        repository: bamboo-deploy-publisher
+        path: bamboo-deploy-publisher
+        force-clean-build: true
+    - artifact-download:
+        artifacts:
+          - name: vscode-adblock.vsix
+          - name: EXTRACTED_CHANGES.md
+          - name: adblock.plist
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -x
+            set -e
+
+            # Fix mixed logs
+            exec 2>&1
+
+            ls -laht
+
+            # publish to Github Releases
+            GITHUB_TOKEN="${bamboo.githubPublicRepoPassword}" \
+            ./bamboo-deploy-publisher/deploy.sh vscode-adblock-syntax-github-release
+  final-tasks: []
   requirements:
     - adg-docker: 'true'
   notifications:
