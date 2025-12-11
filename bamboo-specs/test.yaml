@@ -42,7 +42,7 @@ stages:
   - Stage 3:
       <<: *stage
       jobs:
-        - Build & Package
+        - Build and Package
 
 Test Shared:
   key: TESTSHARED
@@ -196,7 +196,7 @@ Test Server:
     - script: *cleanup-script
   requirements: *requirements
 
-Build & Package:
+Build and Package:
   key: BUILDPACKAGE
   docker: *docker
   tasks:
