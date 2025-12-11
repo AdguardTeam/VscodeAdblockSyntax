@@ -68,7 +68,7 @@ Build:
     - script:
         interpreter: SHELL
         scripts:
-          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix syntaxes/out/adblock.plist"
+          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix,syntaxes/out/adblock.plist"
   artifacts:
     - name: vscode-adblock.vsix
       location: out
