@@ -14,6 +14,9 @@ importers:
 
   .:
     devDependencies:
+      '@adguard/changelog-tools':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@swc/core':
         specifier: ^1.3.76
         version: 1.11.18
@@ -226,6 +229,11 @@ packages:
   '@adguard/agtree@3.4.1':
     resolution: {integrity: sha512-+g7dkggf7qY+WckjdbUUb+MJq/C8Bc1xX7dn7kEQSBkD9pJxAcp3d391R2OYdQdgR1FNUZ+FnuJfk60ZetkNPg==}
     engines: {node: '>=22'}
+
+  '@adguard/changelog-tools@0.0.1':
+    resolution: {integrity: sha512-tV3k8j6vgbMnMulRGx4SySls6yQETjryijBO+Lg7QR5nsLmOd0w7zaXFwxD9cG8xy72TA+B8n4argre2ie6JuA==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@adguard/css-tokenizer@1.2.0':
     resolution: {integrity: sha512-cUj5j/AU5z/T4//5M6KnIJBpykAY4QbDsoiQ2DaWX/r2XkepMkTb8DhIbUHJD/QLGEyLeQLpi+nlxAgf4NTRRQ==}
@@ -4736,6 +4744,17 @@ snapshots:
       tldts: 5.7.112
       xregexp: 5.1.2
       zod: 3.24.4
+
+  '@adguard/changelog-tools@0.0.1':
+    dependencies:
+      commander: 14.0.2
+      escape-string-regexp: 5.0.0
+      remark-inline-links: 7.0.0
+      remark-parse: 11.0.0
+      remark-stringify: 11.0.0
+      unified: 11.0.5
+    transitivePeerDependencies:
+      - supports-color
 
   '@adguard/css-tokenizer@1.2.0': {}
 

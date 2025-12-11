@@ -64,23 +64,39 @@ Build:
         file: out/build.txt
         scope: RESULT
         namespace: inject
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |
+            set -e
+
+            # Extract related changes from changelog
+            pnpm exec changelog-tools extract --extract-version ${bamboo.inject.version} > ./EXTRACTED_CHANGES.md
     - any-task:
         plugin-key: com.atlassian.bamboo.plugins.vcs:task.vcs.tagging
         configuration:
           selectedRepository: defaultRepository
           tagName: v${bamboo.inject.version}
-          # annotated tag
-          description: prerelease
   final-tasks:
     - script:
         interpreter: SHELL
         scripts:
-          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix"
+          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix syntaxes/out/adblock.plist EXTRACTED_CHANGES.md"
   # Store the .vsix file as a build artifact
   artifacts:
     - name: vscode-adblock.vsix
       location: out
       pattern: vscode-adblock.vsix
+      shared: true
+      required: true
+    - name: EXTRACTED_CHANGES.md
+      location: .
+      pattern: EXTRACTED_CHANGES.md
+      shared: true
+      required: true
+    - name: adblock.plist
+      location: syntaxes/out
+      pattern: adblock.plist
       shared: true
       required: true
   requirements:
