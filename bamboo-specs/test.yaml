@@ -55,11 +55,25 @@ Build:
 
             # Run Vitest tests
             pnpm test
+
+            # Build extension
+            pnpm build
+
+            # Package build into .vsix file
+            pnpm package
+
+            # Show tree of files in .vsix file
+            pnpm exec vsce ls --tree
   final-tasks:
     - script:
         interpreter: SHELL
         scripts:
-          - "./bamboo-specs/scripts/cleanup.sh"
+          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix"
+  artifacts:
+    - name: vscode-adblock-vsix
+      pattern: out/vscode-adblock.vsix
+      shared: true
+      required: false
   requirements:
     - adg-docker: true
 

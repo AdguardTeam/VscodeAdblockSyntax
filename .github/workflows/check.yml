@@ -53,6 +53,19 @@ jobs:
       - name: Run Vitest tests
         run: pnpm test
 
+      - name: Build extension
+        run: pnpm build
+
+      - name: Package extension
+        run: pnpm package
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-adblock-vsix
+          path: out/vscode-adblock.vsix
+          retention-days: 30
+
   notify:
     name: Send Slack notification on failure
     needs: check_code
