@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
-## [2.1.1] (prerelease) - 2025-12-15
+## [2.1.2] (prerelease) - 2025-12-15
 
 ### Changed
 
@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 > **Note:** Starting from v2.1.0, we follow an odd/even versioning scheme for pre-releases.
 > Version 2.1.x will be the pre-release track, and 2.2.0 will be the next stable release.
 
-[2.1.1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/2.0.4...2.1.1
+[2.1.2]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/2.0.4...2.1.2
 
 ## [2.0.4] (prerelease) - 2025-11-28
 
