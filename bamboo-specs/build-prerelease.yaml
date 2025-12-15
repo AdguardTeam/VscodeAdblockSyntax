@@ -43,6 +43,9 @@ Build:
             # Install dependencies
             pnpm install
 
+            # Build shared library first (required by client and server)
+            pnpm --filter @vscode-adblock-syntax/shared build
+
             # Check TypeScript types
             pnpm test:compile
 
