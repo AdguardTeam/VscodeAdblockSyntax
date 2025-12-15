@@ -1,6 +1,8 @@
 {
     "recommendations": [
-        "connor4312.esbuild-problem-matchers",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "davidanson.vscode-markdownlint",
+        "vitest.explorer",
+        "editorconfig.editorconfig"
     ]
 }

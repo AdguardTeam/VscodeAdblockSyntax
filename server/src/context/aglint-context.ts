@@ -8,8 +8,8 @@ import type { Connection, TextDocuments } from 'vscode-languageserver/node';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { LSPFileSystemAdapter } from '../adapters/fs';
-import type { LoadedAglint } from '../utils/aglint-loader';
-import { loadAglintModule } from '../utils/aglint-loader';
+import type { LoadedAglint } from '../loaders/aglint';
+import { loadAglintModule } from '../loaders/aglint';
 
 /**
  * Encapsulates all AGLint-related state and dependencies.

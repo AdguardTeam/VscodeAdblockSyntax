@@ -1,15 +1,30 @@
 {
-    "name": "aglint-client",
+    "name": "@vscode-adblock-syntax/client",
+    "description": "Language client for Adblock/AdGuard/uBlock filters syntax.",
     "version": "2.0.0",
     "license": "MIT",
     "author": "AdGuard Software Ltd.",
-    "description": "Integrates AGLint into VSCode",
     "private": true,
+    "scripts": {
+        "prebuild": "rimraf out",
+        "build": "rspack",
+        "test": "vitest",
+        "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
+        "lint:md": "markdownlint . --ignore-path ../.markdownlintignore",
+        "lint": "pnpm run lint:code && pnpm run lint:md"
+    },
     "dependencies": {
-        "valibot": "^1.1.0",
-        "vscode-languageclient": "10.0.0-next.15"
+        "@vscode-adblock-syntax/shared": "workspace:^",
+        "valibot": "catalog:",
+        "vscode-languageclient": "catalog:"
     },
     "devDependencies": {
-        "@types/vscode": "^1.74.0"
+        "@rspack/cli": "catalog:",
+        "@rspack/core": "catalog:",
+        "@types/vscode": "catalog:",
+        "rimraf": "catalog:",
+        "tsc-files": "catalog:",
+        "tsx": "catalog:",
+        "vitest": "catalog:"
     }
 }

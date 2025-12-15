@@ -1,27 +1,44 @@
 {
-    "name": "aglint-server",
+    "name": "@vscode-adblock-syntax/server",
+    "description": "Language server for Adblock/AdGuard/uBlock filters syntax.",
     "version": "2.0.0",
     "license": "MIT",
     "author": "AdGuard Software Ltd.",
     "private": true,
     "engines": {
-        "node": ">=16"
+        "node": ">=20.0.0"
+    },
+    "scripts": {
+        "prebuild": "rimraf out",
+        "build": "rspack",
+        "test": "vitest",
+        "lint:code": "eslint . --cache --ext .ts --ext .js --ext .cjs",
+        "lint:md": "markdownlint . --ignore-path ../.markdownlintignore",
+        "lint": "pnpm run lint:code && pnpm run lint:md"
     },
     "dependencies": {
-        "debounce": "^3.0.0",
-        "fast-glob": "^3.3.3",
-        "preferred-pm": "^4.1.1",
-        "resolve": "^1.22.11",
-        "vscode-languageserver": "10.0.0-next.13",
-        "vscode-languageserver-textdocument": "^1.0.8",
-        "vscode-uri": "^3.1.0",
-        "yaml": "^2.7.1"
+        "@vscode-adblock-syntax/shared": "workspace:^",
+        "debounce": "catalog:",
+        "fast-glob": "catalog:",
+        "preferred-pm": "catalog:",
+        "resolve": "catalog:",
+        "semver": "catalog:",
+        "vscode-languageserver": "catalog:",
+        "vscode-languageserver-textdocument": "catalog:",
+        "vscode-uri": "catalog:",
+        "yaml": "catalog:"
     },
     "devDependencies": {
         "@adguard/aglint": "catalog:",
-        "@adguard/agtree": "^2.3.0",
-        "@types/resolve": "^1.20.6",
-        "@types/semver": "^7.5.0",
-        "semver": "^7.5.4"
+        "@adguard/agtree": "catalog:",
+        "@rspack/cli": "catalog:",
+        "@rspack/core": "catalog:",
+        "@types/resolve": "catalog:",
+        "@types/semver": "catalog:",
+        "@vitest/coverage-v8": "catalog:",
+        "rimraf": "catalog:",
+        "tsc-files": "catalog:",
+        "tsx": "catalog:",
+        "vitest": "catalog:"
     }
 }

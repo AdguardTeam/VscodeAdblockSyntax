@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Server dev build (watch)",
-            "type": "npm",
-            "script": "watch:server",
+            "label": "Shared lib rspack build (watch)",
+            "type": "shell",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/shared rspack --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -15,12 +15,118 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$esbuild-watch",
+            "problemMatcher": {
+                "owner": "rspack",
+                "source": "rspack",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/shared"
+                ],
+                "pattern": [
+                    {
+                        // ERROR in ./src/server.ts 8:0-25
+                        "regexp": "^(ERROR|WARNING) in\\s+(.+)\\s+(\\d+):(\\d+)(?:-\\d+)?",
+                        "severity": 1, // ERROR | WARNING
+                        "file": 2, // ./src/server.ts
+                        "line": 3, // 8
+                        "column": 4 // 0
+                    },
+                    {
+                        //   × Module not found: ...
+                        "regexp": "^\\s+×\\s+(.*)$",
+                        "message": 1
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": ".*"
+                    },
+                    // e.g.: "Rspack 1.6.7 compiled with 1 error in 71 ms"
+                    "endsPattern": {
+                        "regexp": "Rspack .* compiled .*"
+                    }
+                }
+            },
+        },
+        {
+            "label": "Shared lib tsc build (watch)",
+            "type": "shell",
+            "command": "pnpm --silent --filter @vscode-adblock-syntax/shared exec tsc --project tsconfig.build.json --emitDeclarationOnly --watch --preserveWatchOutput",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": "$tsc-watch"
+        },
+        {
+            "label": "Shared lib dev build (watch)",
+            "dependsOn": [
+                "Shared lib rspack build (watch)",
+                "Shared lib tsc build (watch)"
+            ]
+        },
+        {
+            "label": "Server dev build (watch)",
+            "type": "shell",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/server build --watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never",
+                "close": true
+            },
+            "problemMatcher": {
+                "owner": "rspack",
+                "source": "rspack",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/server"
+                ],
+                "pattern": [
+                    {
+                        // ERROR in ./src/server.ts 8:0-25
+                        "regexp": "^(ERROR|WARNING) in\\s+(.+)\\s+(\\d+):(\\d+)(?:-\\d+)?",
+                        "severity": 1, // ERROR | WARNING
+                        "file": 2, // ./src/server.ts
+                        "line": 3, // 8
+                        "column": 4 // 0
+                    },
+                    {
+                        //   × Module not found: ...
+                        "regexp": "^\\s+×\\s+(.*)$",
+                        "message": 1
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": ".*"
+                    },
+                    // e.g.: "Rspack 1.6.7 compiled with 1 error in 71 ms"
+                    "endsPattern": {
+                        "regexp": "Rspack .* compiled .*"
+                    }
+                }
+            },
+            "dependsOn": [
+                "Shared lib dev build (watch)"
+            ]
         },
         {
             "label": "Client dev build (watch)",
-            "type": "npm",
-            "script": "watch:client",
+            "type": "shell",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/client build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -31,12 +137,47 @@
                 "reveal": "never",
                 "close": true
             },
-            "problemMatcher": "$esbuild-watch",
+            "problemMatcher": {
+                "owner": "rspack",
+                "source": "rspack",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/client"
+                ],
+                "pattern": [
+                    {
+                        // ERROR in ./src/server.ts 8:0-25
+                        "regexp": "^(ERROR|WARNING) in\\s+(.+)\\s+(\\d+):(\\d+)(?:-\\d+)?",
+                        "severity": 1, // ERROR | WARNING
+                        "file": 2, // ./src/server.ts
+                        "line": 3, // 8
+                        "column": 4 // 0
+                    },
+                    {
+                        //   × Module not found: ...
+                        "regexp": "^\\s+×\\s+(.*)$",
+                        "message": 1
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": ".*"
+                    },
+                    // e.g.: "Rspack 1.6.7 compiled with 1 error in 71 ms"
+                    "endsPattern": {
+                        "regexp": "Rspack .* compiled .*"
+                    }
+                }
+            },
+            "dependsOn": [
+                "Shared lib dev build (watch)"
+            ]
         },
         {
             "label": "Grammar dev build (watch)",
-            "type": "npm",
-            "script": "watch:grammar",
+            "type": "shell",
+            "command": "pnpm exec cross-env NODE_ENV=dev pnpm --silent --filter @vscode-adblock-syntax/syntaxes build --watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -76,10 +217,11 @@
             "label": "Extension dev build (watch)",
             "dependsOrder": "sequence",
             "dependsOn": [
+                "Shared lib dev build (watch)",
                 "Grammar dev build (watch)",
                 "Server dev build (watch)",
                 "Client dev build (watch)"
-            ],
+            ]
         },
         // Terminate watch tasks after debugging
         // https://github.com/microsoft/vscode/issues/90786#issuecomment-587415345

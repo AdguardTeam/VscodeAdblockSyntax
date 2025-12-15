@@ -43,6 +43,9 @@ Build:
             # Install dependencies
             pnpm install
 
+            # Build shared library first (required by client and server)
+            pnpm --filter @vscode-adblock-syntax/shared build
+
             # Check TypeScript types
             pnpm test:compile
 
@@ -50,16 +53,22 @@ Build:
             pnpm lint:md
 
             # Run ESLint
-            pnpm lint:ts
+            pnpm lint:code
 
-            # Run Jest tests
+            # Run Vitest tests
             pnpm test
 
             # Create production build
-            pnpm build:prod
+            pnpm build
+
+            # Package build into .vsix file
+            pnpm package
+
+            # Show tree of files in .vsix file
+            pnpm exec vsce ls --tree
 
             # Create build.txt file with version
-            pnpm build:txt
+            pnpm exec tsx tools/build-txt.ts
     - inject-variables:
         file: out/build.txt
         scope: RESULT
@@ -100,7 +109,7 @@ Build:
       shared: true
       required: true
   requirements:
-    - adg-docker: true
+    - adg-docker: 'true'
 
 triggers: []
 

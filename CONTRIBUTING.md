@@ -11,10 +11,20 @@ Table of Contents:
 - [Prerequisites](#prerequisites)
 - [Initial setup](#initial-setup)
 - [Project structure](#project-structure)
+    - [Main packages](#main-packages)
+    - [Supporting folders](#supporting-folders)
 - [Running the extension in development mode](#running-the-extension-in-development-mode)
 - [Creating a production build](#creating-a-production-build)
 - [Updating syntax highlighting](#updating-syntax-highlighting)
 - [Available commands](#available-commands)
+    - [Build commands](#build-commands)
+    - [Package commands](#package-commands)
+    - [Package-level build commands](#package-level-build-commands)
+    - [Utility commands](#utility-commands)
+    - [Linting \& testing commands](#linting--testing-commands)
+- [Versioning policy](#versioning-policy)
+    - [VS Code extension versioning requirements](#vs-code-extension-versioning-requirements)
+    - [Pre-release versioning strategy](#pre-release-versioning-strategy)
 - [Useful links](#useful-links)
 
 ## Prerequisites
@@ -43,16 +53,31 @@ After cloning the repository, follow these steps to initialize the project:
 
 ## Project structure
 
-The most important folders in the project are:
+This project uses a **monorepo structure** with **pnpm workspaces**. Each package is independent with its own
+`package.json`, build system, and tests.
+
+### Main packages
 
 - [**client**][client-dir]: VSCode extension code which has access to all VS Code Namespace API.
-- [**server**][server-dir]: Language analysis tool running in a separate process.
+    - Built with Rspack
+    - Contains the extension activation logic and VSCode integration
+- [**server**][server-dir]: Language server running in a separate process.
+    - Built with Rspack with code splitting for large dependencies
+    - Handles AGLint integration, diagnostics, and language features
+- [**shared**][shared-dir]: Shared utilities used by both client and server packages.
+    - Built with Rspack
+    - Contains common types and utilities
 - [**syntaxes**][syntaxes-dir]: TextMate grammars for syntax highlighting.
-- [**test**][test-dir]: Various tests for the extension.
-    - [**grammar**][test-grammar-dir]: Unit tests for the TextMate grammar.
-    - [**static**][test-static-dir]: Static test files for testing the extension in development mode.
-        - [**aglint**][test-static-aglint-dir]: AGLint test project.
-        - [**rules**][test-static-rules-dir]: Rules for testing the syntax highlighting visually.
+    - Converts YAML grammar to PList format for VSCode
+    - Contains grammar tests and utilities
+
+### Supporting folders
+
+- [**test**][test-dir]: Static test files and test workspaces.
+    - [**static/aglint**][test-static-aglint-dir]: AGLint test project workspace.
+    - [**static/rules**][test-static-rules-dir]: Rules for testing the syntax highlighting visually.
+- [**tools**][tools-dir]: Build and utility scripts for the project.
+- [**bamboo-specs**][bamboo-specs-dir]: CI/CD pipeline configurations.
 
 > [!NOTE]
 > To learn more about the client-server architecture of VSCode extensions, refer to the [VSCode Language Server
@@ -71,26 +96,25 @@ If you've made changes to the extension code and want to test them, follow these
 
 > [!IMPORTANT]
 > When you start the debugging, VSCode starts the watch build commands in separate terminals. To interpret the terminal
-> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs]. Since ESBuild is not supported by
-> VSCode by default, you need to install the [ESBuild Problem Matchers][esbuild-problem-matcher-extension] extension to
-> make able VSCode to parse its output.
-> Without this extension, VSCode cannot recognize when ESBuild completes its build or encounters errors. This results in
-> an endless run, preventing the opening of the Extension Development Host.
+> output correctly, VSCode relies on [problem matchers][vscode-problem-matcher-docs],
+> otherwise the watch build will not stop when it encounters an error.
 
 ## Creating a production build
 
 To create a production build of the extension:
 
-1. Run `pnpm build:prod` command. This generates a production build and a `.vsix` file in the `out` folder.
-1. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
+1. Run `pnpm build` command to build packages.
+2. Run `pnpm package` command to package the extension into a `.vsix` file.
+3. To ensure the build is correct, install the generated `.vsix` file in VSCode. Open the command palette
    (`Ctrl + Shift + P`), select "Extensions: Install from VSIX...", and choose the `vscode-adblock.vsix` file.
 
 ## Updating syntax highlighting
 
-1. Update the TM grammar in the `syntaxes/adblock.yaml-tmLanguage` file.
+1. Update the TM grammar in the `syntaxes/adblock.yaml-tmlanguage` file.
 1. Create/modify example rules in the `test/static/rules` folder. Add link for GitHub issues to rules if related to some
    issue.
-1. Create/modify unit tests in `test/grammar`. Ensure tests pass by running `pnpm test`.
+1. Create/modify unit tests in `syntaxes/test/adblock`. Ensure tests pass by running
+   `pnpm --filter @vscode-adblock-syntax/syntaxes test`.
 
 > [!TIP]
 > Open the `test/static` folder in the "Extension Development Host" window and you can check the syntax highlighting
@@ -103,38 +127,83 @@ To create a production build of the extension:
 
 During development, you can use the following commands (listed in `package.json`).
 
-- `pnpm build:grammar` - Compiles the TextMate (TM) grammar into a PList format, since VSCode does not natively support
-  YAML grammars.
-- `pnpm build:prod` - Generates a production build of the extension, including a `.vsix` file in the `out` directory for
-  VSCode installation.
-- `pnpm build:txt` - Creates a `build.txt` file in the out directory containing the current version number, primarily
-  for Continuous Integration (CI) purposes.
-- `pnpm build:vsix` - Produces a `.vsix` file in the out directory, which is used to install the extension in VSCode.
-- `pnpm clean` - Removes all generated files in the output directories, cleaning up the build results.
-- `pnpm esbuild:server` - Base ESBuild command for building the server with the common options.
-- `pnpm esbuild:client` - Base ESBuild command for building the client with the common options.
-- `pnpm extract-changelog` - Extract changes from the `CHANGELOG.md` for a specific version. Typically, this is used by
-  CI.
-- `pnpm increment` - Increment the patch version number of the extension in the `package.json` file. Typically, this is
-  used by CI.
-- `pnpm lint:md` - Lint the markdown files with [markdownlint][markdownlint].
-- `pnpm lint:staged` - Run linters on staged files. Typically, this is used by Husky Git hooks.
-- `pnpm lint:ts` - Lint the *ts* code with [ESLint][eslint].
-- `pnpm lint` - Run all linters.
-- `pnpm test:compile` - Check if the code compiles with [TypeScript][typescript].
-- `pnpm test` - Run tests with [Jest][jest].
-- `pnpm watch:client` - Watch for changes in the client code and create a development build automatically.
-- `pnpm watch:grammar` - Watch for changes in the TM grammar and rebuild it automatically.
-- `pnpm watch:server` - Watch for changes in the server code and create a development build automatically.
+### Build commands
+
+- `pnpm build` - Build all packages recursively with minification enabled.
+
+### Package commands
+
+- `pnpm package` - Package the extension into a `.vsix` file in the `out` directory.
+- `pnpm package:pre` - Package the extension with the `--pre-release` flag for prerelease builds.
+
+### Package-level build commands
+
+Each package can be built independently using pnpm workspace filters:
+
+- `pnpm --filter @vscode-adblock-syntax/shared build` - Build the shared package with Rspack.
+- `pnpm --filter @vscode-adblock-syntax/client build` - Build the client package with Rspack.
+- `pnpm --filter @vscode-adblock-syntax/server build` - Build the server package with Rspack (includes code splitting).
+- `pnpm --filter @vscode-adblock-syntax/syntaxes build` - Build the syntaxes package (converts grammar to PList format).
 
 > [!NOTE]
-> Watch commands (e.g., `pnpm watch:client`) are typically used by VSCode tasks (see
-> [`.vscode/tasks.json`][vscode-tasks-file] file and
-> [*Running the extension in development mode*](#running-the-extension-in-development-mode) section).
-> In most cases, you don't need to run them manually.
+> Rspack builds are configured via `rspack.config.ts` files in each package. Production mode is enabled via
+> `NODE_ENV=production` environment variable, which is set automatically by the root `pnpm build` command.
+
+### Utility commands
+
+- `pnpm clean` - Removes all generated files using the clean utility script.
+- `pnpm increment` - Increment the patch version number in the `package.json` file. Typically used by CI.
+
+### Linting & testing commands
+
+- `pnpm lint` - Run all linters recursively across all packages.
+- `pnpm lint:code` - Lint the code with [ESLint][eslint].
+- `pnpm lint:md` - Lint the markdown files with [markdownlint][markdownlint].
+- `pnpm test` - Run tests recursively across all packages with [Vitest][vitest].
+- `pnpm test:compile` - Type-check all packages without emitting files.
+
+You can also run linting and tests for individual packages:
+
+- `pnpm --filter @vscode-adblock-syntax/shared lint` / `test`
+- `pnpm --filter @vscode-adblock-syntax/client lint` / `test`
+- `pnpm --filter @vscode-adblock-syntax/server lint` / `test`
+- `pnpm --filter @vscode-adblock-syntax/syntaxes lint` / `test`
+
+> [!NOTE]
+> Watch builds are handled automatically by VSCode tasks when you start debugging (see
+> [`.vscode/tasks.json`][vscode-tasks-file] file). Each package (shared, client, server, syntaxes) has its own watch
+> task that rebuilds on file changes.
 
 > [!NOTE]
 > Linting and testing commands are called automatically by Husky Git hooks and CI. You can run them manually if needed.
+
+## Versioning policy
+
+This project follows [Semantic Versioning (SemVer)][semver] with specific requirements for VS Code extensions.
+See [VS Code pre-release extensions documentation][vscode-prerelease] for more details.
+
+### VS Code extension versioning requirements
+
+> [!IMPORTANT]
+> VS Code Marketplace and Open VSX **only support `major.minor.patch` format**. Pre-release tags like `1.0.0-alpha` or
+> `1.0.0-beta` are **NOT supported** and will be rejected by the stores.
+
+### Pre-release versioning strategy
+
+To support pre-release versions while maintaining compatibility, we use an **odd/even minor version scheme**:
+
+- **Release versions**: `major.EVEN.patch` → e.g., `2.0.0`, `2.0.1`, `2.2.0`
+- **Pre-release versions**: `major.ODD.patch` → e.g., `2.1.0`, `2.1.1`, `2.3.0`
+
+**Version progression example:**
+
+```text
+2.0.0 → 2.1.0 (start pre-release)  → 2.1.1 (pre-release update)  → 2.2.0 (promote to release)
+```
+
+> [!WARNING]
+> VS Code auto-updates to the highest version. Always ensure pre-release versions are higher than release versions to
+> prevent downgrading pre-release users.
 
 ## Useful links
 
@@ -146,24 +215,25 @@ Explore the following links for more information on development:
 - [VSCode Extension Samples](https://github.com/microsoft/vscode-extension-samples)
 - [Online test page for TextMate grammars][nova-light-show]
 
+[bamboo-specs-dir]: ./bamboo-specs
 [client-dir]: ./client
 [contribute]: https://adguard.com/contribute.html
-[esbuild-problem-matcher-extension]: https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers
 [eslint]: https://eslint.org/
 [husky]: https://typicode.github.io/husky
-[jest]: https://jestjs.io/
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [nova-light-show]: https://novalightshow.netlify.app/
+[semver]: https://semver.org/
 [server-dir]: ./server
+[shared-dir]: ./shared
 [syntaxes-dir]: ./syntaxes
 [test-dir]: ./test
-[test-grammar-dir]: ./test/grammar
 [test-static-aglint-dir]: ./test/static/aglint
-[test-static-dir]: ./test/static
 [test-static-rules-dir]: ./test/static/rules
-[typescript]: https://www.typescriptlang.org/
+[tools-dir]: ./tools
+[vitest]: https://vitest.dev/
 [vscode-extensions-file]: ./.vscode/extensions.json
 [vscode-ls-extension-guide]: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
+[vscode-prerelease]: https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
 [vscode-problem-matcher-docs]: https://code.visualstudio.com/docs/editor/tasks#_processing-task-output-with-problem-matchers
 [vscode-tasks-file]: ./.vscode/tasks.json
 [vscode]: https://code.visualstudio.com/

@@ -1,220 +1,232 @@
 <!-- markdownlint-disable -->
-&nbsp;
-<p align="center">
-    <img alt="AGLint" src="https://cdn.adguard.com/website/github.com/AGLint/aglint_512x512.png" width="128px">
-</p>
-<h3 align="center">Adblock Language support for VSCode.</h3>
-<p align="center">
-    Supported syntaxes:
-</p>
-<p align="center">
-    <a href="https://adguard.com/"><img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px"> AdGuard</a> |
-    <a href="https://github.com/gorhill/uBlock"><img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px"> uBlock Origin</a> |
-    <a href="https://getadblock.com"><img src="https://cdn.adguard.com/website/github.com/AGLint/ab_logo_128x128.png" width="14px"> AdBlock</a> |
-    <a href="https://adblockplus.org/"><img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px"> Adblock Plus</a>
-</p>
+<div align="center">
 
-<p align="center">
-    <a href="https://marketplace.visualstudio.com/items?itemName=adguard.adblock"><img src="https://img.shields.io/visual-studio-marketplace/v/adguard.adblock?label=VSCode%20Marketplace" alt="Visual Studio Marketplace Version (including pre-releases)"></a>
-    <a href="https://open-vsx.org/extension/adguard/adblock"><img src="https://img.shields.io/open-vsx/v/adguard/adblock?label=Open%20VSX" alt="Open VSX Version" ></a>
-    <a href="https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/AdguardTeam/VscodeAdblockSyntax" alt="License" /></a>
-    <a href="https://github.com/AdguardTeam/VscodeAdblockSyntax/issues"><img src="https://img.shields.io/github/issues/AdguardTeam/VscodeAdblockSyntax" alt="Open GitHub Issues" /></a>
-    <a href="https://github.com/AdguardTeam/VscodeAdblockSyntax/pulls"><img src="https://img.shields.io/github/issues-pr/AdguardTeam/VscodeAdblockSyntax" alt="Open GitHub Pull Requests" /></a>
-</p>
+<img alt="AGLint" src="https://cdn.adguard.com/website/github.com/AGLint/aglint_512x512.png" width="128px">
+
+# Adblock Syntax for VSCode
+
+**Complete adblock filter list support for VSCode**
+
+> **Note:** This is a development tool for creating and editing adblock filter lists, not an ad blocker for VSCode.
+
+[![VSCode Marketplace][badge-vscode]][marketplace]
+[![Open VSX][badge-openvsx]][openvsx]
+[![License][badge-license]][license]
+
+<img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard"> AdGuard・
+<img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin"> uBlock Origin・
+<img src="https://cdn.adguard.com/website/github.com/AGLint/ab_logo_128x128.png" width="14px" alt="AdBlock"> AdBlock・
+<img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus"> Adblock Plus
+
+[Install][marketplace] • [Documentation](#features) • [Report Issue][issues] • [Contributing][contributing]
+
+</div>
+
+---
+
 <!-- markdownlint-restore -->
 
-Table of Contents:
+## ✨ Features
 
-- [Introduction](#introduction)
-    - [Features](#features)
-        - [Syntax highlighting](#syntax-highlighting)
-        - [AGLint integration (linter)](#aglint-integration-linter)
-        - [Configuration](#configuration)
-        - [GitHub Linguist support](#github-linguist-support)
-    - [Ideas \& Questions](#ideas--questions)
-    - [Reporting Issues](#reporting-issues)
-    - [Contributing](#contributing)
-    - [License](#license)
-    - [References](#references)
+- 🎨 **Syntax highlighting** — Full support for AdGuard, uBlock Origin, and Adblock Plus filter syntax
+- 🔍 **Real-time linting** — Powered by [AGLint][aglint] with instant validation and error detection
+- 🛠️ **Auto-fixing** — Automatically fix issues with AGLint's suggestions and quick fixes
+- 🌐 **Multi-platform validation** — Platform-specific compatibility warnings and syntax checks
+- 🐙 **GitHub integration** — Syntax highlighting on GitHub via [Linguist][linguist]
+- ⚙️ **Flexible configuration** — VSCode settings and AGLint config file (`.aglintrc`) support
+- 🚀 **Auto-discovery** — Automatically finds AGLint in your workspace (local or global)
 
-# Introduction
+---
 
-This extension adds support for AdGuard, uBlock Origin and Adblock Plus syntaxes to Visual Studio Code, so you can write
-adblock rules in a convenient way. It also provides a linter to check your rules for errors.
+## 📷 Screenshot
 
-**We recommend using this extension if you are working with adblock rules.**
-
-You can easily install the update from the Visual Studio Marketplace or the Open VSX Registry:
-
-- [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=adguard.adblock)
-- [Open VSX Registry](https://open-vsx.org/extension/adguard/adblock)
-
-Here is a screenshot of the extension in action:
-
+<!--markdownlint-disable MD013-->
 <a href="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png">
     <img src="https://cdn.adtidy.org/website/github.com/VscodeAdblockSyntax/screenshot.png"
-        style="max-width: 600px"
+        style="max-width: 550px"
         alt="Adblock Syntax in action"
     />
 </a>
-
-GitHub Linguist support is also available, so you can highlight your adblock rules in GitHub repositories. See
-[GitHub Linguist support](#github-linguist-support) for more details. Quick example:
-
-```adblock
-! This is an example rule
-example.org##.banner
-||example.net/script.js$script,third-party,domain=example.com
-```
-
-## Features
-
-In this section we will describe the main features of this extension.
-
-### Syntax highlighting
-
-Syntax highlighting is available for AdGuard, uBlock Origin and Adblock Plus syntaxes. Nowadays it is unimaginable to
-work with code without highlighting, which helps you to distinguish different parts of the code and makes it easier
-to read.
-
-### AGLint integration (linter)
-
-This extension integrates [AGLint][aglint] to check your rules for syntax errors, invalid domains,
-incompatible CSS selectors, unknown scriptlets, and other issues. For more details, see the [AGLint repository][aglint].
-
-The extension automatically searches for AGLint installations in this order:
-
-1. Local workspace installation
-2. Global installation
-3. Prompts to install if not found
-
-Using a local installation ensures consistent results with your project's AGLint version.
-
-> [!WARNING]
-> Please note that the linter is under active development, so it may not work properly for some rules. If you
-> find any issues, please report them [here][aglintissues]. We look forward to your feedback, your help is very
-> important to us!
-
-### Configuration
-
-This extension provides the following configuration options:
-
-<!--markdownlint-disable MD013-->
-| Option | Description | Default value | Possible values |
-| ------ | ----------- | ------------- | --------------- |
-| `adblock.enableAglint` | Enable or disable AGLint integration. If disabled, only syntax highlighting and other language features will be available. | `true` | `true`, `false` |
-| `adblock.enableInMemoryAglintCache` | ⚠️ **Experimental**: Enable or disable in-memory caching of linting results for better performance. | `false` | `true`, `false` |
-
-**Note:** AGLint debug logging is automatically enabled when VSCode's log level is set to "Debug" or "Trace" via "Developer: Set Log Level".
-
-> **💡 Tip**: To control AGLint logging verbosity, use VSCode's built-in log level control:
-> Open Command Palette (**Cmd+Shift+P**) → **Developer: Set Log Level...** → Select **AGLint**
-
-### GitHub Linguist support
-
-GitHub supports adblock syntax officially via the [Linguist][linguist] library. Our extension provides a
-[TMLanguage file][tmlanguagefile], which is used by Linguist to highlight adblock rules (VSCode highlight also based on
-this file). This means that if you have a repository with adblock rules, GitHub can highlight your `.txt` files, if the
-following conditions are met:
-
-- If a `*.txt` file **begins** with an adblock agent (such as `[Adblock Plus 2.0]`, `[AdGuard]`, `[uBlock Origin]`,
-  `[Adblock Plus 2.0; AdGuard]`, etc.), then it will be highlighted as an adblock file automatically. You can find the
-  detection heuristics [here][linguistheur].
-- In any other cases, you can override the language classification by adding the following lines to `.gitattributes`
-  file:
-  ```gitattributes
-  # Override classification for *.txt files, so they are highlighted as adblock files.
-  # - This example will match all *.txt files in the repository, but you can
-  #   customize path(s) to match only specific files, such as /filters/*.txt
-  #   or /filters/*.adblock. See https://git-scm.com/docs/gitattributes for more details.
-  # - By default, Adblock language doesn't show up in the repository's language statistics,
-  #   but adding linguist-detectable will resolve this, so it is recommended to add it.
-  *.txt linguist-language=AdBlock linguist-detectable
-  ```
-  You can find more information about overriding language classification [here][linguistoverride].
-
-In addition, adblock code blocks can be inserted in markdown files and comments according to the following pattern:
-
-<pre>
-```adblock
-! Example rule
-example.org##.banner
-```
-</pre>
-
-will be rendered as:
-
-```adblock
-! Example rule
-example.org##.banner
-```
-
-## Ideas & Questions
-
-If you have any questions or ideas for new features, please open an issue or a discussion. We will be happy to discuss
-it with you.
-
-## Reporting Issues
-
-If you found a bug or have a feature request, please report it [here][issues]. Please make sure to include as much
-information as possible, including screenshots or example rules.
-
-Please note that the highlighter issues on GitHub will not be fixed immediately when we update the TMLanguage in this
-repository. GitHub's highlighter is only updated after Linguist releases. This process happens roughly every quarter.
-Before release, Linguist maintainers will update all integrated TMLanguage to the latest version. You can find more
-information about Linguist's release process [here][linguistrelease].
-
-## Contributing
-
-If you want to contribute to this project, please read the [CONTRIBUTING][contributing] file.
-
-## License
-
-This extension is licensed under the MIT License. See the [LICENSE][license] file for details.
-
-## References
-
-Here are some useful links to help you write adblock rules. This list is not exhaustive, so if you know any other useful
-resources, please let us know.
-
-<!--markdownlint-disable MD013-->
-- Syntax documentation:
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard: *How to create your own ad filters*][adg-filters]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin logo"> [uBlock Origin: *Static filter syntax*][ubo-filters]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus logo"> [Adblock Plus: *How to write filters*][abp-filters]
-- Extended CSS documentation:
-    - [MDN: *CSS selectors*][mdn-css-selectors]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard: *Extended CSS capabilities*][adg-ext-css]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin logo"> [uBlock Origin: *Procedural cosmetic filters*][ubo-procedural]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus logo"> [Adblock Plus: *Extended CSS selectors*][abp-ext-css]
-- Scriptlets:
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard scriptlets][adg-scriptlets]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin logo"> [uBlock Origin scriptlets][ubo-scriptlets]
-    - <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus logo"> [Adblock Plus snippets][abp-snippets]
-- Third party libraries:
-    - [CSSTree docs][css-tree-docs]
-- <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard logo"> [AdGuard's compatibility table][adg-compatibility-table]
 <!--markdownlint-enable MD013-->
 
-[abp-ext-css]: https://help.eyeo.com/adblockplus/how-to-write-filters#elemhide-emulation
-[abp-filters]: https://help.eyeo.com/adblockplus/how-to-write-filters
-[abp-snippets]: https://help.eyeo.com/adblockplus/snippet-filters-tutorial#snippets-ref
-[adg-compatibility-table]: https://github.com/AdguardTeam/Scriptlets/blob/master/wiki/compatibility-table.md
-[adg-ext-css]: https://github.com/AdguardTeam/ExtendedCss/blob/master/README.md
-[adg-filters]: https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters
-[adg-scriptlets]: https://github.com/AdguardTeam/Scriptlets/blob/master/wiki/about-scriptlets.md#scriptlets
+---
+
+## 📦 Installation
+
+### Quick Install
+
+1. Open VSCode
+2. Press `Ctrl+P` / `Cmd+P`
+3. Type: `ext install adguard.adblock`
+4. Press `Enter`
+
+### Manual Install
+
+**VSCode Marketplace:**
+
+1. Open [VSCode Marketplace][marketplace]
+2. Click **Install**
+3. VSCode will open automatically
+
+**Open VSX (for VSCodium, etc.):**
+
+1. Open [Open VSX Registry][openvsx]
+2. Click **Download**
+3. Install the `.vsix` file manually
+
+### Verify Installation
+
+1. Open any `.txt` file with adblock rules
+2. Add a filter rule: `example.org##.banner`
+3. You should see syntax highlighting
+
+**Note:** AGLint linting requires [AGLint][aglint] to be installed in your workspace or globally.
+See [AGLint Configuration](#-aglint-configuration) for setup details.
+
+---
+
+## ⚙️ Configuration
+
+| Setting                               | Description                             | Default |
+|---------------------------------------|-----------------------------------------|---------|
+| `adblock.enableAglint`                | Enable AGLint linting                   | `true`  |
+| `adblock.enableInMemoryAglintCache`   | Cache linting results for performance   | `false` |
+
+**💡 Tip**: Control AGLint logging via VSCode's built-in log level:
+Command Palette → **Developer: Set Log Level** → **AGLint**
+
+---
+
+## 📝 AGLint Configuration
+
+AGLint requires a configuration file to enable linting.
+The extension will automatically detect AGLint in your workspace.
+
+### Quick Setup
+
+Run in your project root:
+
+```bash
+npx aglint --init
+```
+
+This creates an interactive wizard to generate a configuration file.
+
+### Configuration File
+
+Supported file names (YAML recommended):
+
+- `.aglintrc.yaml` / `.aglintrc.yml` (recommended)
+- `.aglintrc.json` / `.aglintrc`
+- `aglint.config.json` / `aglint.config.yaml`
+
+### Example Configuration
+
+```yaml
+# .aglintrc.yaml
+root: true
+extends:
+  - aglint:recommended
+```
+
+### Available Presets
+
+- `aglint:recommended` — Recommended rules for most projects
+- `aglint:all` — All available rules (strict)
+
+For detailed configuration options, rule customization, and cascading configs,
+see the [AGLint documentation][aglint-docs].
+
+---
+
+## 🐙 GitHub Support
+
+GitHub uses this extension's [grammar file][grammar-file] via [Linguist][linguist] for syntax highlighting.
+
+Your filter lists will be automatically highlighted on GitHub if they start with an agent comment
+like `[Adblock Plus 2.0]` or `[AdGuard]`.
+
+[grammar-file]: https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/syntaxes/adblock.yaml-tmlanguage
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guide][contributing] for details on how to get started.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE][license] file for details.
+
+---
+
+## 🔗 Resources
+
+### 📚 Filter Syntax Documentation
+
+<!--markdownlint-disable MD013-->
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard"> [AdGuard Filter Syntax][adg-syntax]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin"> [uBlock Origin Static Filters][ubo-syntax]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus"> [Adblock Plus Filter Guide][abp-syntax]
+<!--markdownlint-enable MD013-->
+
+### 🎯 Scriptlets & Snippets
+
+<!--markdownlint-disable MD013-->
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard"> [AdGuard Scriptlets][adg-scriptlets]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin"> [uBlock Origin Scriptlets][ubo-scriptlets]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus"> [Adblock Plus Snippets][abp-snippets]
+<!--markdownlint-enable MD013-->
+
+### 🎨 Extended CSS
+
+<!--markdownlint-disable MD013-->
+- [MDN CSS Selectors][mdn-css]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/adg_logo_128x128.png" width="14px" alt="AdGuard"> [AdGuard Extended CSS][adg-extcss]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/ubo_logo_128x128.png" width="14px" alt="uBlock Origin"> [uBlock Origin Procedural Filters][ubo-procedural]
+- <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus"> [Adblock Plus Extended CSS][abp-extcss]
+<!--markdownlint-enable MD013-->
+
+### 🛠️ Tools
+
+- [AGLint][aglint] - Adblock filter linter
+- [Compatibility Tables][compat-tables] - Cross-platform feature support
+
+---
+
+<div align="center">
+
+Made with ❤️ by [AdGuard][adguard]
+
+[Report Issue][issues] • [Request Feature][feature-request] • [Ask Question][discussions]
+
+</div>
+
+<!-- Link Definitions -->
+[adguard]: https://adguard.com
 [aglint]: https://github.com/AdguardTeam/AGLint
-[aglintissues]: https://github.com/AdguardTeam/AGLint/issues
-[contributing]: https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/CONTRIBUTING.md
-[css-tree-docs]: https://github.com/csstree/csstree/tree/master/docs
+[aglint-docs]: https://github.com/AdguardTeam/AGLint/tree/master/docs
+[badge-license]: https://img.shields.io/github/license/AdguardTeam/VscodeAdblockSyntax
+[badge-openvsx]: https://img.shields.io/open-vsx/v/adguard/adblock?label=Open%20VSX
+[badge-vscode]: https://img.shields.io/visual-studio-marketplace/v/adguard.adblock?label=VSCode%20Marketplace
+[contributing]: CONTRIBUTING.md
+[discussions]: https://github.com/AdguardTeam/VscodeAdblockSyntax/discussions
+[feature-request]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/new
 [issues]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues
-[license]: https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/LICENSE.md
+[license]: LICENSE.md
 [linguist]: https://github.com/github/linguist
-[linguistheur]: https://github.com/github/linguist/blob/c1c34e5260797b4d598f5ec76f19723bfc5a1894/lib/linguist/heuristics.yml#L708-L728
-[linguistoverride]: https://github.com/github/linguist/blob/master/docs/overrides.md
-[linguistrelease]: https://github.com/github/linguist/blob/master/docs/releasing.md
-[mdn-css-selectors]: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors
-[tmlanguagefile]: https://github.com/AdguardTeam/VscodeAdblockSyntax/blob/master/syntaxes/adblock.tmLanguage.json
-[ubo-filters]: https://github.com/gorhill/uBlock/wiki/Static-filter-syntax
+[marketplace]: https://marketplace.visualstudio.com/items?itemName=adguard.adblock
+[openvsx]: https://open-vsx.org/extension/adguard/adblock
+
+<!-- Resource Links -->
+[abp-extcss]: https://help.adblockplus.org/hc/en-us/articles/360062733293-How-to-write-filters#elemhide-emulation
+[abp-snippets]: https://help.adblockplus.org/hc/en-us/articles/1500002338501-Snippet-filters-tutorial
+[abp-syntax]: https://help.adblockplus.org/hc/en-us/articles/360062733293-How-to-write-filters
+[adg-extcss]: https://github.com/AdguardTeam/ExtendedCss
+[adg-scriptlets]: https://github.com/AdguardTeam/Scriptlets/blob/master/wiki/about-scriptlets.md
+[adg-syntax]: https://kb.adguard.com/en/general/how-to-create-your-own-ad-filters
+[compat-tables]: https://github.com/AdguardTeam/tsurlfilter/tree/master/packages/agtree/src/compatibility-tables
+[mdn-css]: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors
 [ubo-procedural]: https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters
-[ubo-scriptlets]: https://github.com/gorhill/uBlock/wiki/Resources-Library#available-general-purpose-scriptlets
+[ubo-scriptlets]: https://github.com/gorhill/uBlock/wiki/Resources-Library
+[ubo-syntax]: https://github.com/gorhill/uBlock/wiki/Static-filter-syntax

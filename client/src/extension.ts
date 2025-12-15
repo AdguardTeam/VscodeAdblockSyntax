@@ -1,10 +1,9 @@
 import { join } from 'node:path';
 
-import * as v from 'valibot';
+import { FileScheme } from '@vscode-adblock-syntax/shared';
 import {
     commands,
     type ExtensionContext,
-    LogLevel,
     RelativePattern,
     StatusBarAlignment,
     type StatusBarItem,
@@ -21,70 +20,21 @@ import {
     TransportKind,
 } from 'vscode-languageclient/node';
 
+import {
+    CLIENT_ID,
+    CLIENT_NAME,
+    CONFIG_FILE_NAMES,
+    DOCUMENT_SCHEME,
+    IGNORE_FILE_NAME,
+    LANGUAGE_ID,
+    STATUS_BAR_PRIORITY,
+    SUPPORTED_FILE_EXTENSIONS,
+} from './constants';
+import { shouldEnableAglintDebug } from './utils/log-level';
+import { type AglintStatus, parseStatusParams } from './utils/status-parser';
 import { fileInFolder, getOuterMostWorkspaceFolder } from './workspace-folders';
 
-/**
- * Schemes for file documents.
- */
-const enum FileScheme {
-    File = 'file',
-    Untitled = 'untitled',
-}
-
 const SERVER_PATH = join('server', 'out', 'server.js');
-const DOCUMENT_SCHEME = FileScheme.File;
-const LANGUAGE_ID = 'adblock';
-const CLIENT_ID = 'aglint';
-const CLIENT_NAME = 'AGLint';
-
-/**
- * Supported file extensions.
- */
-const SUPPORTED_FILE_EXTENSIONS: ReadonlySet<string> = new Set([
-    'txt',
-    'adblock',
-    'ublock',
-    'adguard',
-]);
-
-/**
- * Possible names of the config file.
- */
-const CONFIG_FILE_NAMES: ReadonlySet<string> = new Set([
-    // aglint.config stuff
-    'aglint.config.json',
-    'aglint.config.yaml',
-    'aglint.config.yml',
-
-    // .aglintrc stuff
-    '.aglintrc',
-    '.aglintrc.json',
-    '.aglintrc.yaml',
-    '.aglintrc.yml',
-]);
-
-/**
- * Name of the ignore file.
- */
-const IGNORE_FILE_NAME = '.aglintignore';
-
-/**
- * Priority for the VS Code status bar item.
- *
- * Higher values mean the item is placed more to the left *within its alignment group*.
- * For {@link StatusBarAlignment.Right}, a higher number positions it closer
- * to the center of the status bar; a lower number moves it toward the right edge.
- *
- * This project uses `100` as a balanced value; it is prominent but not far-left,
- * following the example from `vscode-extension-samples`:
- * https://github.com/microsoft/vscode-extension-samples/blob/986bcc700dee6cc4d1e6d4961a316eead110fb21/statusbar-sample/src/extension.ts#L21.
- *
- * Other extensions typically use values between 0 and 200:
- * https://github.com/search?q=createStatusBarItem(vscode.StatusBarAlignment.Right&type=code.
- *
- * This value is based on convention and visual preference, and can be adjusted in the future if needed.
- */
-const STATUS_BAR_PRIORITY = 100;
 
 /**
  * Language client instance for the default workspace folder or untitled documents.
@@ -99,36 +49,10 @@ let defaultClient: LanguageClient | undefined;
 const clients = new Map<string, LanguageClient>();
 
 /**
- * Convert VSCode LogLevel to a simple boolean for AGLint debug mode.
- * Enable AGLint debugger only when VSCode log level is Debug or Trace.
- *
- * @param logLevel VSCode log level.
- *
- * @returns Whether AGLint debug mode should be enabled.
- */
-function shouldEnableAglintDebug(logLevel: LogLevel): boolean {
-    // LogLevel enum: Off = 0, Trace = 1, Debug = 2, Info = 3, Warning = 4, Error = 5
-    // Enable AGLint debug when log level is Trace (1) or Debug (2)
-    return logLevel <= LogLevel.Debug;
-}
-
-/**
  * Status bar item to show the AGLint status.
  * This is shared across all workspace folders and updates based on the active editor's folder.
  */
 let statusBarItem: StatusBarItem;
-
-/**
- * Schema for the server notification parameters.
- * Allow undefined / null payloads to act as "neutral" updates.
- */
-// TODO (AG-45205): Improve notification schema
-const notificationSchema = v.object({
-    error: v.optional(v.unknown()),
-    aglintEnabled: v.optional(v.boolean()),
-});
-
-type AglintStatus = v.InferInput<typeof notificationSchema>;
 
 /**
  * Map of last-known status per OUTERMOST folder.
@@ -162,24 +86,6 @@ function renderStatus(status: AglintStatus | undefined) {
     statusBarItem.text = status.aglintEnabled === false
         ? '$(debug-pause) AGLint'
         : 'AGLint';
-}
-
-/**
- * Parse incoming server params; tolerate undefined/null.
- *
- * @param params Params to parse.
- *
- * @returns Parsed status.
- */
-function parseStatusParams(params: unknown): AglintStatus {
-    const schema = v.union([notificationSchema, v.undefined(), v.null()]);
-    const parsed = v.safeParse(schema, params);
-
-    if (!parsed.success) {
-        return {};
-    }
-
-    return (parsed.output ?? {});
 }
 
 /**
@@ -250,29 +156,42 @@ function createClientForFolder(folder: WorkspaceFolder, serverModule: string): L
         outputChannel,
 
         synchronize: {
+            // File watchers are configured to explicitly avoid node_modules.
+            // VSCode's createFileSystemWatcher respects 'files.watcherExclude' by default,
+            // but we also structure patterns to be explicit about what we want to watch.
             fileEvents: [
+                // Watch filter list files (but ignore changes, only watch create/delete)
+                // Pattern avoids node_modules by using VSCode's default exclusions
                 Workspace.createFileSystemWatcher(
                     new RelativePattern(
                         folder,
-                        `{**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}},!**/node_modules/**}`,
+                        `**/*.{${Array.from(SUPPORTED_FILE_EXTENSIONS).join(',')}}`,
                     ),
-                    false,
-                    true,
-                    false,
+                    false, // ignoreCreateEvents
+                    true, // ignoreChangeEvents
+                    false, // ignoreDeleteEvents
                 ),
-                Workspace.createFileSystemWatcher(
-                    new RelativePattern(
-                        folder,
-                        `{**/{${Array.from(CONFIG_FILE_NAMES).join(',')}},!**/node_modules/**}`,
-                    ),
-                ),
-                Workspace.createFileSystemWatcher(
-                    new RelativePattern(folder, `{**/${IGNORE_FILE_NAME},!**/node_modules/**}`),
-                ),
-                // Watch package.json for AGLint installation changes (only root, not node_modules)
+                // Watch AGLint config files at workspace root
+                ...Array.from(CONFIG_FILE_NAMES).map((configName) => Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, configName),
+                )),
+                // Watch AGLint config files in subdirectories (VSCode excludes node_modules by default)
+                ...Array.from(CONFIG_FILE_NAMES).map((configName) => Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, `*/${configName}`),
+                )),
+                // Watch .aglintignore file at workspace root
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, IGNORE_FILE_NAME)),
+                // Watch .aglintignore in subdirectories
+                Workspace.createFileSystemWatcher(new RelativePattern(folder, `*/${IGNORE_FILE_NAME}`)),
+                // Watch package.json ONLY at workspace root for AGLint installation detection
                 Workspace.createFileSystemWatcher(new RelativePattern(folder, 'package.json')),
-                // Watch node_modules directory itself for package installation/updates
-                Workspace.createFileSystemWatcher(new RelativePattern(folder, 'node_modules')),
+                // Watch node_modules directory itself (creation/deletion) for package installation detection
+                Workspace.createFileSystemWatcher(
+                    new RelativePattern(folder, 'node_modules'),
+                    false, // ignoreCreateEvents
+                    false, // ignoreChangeEvents
+                    false, // ignoreDeleteEvents
+                ),
             ],
         },
 

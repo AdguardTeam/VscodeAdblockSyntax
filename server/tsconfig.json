@@ -1,16 +1,14 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "target": "es2020",
-        "lib": ["es2020"],
-        "module": "preserve",
-        "moduleResolution": "bundler",
-        "sourceMap": true,
-        "strict": true,
-        "outDir": "out",
-        "rootDir": "src",
-        "esModuleInterop": true,
-        "skipLibCheck": true
+        "noEmit": true
     },
-    "include": ["src"],
+    "include": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        ".eslintrc.cjs",
+        "vitest.config.ts",
+        "rspack.config.ts"
+    ],
     "exclude": ["node_modules", ".vscode-test"]
 }

@@ -38,6 +38,9 @@ jobs:
       - name: List files
         run: ls -alt
 
+      - name: Build shared library
+        run: pnpm --filter @vscode-adblock-syntax/shared build
+
       - name: Check TypeScript types
         run: pnpm test:compile
 
@@ -45,10 +48,25 @@ jobs:
         run: pnpm lint:md
 
       - name: Run ESLint
-        run: pnpm lint:ts
+        run: pnpm lint:code
 
-      - name: Run Jest tests
+      - name: Run Vitest tests
         run: pnpm test
+
+      - name: Build extension
+        run: pnpm build
+
+      - name: Package extension
+        run: pnpm package
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-adblock-build
+          path: |
+            out/vscode-adblock.vsix
+            syntaxes/out/adblock.plist
+          retention-days: 30
 
   notify:
     name: Send Slack notification on failure

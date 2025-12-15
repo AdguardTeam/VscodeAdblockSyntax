@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        ".eslintrc.cjs",
+        "vitest.config.ts",
+        "scripts/**/*.ts",
+        "scripts/.eslintrc.cjs"
+    ],
+    "exclude": ["node_modules", ".vscode-test"]
+}

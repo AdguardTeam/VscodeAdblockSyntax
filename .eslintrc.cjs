@@ -118,6 +118,7 @@ const IMPORT_PLUGIN_RULES = {
 const JSDOC_PLUGIN_RULES = {
     // Types are described in TypeScript
     'jsdoc/require-param-type': 'off',
+    'jsdoc/require-throws-type': 'off',
     'jsdoc/no-undefined-types': 'off',
     'jsdoc/require-returns-type': 'off',
 
@@ -265,10 +266,6 @@ function mergeRules(...ruleSets) {
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
-    parserOptions: {
-        tsconfigRootDir: path.join(__dirname),
-        project: 'tsconfig.eslint.json',
-    },
     plugins: [
         'import',
         'import-newlines',
@@ -285,7 +282,7 @@ module.exports = {
         'plugin:n/recommended',
     ],
     ignorePatterns: [
-        'dist',
+        'out',
         'coverage',
     ],
     settings: {

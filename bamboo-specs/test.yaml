@@ -7,58 +7,236 @@ plan:
 variables:
   dockerNode: adguard/node-ssh:22.14--0
 
+# Package dependencies:
+# - Shared: no dependencies (base package)
+# - Syntaxes: no dependencies (independent)
+# - Client: depends on Shared
+# - Server: depends on Shared
+#
+# Stage 1:
+# - Test Shared (base package);
+# - Test Syntaxes (independent).
+#
+# Stage 2:
+# - Test Client (depends on Shared);
+# - Test Server (depends on Shared).
+#
+# Stage 3:
+# - Build & Package (final assembly and artifact creation).
+#
+# Note: Cleanup is performed after each stage to prevent disk space issues
+# and ensure clean state for subsequent builds.
+
 stages:
-  - Build:
+  - Stage 1: &stage
       manual: false
       final: false
       jobs:
-        - Build
+        - Test Shared
+        - Test Syntaxes
+  - Stage 2:
+      <<: *stage
+      jobs:
+        - Test Client
+        - Test Server
+  - Stage 3:
+      <<: *stage
+      jobs:
+        - Build and Package
 
-Build:
-  key: BUILD
-  docker:
+Test Shared:
+  key: TESTSHARED
+  docker: &docker
     image: '${bamboo.dockerNode}'
     volumes:
       ${system.PNPM_DIR}: "${bamboo.cachePnpm}"
   tasks:
     - checkout:
         force-clean-build: true
-    - script:
+    - script: &setup-script
         interpreter: SHELL
         scripts:
           - |-
-            set -e
-            set -x
+            set -ex
 
             # Fix mixed logs
             exec 2>&1
 
-            ls -laht
+            ls -alt
 
             # Set cache directory
             pnpm config set store-dir ${bamboo.cachePnpm}
 
             # Install dependencies
             pnpm install
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -ex
 
-            # Check TypeScript types
-            pnpm test:compile
+            # Build shared library
+            pnpm --filter @vscode-adblock-syntax/shared build
 
-            # Run markdownlint
-            pnpm lint:md
+            # Run TypeScript type checking
+            pnpm --filter @vscode-adblock-syntax/shared exec tsc --noEmit
 
             # Run ESLint
-            pnpm lint:ts
+            pnpm --filter @vscode-adblock-syntax/shared lint:code
 
-            # Run Jest tests
-            pnpm test
+            # Run markdownlint
+            pnpm --filter @vscode-adblock-syntax/shared lint:md
+
+            # Run tests
+            pnpm --filter @vscode-adblock-syntax/shared test --run --no-color
+  final-tasks:
+    - script: &cleanup-script
+        interpreter: SHELL
+        scripts:
+          - "./bamboo-specs/scripts/cleanup.sh"
+  requirements: &requirements
+    - adg-docker: 'true'
+
+Test Syntaxes:
+  key: TESTSYNTAXES
+  docker: *docker
+  tasks:
+    - checkout:
+        force-clean-build: true
+    - script: *setup-script
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -ex
+
+            # Build syntaxes
+            pnpm --filter @vscode-adblock-syntax/syntaxes build
+
+            # Run TypeScript type checking
+            pnpm --filter @vscode-adblock-syntax/syntaxes exec tsc --noEmit
+
+            # Run ESLint
+            pnpm --filter @vscode-adblock-syntax/syntaxes lint:code
+
+            # Run markdownlint
+            pnpm --filter @vscode-adblock-syntax/syntaxes lint:md
+
+            # Run tests
+            pnpm --filter @vscode-adblock-syntax/syntaxes test --run --no-color
+  final-tasks:
+    - script: *cleanup-script
+  requirements: *requirements
+
+Test Client:
+  key: TESTCLIENT
+  docker: *docker
+  tasks:
+    - checkout:
+        force-clean-build: true
+    - script: *setup-script
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -ex
+
+            # Build shared first (dependency)
+            pnpm --filter @vscode-adblock-syntax/shared build
+
+            # Build client
+            pnpm --filter @vscode-adblock-syntax/client build
+
+            # Run TypeScript type checking
+            pnpm --filter @vscode-adblock-syntax/client exec tsc --noEmit
+
+            # Run ESLint
+            pnpm --filter @vscode-adblock-syntax/client lint:code
+
+            # Run markdownlint
+            pnpm --filter @vscode-adblock-syntax/client lint:md
+
+            # Run tests
+            pnpm --filter @vscode-adblock-syntax/client test --run --no-color
+  final-tasks:
+    - script: *cleanup-script
+  requirements: *requirements
+
+Test Server:
+  key: TESTSERVER
+  docker: *docker
+  tasks:
+    - checkout:
+        force-clean-build: true
+    - script: *setup-script
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -ex
+
+            # Build shared first (dependency)
+            pnpm --filter @vscode-adblock-syntax/shared build
+
+            # Build server
+            pnpm --filter @vscode-adblock-syntax/server build
+
+            # Run TypeScript type checking
+            pnpm --filter @vscode-adblock-syntax/server exec tsc --noEmit
+
+            # Run ESLint
+            pnpm --filter @vscode-adblock-syntax/server lint:code
+
+            # Run markdownlint
+            pnpm --filter @vscode-adblock-syntax/server lint:md
+
+            # Run tests
+            pnpm --filter @vscode-adblock-syntax/server test --run --no-color
+  final-tasks:
+    - script: *cleanup-script
+  requirements: *requirements
+
+Build and Package:
+  key: BUILDPACKAGE
+  docker: *docker
+  tasks:
+    - checkout:
+        force-clean-build: true
+    - script: *setup-script
+    - script:
+        interpreter: SHELL
+        scripts:
+          - |-
+            set -ex
+
+            # Build all packages
+            pnpm build
+
+            # Final type check for all packages
+            pnpm test:compile
+
+            # Package into .vsix file
+            pnpm package
+
+            # Show tree of files in .vsix file
+            pnpm exec vsce ls --tree
   final-tasks:
     - script:
         interpreter: SHELL
         scripts:
-          - "./bamboo-specs/scripts/cleanup.sh"
-  requirements:
-    - adg-docker: true
+          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix,syntaxes/out/adblock.plist"
+  artifacts:
+    - name: vscode-adblock.vsix
+      location: out
+      pattern: vscode-adblock.vsix
+      shared: true
+      required: true
+    - name: adblock.plist
+      location: syntaxes/out
+      pattern: adblock.plist
+      shared: true
+      required: true
+  requirements: *requirements
 
 branches:
   create: for-pull-request

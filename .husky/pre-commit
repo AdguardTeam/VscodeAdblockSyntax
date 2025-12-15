@@ -1,7 +1,11 @@
-pnpm test:compile
-pnpm lint:staged
-pnpm test
+# Exit immediately if a command fails
+set -e
 
+lint-staged
+
+# Corepack automatically adds a "packageManager" field to package.json.
+# We don't want to commit this field, so we remove it from the staged version
+# while keeping it in the working directory for local development.
 if git diff --cached --name-only | grep -q "package.json"; then
     echo "package.json is being committed. Checking if packageManager field is present..."
 
