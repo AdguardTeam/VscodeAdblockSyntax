@@ -117,6 +117,7 @@ GitHub:
           - name: vscode-adblock.vsix
           - name: EXTRACTED_CHANGES.md
           - name: adblock.plist
+          - name: build.txt
     - script:
         interpreter: SHELL
         scripts:

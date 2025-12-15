@@ -108,6 +108,11 @@ Build:
       pattern: adblock.plist
       shared: true
       required: true
+    - name: build.txt
+      location: out
+      pattern: build.txt
+      shared: true
+      required: true
   requirements:
     - adg-docker: 'true'
 
