@@ -90,7 +90,7 @@ Build:
     - script:
         interpreter: SHELL
         scripts:
-          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix,syntaxes/out/adblock.plist,EXTRACTED_CHANGES.md,build.txt"
+          - "./bamboo-specs/scripts/cleanup.sh out/vscode-adblock.vsix,syntaxes/out/adblock.plist,EXTRACTED_CHANGES.md,out/build.txt"
   # Store the .vsix file as a build artifact
   artifacts:
     - name: vscode-adblock.vsix
