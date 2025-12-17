@@ -96,6 +96,7 @@ Test Shared:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements: &requirements
     - adg-docker: 'true'
+    - extension: 'true'
 
 Test Syntaxes:
   key: TESTSYNTAXES

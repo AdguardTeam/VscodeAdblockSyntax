@@ -49,6 +49,7 @@ marketplace.visualstudio.com:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
     - adg-docker: 'true'
+    - extension: 'true'
   notifications:
     - events:
         - deployment-started-and-finished
@@ -96,6 +97,7 @@ open-vsx.org:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
     - adg-docker: 'true'
+    - extension: 'true'
   notifications:
     - events:
         - deployment-started-and-finished
@@ -136,6 +138,7 @@ GitHub:
   final-tasks: []
   requirements:
     - adg-docker: 'true'
+    - extension: 'true'
   notifications:
     - events:
         - deployment-started-and-finished
