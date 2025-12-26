@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [2.1.4] (prerelease) - 2025-12-26
+
+### Added
+
+- Support for CSS selector syntax in HTML filtering and elemhide rules [#140], [#155].
+
+[#140]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/140
+[#155]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/155
+[2.1.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/2.1.3...2.1.4
+
 ## [2.1.3] (prerelease) - 2025-12-15
 
 ### Changed

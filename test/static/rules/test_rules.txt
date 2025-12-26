@@ -203,18 +203,59 @@ example.org,example.com,test.com#$@#wrong_syntax { visibitility: hidden; }
 !
 ! Content-filtering rules (valid)
 !
-$$script[id="hello"]
-example.org$$script[id="hello"][tag-content="hello"][max-length="hi"]
+$$*, div, custom-tag, -weird-tag, _weird-tag, -_weird-tag, weird-tag-2
+$$#id, #test-id, #test-id-2, #-weird-id, #_weird-id, #-_weird-id
+$$.class, .test-class, .test-class-2, .-weird-class, ._weird-class, .-_weird-class
+$$[attr][attr-name][attr-name-2][-weird-attr][_weird-attr][-_weird-attr]
+$$[attr1][attr2="value2"][attr3='value3'][attr4=value4]
+$$[attr1~="value1"][attr2|='value2'][attr3^=value3][attr4$="value4"][attr5*="value5"]
+$$[attr1="value1" i][attr2='value2' s][attr3=value3 i]
+$$[attr1="value \" 1"][attr2="value "" 2"][attr3='value \' 3']
+$$[ attr1 = "value1" i ][ attr2 ~= 'value2' s ][ attr3 $= value3 i ]
+$$::element, ::test-element, ::-weird-element, ::_weird-element, ::-_weird-element
+$$:class, :test-class, :-weird-class, :_weird-class, :-_weird-class
+$$:class(), :test-class(), :-weird-class(), :_weird-class(), :-_weird-class()
+$$:class1(arg1), :class2("arg2"), :class3('arg3'), :class4(/arg4/i)
+$$:class1("arg \" 1"), :class2('arg \' 2'), :class3(/arg\/3/i)
+$$:class1( arg1 ), :class2( "arg2" ), :class3( 'arg3' ), :class4( /arg4/i )
+$$:class(arg with spaces), :class(multiple, args, here)
+$$tag > tag + tag ~ tag tag, tag + tag
+example.org$$script[id="hello"][tag-content="hello"][max-length="100"]
 example.org,example.com$@$script[id="hello"][tag-content="something"]
 example.org$$script
 
 !
 ! Content-filtering rules (invalid)
 !
-exam$$script[id="hello"]
-$$tag-name[id=value]
-$$tag-name[id=value
-$$div[id="value"]["val"="val"]
+$$
+$$1tag
+$$-1tag
+$$#
+$$#1id
+$$#-1id
+$$.
+$$.1class
+$$.-1class
+$$[
+$$[]
+$$[1attr]
+$$[-1attr]
+$$[invalid attr]
+$$[attr=]
+$$[attr="unclosed value]
+$$[attr=value with spaces]
+$$[attr+="invalid operator"]
+$$[attr="unescaped " quote"]
+$$::
+$$::1element
+$$::-1element
+$$::element()
+$$:
+$$:1class
+$$:-1class
+$$:1class()
+$$:-1class()
+$$:class("unclosed arg
 
 !
 ! JS rules rules (valid)

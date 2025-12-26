@@ -197,7 +197,15 @@ repository:
               - include: "#cssStyle"
   contentRules:
     patterns:
-      - match: "^(\\[.+?\\])?(.*?)(\\$@?\\$)(.+?)(\\[.+)?$"
+      - match: |-
+          (?x)
+            ^                   # Start of the line
+            \s*                 # Optional leading whitespace
+            (\[.+?\])?          # Group 1. AdGuard modifier list
+            (.*)?               # Group 2. Domain list
+            (\$@?\$)            # Group 3. Cosmetic rule marker
+            (.+)                # Group 4. CSS selector
+            $                   # End of the line
         captures:
           "1":
             patterns:
@@ -208,10 +216,8 @@ repository:
           "3":
             name: keyword.control.adblock
           "4":
-            name: entity.name.function.adblock
-          "5":
             patterns:
-              - include: "#contentAttributes"
+              - include: "#cssSelector"
   scriptletRules:
     patterns:
       - include: "#exceptionScriptletRules"
@@ -603,22 +609,6 @@ repository:
             match: ".*"
       "3":
         name: keyword.control.adblock
-  contentAttributes:
-    patterns:
-      - match: (\[)([^"=]+?)(\=)(".+?")(\])
-        captures:
-          "1":
-            name: punctuation.section.adblock
-          "2":
-            name: keyword.other.adblock
-          "3":
-            name: keyword.operator.adblock
-          "4":
-            name: string.quoted.adblock
-          "5":
-            name: punctuation.section.adblock
-      - name: invalid.illegal.adblock
-        match: ".*"
   emptyScriptletFunction:
     patterns:
       - match: \s*\z
@@ -675,8 +665,229 @@ repository:
         match: ".*"
   cssSelector:
     patterns:
-      - name: entity.name.function.adblock
-        match: ".+"
+      # ID selector
+      - match: |-
+          (?x)
+            (\#)                      # Group 1: Prefix (#)
+            -?                        # Optional leading hyphen
+            [A-Za-z_]                 # Followed by letter or underscore
+            [A-Za-z0-9_-]*            # Followed by letters, digits, underscores, hyphens
+        captures:
+          "1":
+            name: punctuation.definition.entity.css
+        name: entity.other.attribute-name.id.css
+
+      # Class selector
+      - match: |-
+          (?x)
+            (\.)                      # Group 1: Prefix (.)
+            -?                        # Optional leading hyphen
+            [A-Za-z_]                 # Followed by letter or underscore
+            [A-Za-z0-9_-]*            # Followed by letters, digits, underscores, hyphens
+        captures:
+          "1":
+            name: punctuation.definition.entity.css
+        name: entity.other.attribute-name.class.css
+
+      # Universal type selector (*)
+      - match: "\\*"
+        name: entity.name.tag.wildcard.css
+
+      # Type selector (order is important here, it must come after ID and class selectors)
+      - match: |-
+          (?x)
+            -?                        # Optional leading hyphen
+            [A-Za-z_]                 # Followed by letter or underscore
+            [A-Za-z0-9_-]*            # Followed by letters, digits, underscores, hyphens
+        name: entity.name.tag.css
+
+      # Attribute selector
+      - match: |-
+          (?x)
+            (\[)                      # Group 1: Opening bracket ([)
+            \s*                       # Optional whitespace after opening bracket
+            (                         # Group 2: Attribute name
+              -?                      #   Optional leading hyphen
+              [A-Za-z_]               #   Followed by letter or underscore
+              [A-Za-z0-9_-]*          #   Followed by letters, digits, underscores, hyphens
+            )
+            \s*                       # Optional whitespace after attribute name
+            (?:                       # Optional operator + value + flag
+              (                       #   Group 3: Operator (=, ~=, |=, ^=, $=, *=)
+                [~|^$*]?              #     Optional operator prefix (~, |, ^, $, *)
+                =                     #     Equal sign (=)
+              )
+              \s*                     #   Optional whitespace after operator
+              (?:                     #   Attribute value
+                (                     #     Group 4: double quoted value
+                  (")                 #       Group 5: opening double quote
+                  (?:\\.|""|[^"\\])*  #       Value is 0 or more non-double-quote characters, escaped characters or escaped double quotes ("")
+                  (")                 #       Group 6: closing double quote
+                )
+                |(                    #     Group 7: single quoted value
+                  (')                 #       Group 8: opening single quote
+                  (?:\\.|[^'\\])*     #       Value is 0 or more non-single-quote characters or escaped characters
+                  (')                 #       Group 9: closing single quote
+                )
+                |(                    #     Group 10: unquoted value
+                  [^\]\s]+            #       Value is 1 or more non-whitespace, non-] characters
+                )
+              )
+              \s*                     #   Optional whitespace after value
+              ([is])?                 #   Group 11: optional flags i or s
+            )?
+            \s*                       # Optional whitespace after operator + value + flag
+            (\])                      # Group 12: Closing bracket (])
+        captures:
+          "1":
+            name: punctuation.definition.entity.begin.bracket.square.css
+          "2":
+            name: entity.other.attribute-name.css
+          "3":
+            name: keyword.operator.pattern.css
+          "4":
+            name: string.quoted.double.css
+          "5":
+            name: punctuation.definition.string.begin.css
+          "6":
+            name: punctuation.definition.string.end.css
+          "7":
+            name: string.quoted.single.css
+          "8":
+            name: punctuation.definition.string.begin.css
+          "9":
+            name: punctuation.definition.string.end.css
+          "10":
+            name: string.unquoted.attribute-value.css
+          "11":
+            name: keyword.other.flag.css
+          "12":
+            name: punctuation.definition.entity.end.bracket.square.css
+        name: meta.attribute-selector.css
+
+      # Pseudo-element selector with double colon (::)
+      - match: |-
+          (?x)
+            (::)                      # Group 1: Prefix (::)
+            (?:                       # Pseudo-element name
+              -?                      #   Optional leading hyphen
+              [A-Za-z_]               #   Followed by letter or underscore
+              [A-Za-z0-9_-]*          #   Followed by letters, digits, underscores, hyphens
+            )
+        captures:
+          "1":
+            name: punctuation.definition.entity.css
+        name: entity.other.attribute-name.pseudo-element.css
+
+      # Pseudo-class selector and pseudo-element selector with single colon (:)
+      - match: |-
+          (?x)
+            (:)                       # Group 1: Prefix (:)
+            (?:                       # Pseudo-class or pseudo-element name
+              -?                      #   Optional leading hyphen
+              [A-Za-z_]               #   Followed by letter or underscore
+              [A-Za-z0-9_-]*          #   Followed by letters, digits, underscores, hyphens
+            )
+            (?:                       # Optional function part
+              (\()                    #   Group 2: Opening parenthesis
+              (?:                     #   Function arguments
+                (?:                   #     Double quoted value
+                  \s*                 #       Optional whitespace after opening parenthesis
+                  (                   #       Group 3: double quoted value
+                    (")               #         Group 4: opening double quote
+                    (?:\\.|[^"\\])*   #         Value is 0 or more non-double-quote characters or escaped characters
+                    (")               #         Group 5: closing double quote
+                  )
+                  \s*                 #       Optional whitespace after double quoted value
+                )
+                |(?:                  #     Single quoted value
+                  \s*                 #       Optional whitespace after opening parenthesis
+                  (                   #       Group 6: single quoted value
+                    (')               #         Group 7: opening single quote
+                    (?:\\.|[^'\\])*   #         Value is 0 or more non-single-quote characters or escaped characters
+                    (')               #         Group 8: closing single quote
+                  )
+                  \s*                 #       Optional whitespace after single quoted value
+                )
+                |(?:                  #     Regexp value
+                  \s*                 #       Optional whitespace after opening parenthesis
+                  (                   #       Group 9: regexp value
+                    (\/)              #         Group 10: opening slash
+                    (?:\\.|[^/\\])*   #         Value is 0 or more non-slash or escaped characters
+                    (\/)              #         Group 11: closing slash
+                    ([dgimsuy]*)      #         Group 12: optional flags
+                  )
+                  \s*                 #       Optional whitespace after regexp value
+                )
+                |(                    #     Group 13: unquoted value
+                  [^\)]+              #       Value is 1 or more non-) characters
+                )
+              )?
+              (\))                    #   Group 14: Closing parenthesis
+            )?
+        captures:
+          "1":
+            name: punctuation.definition.entity.css
+          "2":
+            name: punctuation.section.function.begin.bracket.round.css
+          "3":
+            name: string.quoted.double.css
+          "4":
+            name: punctuation.definition.string.begin.css
+          "5":
+            name: punctuation.definition.string.end.css
+          "6":
+            name: string.quoted.single.css
+          "7":
+            name: punctuation.definition.string.begin.css
+          "8":
+            name: punctuation.definition.string.end.css
+          "9":
+            name: string.regexp.js
+          "10":
+            name: punctuation.definition.string.begin.js
+          "11":
+            name: punctuation.definition.string.end.js
+          "12":
+            name: keyword.other.regex
+          "13":
+            name: constant.numeric.css
+          "14":
+            name: punctuation.section.function.end.bracket.round.css
+        name: entity.other.attribute-name.pseudo-class.css
+
+      # Combinators (>, +, ~)
+      - match: |-
+          (?x)
+            \s*                       # Optional leading whitespace
+            ([>+~])                   # Group 1: Combinator character (>, +, ~)
+            \s*                       # Optional trailing whitespace
+        captures:
+          "1":
+            name: keyword.operator.combinator.css
+
+      # Descendant combinator (whitespace)
+      - match: |-
+          (?x)
+            (\s+)                     # Group 1: One or more whitespace characters
+        captures:
+          "1":
+            name: keyword.operator.combinator.css
+
+      # Grouping combinator (,)
+      - match: |-
+          (?x)
+            \s*                       # Optional leading whitespace
+            (\,)                      # Group 1: Combinator character (,)
+            \s*                       # Optional trailing whitespace
+        captures:
+          "1":
+            name: punctuation.separator.list.comma.css
+
+      # Anything else is invalid
+      - match: ".*"
+        name: invalid.illegal.adblock
+
   domainListCommaSeparated:
     patterns:
       - match: "(~?)([^,]+)(,?)"
