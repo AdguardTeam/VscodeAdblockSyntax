@@ -48,7 +48,6 @@ marketplace.visualstudio.com:
         scripts:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
-    - adg-docker: 'true'
     - extension: 'true'
   notifications:
     - events:
@@ -96,7 +95,6 @@ open-vsx.org:
         scripts:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
-    - adg-docker: 'true'
     - extension: 'true'
   notifications:
     - events:
@@ -137,7 +135,6 @@ GitHub:
             ./bamboo-deploy-publisher/deploy.sh vscode-adblock-syntax-github-prerelease
   final-tasks: []
   requirements:
-    - adg-docker: 'true'
     - extension: 'true'
   notifications:
     - events:

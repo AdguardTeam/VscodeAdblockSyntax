@@ -49,7 +49,6 @@ Increment:
         scripts:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
-    - adg-docker: 'true'
     - extension: 'true'
 
 branches:
