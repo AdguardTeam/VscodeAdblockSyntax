@@ -6,21 +6,6 @@ settings:
 
 catalogs:
   default:
-    '@adguard/aglint':
-      specifier: ^4.0.0-beta.3
-      version: 4.0.0-beta.3
-    '@adguard/agtree':
-      specifier: ^2.3.0
-      version: 2.3.0
-    '@adguard/changelog-tools':
-      specifier: ^0.0.1
-      version: 0.0.1
-    '@rspack/cli':
-      specifier: ^1.6.7
-      version: 1.6.7
-    '@rspack/core':
-      specifier: ^1.1.7
-      version: 1.6.7
     '@types/fs-extra':
       specifier: ^11.0.4
       version: 11.0.4
@@ -30,141 +15,45 @@ catalogs:
     '@types/plist':
       specifier: ^3.0.5
       version: 3.0.5
-    '@types/resolve':
-      specifier: ^1.20.6
-      version: 1.20.6
-    '@types/semver':
-      specifier: ^7.7.1
-      version: 7.7.1
-    '@types/vscode':
-      specifier: ^1.74.0
-      version: 1.99.0
-    '@typescript-eslint/eslint-plugin':
-      specifier: ^7.5.0
-      version: 7.18.0
-    '@typescript-eslint/parser':
-      specifier: ^7.5.0
-      version: 7.18.0
-    '@vitest/coverage-v8':
-      specifier: ^4.0.15
-      version: 4.0.15
     '@vitest/expect':
       specifier: ^4.0.15
       version: 4.0.15
-    '@vscode/vsce':
-      specifier: ^3.7.1
-      version: 3.7.1
+    chalk:
+      specifier: ^5.6.2
+      version: 5.6.2
     chokidar:
       specifier: ^5.0.0
       version: 5.0.0
-    ci-info:
-      specifier: ^4.3.1
-      version: 4.3.1
-    cross-env:
-      specifier: ^10.1.0
-      version: 10.1.0
-    debounce:
-      specifier: ^3.0.0
-      version: 3.0.0
-    eslint:
-      specifier: 8.57.1
-      version: 8.57.1
-    eslint-config-airbnb-base:
-      specifier: ^15.0.0
-      version: 15.0.0
-    eslint-config-airbnb-typescript:
-      specifier: ^18.0.0
-      version: 18.0.0
-    eslint-plugin-boundaries:
-      specifier: ^5.3.1
-      version: 5.3.1
-    eslint-plugin-import:
-      specifier: ^2.32.0
-      version: 2.32.0
-    eslint-plugin-import-newlines:
-      specifier: ^1.4.0
-      version: 1.4.0
-    eslint-plugin-jsdoc:
-      specifier: ^61.5.0
-      version: 61.5.0
-    eslint-plugin-n:
-      specifier: ^17.23.1
-      version: 17.23.1
     fast-glob:
-      specifier: ^3.3.3
+      specifier: 3.3.3
       version: 3.3.3
     fs-extra:
       specifier: ^11.3.1
       version: 11.3.2
-    husky:
-      specifier: ^9.1.7
-      version: 9.1.7
-    jsdoc:
-      specifier: ^4.0.5
-      version: 4.0.5
-    lint-staged:
-      specifier: ^16.2.7
-      version: 16.2.7
-    markdownlint:
-      specifier: ^0.40.0
-      version: 0.40.0
-    markdownlint-cli:
-      specifier: ^0.46.0
-      version: 0.46.0
-    mkdirp:
-      specifier: ^3.0.1
-      version: 3.0.1
-    ovsx:
-      specifier: ^0.10.7
-      version: 0.10.7
     plist:
       specifier: ^3.1.0
       version: 3.1.0
-    preferred-pm:
-      specifier: ^4.1.1
-      version: 4.1.1
-    resolve:
-      specifier: ^1.22.11
-      version: 1.22.11
     rimraf:
       specifier: ^6.1.2
       version: 6.1.2
-    semver:
-      specifier: ^7.7.3
-      version: 7.7.3
+    tar:
+      specifier: ^7.5.6
+      version: 7.5.6
     tsc-files:
       specifier: 1.1.4
       version: 1.1.4
-    tsx:
-      specifier: ^4.21.0
-      version: 4.21.0
-    typescript:
-      specifier: ^5.9.3
-      version: 5.9.3
     valibot:
       specifier: ^1.2.0
       version: 1.2.0
     vitest:
       specifier: ^4.0.15
       version: 4.0.15
-    vscode-languageclient:
-      specifier: 10.0.0-next.15
-      version: 10.0.0-next.15
-    vscode-languageserver:
-      specifier: 10.0.0-next.13
-      version: 10.0.0-next.13
-    vscode-languageserver-textdocument:
-      specifier: ^1.0.12
-      version: 1.0.12
     vscode-oniguruma:
       specifier: ^2.0.1
       version: 2.0.1
     vscode-textmate:
       specifier: ^9.3.0
       version: 9.3.0
-    vscode-uri:
-      specifier: ^3.1.0
-      version: 3.1.0
     yaml:
       specifier: ^2.8.2
       version: 2.8.2
@@ -388,9 +277,15 @@ importers:
       '@vitest/expect':
         specifier: 'catalog:'
         version: 4.0.15
+      chalk:
+        specifier: 'catalog:'
+        version: 5.6.2
       chokidar:
         specifier: 'catalog:'
         version: 5.0.0
+      fast-glob:
+        specifier: 'catalog:'
+        version: 3.3.3
       fs-extra:
         specifier: 'catalog:'
         version: 11.3.2
@@ -400,6 +295,9 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
+      tar:
+        specifier: 'catalog:'
+        version: 7.5.6
       tsc-files:
         specifier: 'catalog:'
         version: 1.1.4(typescript@5.9.3)
@@ -1001,6 +899,10 @@ packages:
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
+
+  '@isaacs/fs-minipass@4.0.1':
+    resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
+    engines: {node: '>=18.0.0'}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -2116,6 +2018,10 @@ packages:
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
+
+  chownr@3.0.0:
+    resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
+    engines: {node: '>=18'}
 
   ci-info@2.0.0:
     resolution: {integrity: sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==}
@@ -3655,6 +3561,10 @@ packages:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  minizlib@3.1.0:
+    resolution: {integrity: sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==}
+    engines: {node: '>= 18'}
+
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
 
@@ -4452,6 +4362,10 @@ packages:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
 
+  tar@7.5.6:
+    resolution: {integrity: sha512-xqUeu2JAIJpXyvskvU3uvQW8PAmHrtXp2KDuMJwQqW8Sqq0CaZBAQ+dKS3RBXVhU4wC5NjAdKrmh84241gO9cA==}
+    engines: {node: '>=18'}
+
   terminal-link@2.1.1:
     resolution: {integrity: sha512-un0FmiRUQNr5PJqy9kP7c40F5BOfpGlYTrxonDChEZB7pzZxRNp/bt+ymiy9/npwXya9KH99nJ/GXFIiUkYGFQ==}
     engines: {node: '>=8'}
@@ -4859,6 +4773,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -4964,6 +4879,10 @@ packages:
 
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
+
+  yallist@5.0.0:
+    resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
+    engines: {node: '>=18'}
 
   yaml@2.8.2:
     resolution: {integrity: sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A==}
@@ -5508,6 +5427,10 @@ snapshots:
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
+
+  '@isaacs/fs-minipass@4.0.1':
+    dependencies:
+      minipass: 7.1.2
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -6707,6 +6630,8 @@ snapshots:
 
   chownr@1.1.4:
     optional: true
+
+  chownr@3.0.0: {}
 
   ci-info@2.0.0: {}
 
@@ -8597,6 +8522,10 @@ snapshots:
 
   minipass@7.1.2: {}
 
+  minizlib@3.1.0:
+    dependencies:
+      minipass: 7.1.2
+
   mkdirp-classic@0.5.3:
     optional: true
 
@@ -9538,6 +9467,14 @@ snapshots:
       readable-stream: 3.6.2
     optional: true
 
+  tar@7.5.6:
+    dependencies:
+      '@isaacs/fs-minipass': 4.0.1
+      chownr: 3.0.0
+      minipass: 7.1.2
+      minizlib: 3.1.0
+      yallist: 5.0.0
+
   terminal-link@2.1.1:
     dependencies:
       ansi-escapes: 4.3.2
@@ -10105,6 +10042,8 @@ snapshots:
       '@babel/runtime-corejs3': 7.28.4
 
   yallist@4.0.0: {}
+
+  yallist@5.0.0: {}
 
   yaml@2.8.2: {}
 

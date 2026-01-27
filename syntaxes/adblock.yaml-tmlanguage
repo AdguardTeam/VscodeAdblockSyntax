@@ -18,6 +18,7 @@
 ---
 name: Adblock
 scopeName: text.adblock
+
 patterns:
   - include: "#adblockAgent"
   - include: "#preprocessor"
@@ -32,6 +33,7 @@ patterns:
   - include: "#basicRulesNoUrl"
   - include: "#basicRulesRegex"
   - include: "#basicRules"
+
 repository:
   adblockAgent:
     patterns:
@@ -48,6 +50,7 @@ repository:
                 match: ".*"
           "3":
             name: punctuation.definition.array.end.adblock.agent
+
   adblockData:
     patterns:
       - match: |-
@@ -65,6 +68,7 @@ repository:
             name: constant.language.agent.adblocker.name
           "2":
             name: constant.numeric.decimal
+
   preprocessor:
     patterns:
       - match: "^(!#if)(\\s)(.*)$"
@@ -144,6 +148,7 @@ repository:
                 match: "(\\(|\\)|,)"
       - match: "^!#(?!#).+$"
         name: invalid.illegal.preprocessor
+
   comments:
     patterns:
       - name: comment.line.exclamation-sign
@@ -154,9 +159,24 @@ repository:
         # marked as a comment.
         # TODO: If a new cosmetic rule separator is added, it should be added here too
         match: "^#(?!(?:@?(?:\\$?\\?|\\$|%)?#)).*"
+
   elemhideRules:
     patterns:
-      - match: "^(\\[.+?\\])?(.*?)(#@?\\??#\\^?)(.+)$"
+      - match: |-
+          (?x)
+            ^                                                # Start of the line
+            (                                                # Group 1. Cosmetic rule options (optional)
+              \[                                             #   Opening bracket
+                (?:                                          #   One or more of:
+                  \/(?:\\.|[^\/\\])*\/[a-z]*                 #     Regex pattern (handles ] inside regex like /[class]/)
+                  |[^\]]                                     #     OR any character except closing bracket
+                )+
+              \]                                             #   Closing bracket
+            )?
+            (.*?)                                            # Group 2. Domain list
+            (\#@?\??\#\^?)                                   # Group 3. Cosmetic rule separator
+            (.+)                                             # Group 4. CSS selector
+            $                                                # End of the line
         captures:
           "1":
             patterns:
@@ -169,6 +189,7 @@ repository:
           "4":
             patterns:
               - include: "#cssSelector"
+
   snippetRulesABP:
     patterns:
       - match: "^(.*?)(#@?\\$#)([^{]+)$"
@@ -180,6 +201,7 @@ repository:
             name: keyword.control.adblock
           "3":
             name: constant.character.snippet.adblock
+
   cssRules:
     patterns:
       - match: "^(\\[.+?\\])?(.*?)(#@?\\$\\??#)(.+)$"
@@ -195,17 +217,24 @@ repository:
           "4":
             patterns:
               - include: "#cssStyle"
+
   contentRules:
     patterns:
       - match: |-
           (?x)
-            ^                   # Start of the line
-            \s*                 # Optional leading whitespace
-            (\[.+?\])?          # Group 1. AdGuard modifier list
-            (.*)?               # Group 2. Domain list
-            (\$@?\$)            # Group 3. Cosmetic rule marker
-            (.+)                # Group 4. CSS selector
-            $                   # End of the line
+            ^                                                # Start of the line
+            (                                                # Group 1. Cosmetic rule options (optional)
+              \[                                             #   Opening bracket
+                (?:                                          #   One or more of:
+                  \/(?:\\.|[^\/\\])*\/[a-z]*                 #     Regex pattern (handles ] inside regex like /[class]/)
+                  |[^\]]                                     #     OR any character except closing bracket
+                )+
+              \]                                             #   Closing bracket
+            )?
+            (.*?)                                            # Group 2. Domain list
+            (\$@?\$)                                         # Group 3. Cosmetic rule marker
+            (.+)                                             # Group 4. CSS selector
+            $                                                # End of the line
         captures:
           "1":
             patterns:
@@ -218,25 +247,33 @@ repository:
           "4":
             patterns:
               - include: "#cssSelector"
+
   scriptletRules:
     patterns:
       - include: "#exceptionScriptletRules"
       - include: "#blockingScriptletRules"
+
   exceptionScriptletRules:
     patterns:
       - match: |-
           (?x)
-            ^                   # Start of the line
-            \s*                 # Optional leading whitespace
-            (\[.+?\])?          # Group 1. AdGuard modifier list
-            (.*)?               # Group 2. Domain list
-            (\#@%\#)            # Group 3. Cosmetic rule marker
-            (\/\/scriptlet)     # Group 4. Scriptlet marker
-            (\()                # Group 5. Opening parenthesis
-            (.*)?               # Group 6. Arguments
-            (\))                # Group 7. Closing parenthesis
-            \s*                 # Optional trailing whitespace
-            $                   # End of the line
+            ^                                                # Start of the line
+            (                                                # Group 1. Cosmetic rule options (optional)
+              \[                                             #   Opening bracket
+                (?:                                          #   One or more of:
+                  \/(?:\\.|[^\/\\])*\/[a-z]*                 #     Regex pattern (handles ] inside regex like /[class]/)
+                  |[^\]]                                     #     OR any character except closing bracket
+                )+
+              \]                                             #   Closing bracket
+            )?
+            (.*?)                                            # Group 2. Domain list
+            (\#@%\#)                                         # Group 3. Cosmetic rule marker
+            (\/\/scriptlet)                                  # Group 4. Scriptlet marker
+            (\()                                             # Group 5. Opening parenthesis
+            (.*)?                                            # Group 6. Arguments
+            (\))                                             # Group 7. Closing parenthesis
+            \s*                                              # Optional trailing whitespace
+            $                                                # End of the line
         captures:
           "1":
             patterns:
@@ -256,21 +293,28 @@ repository:
               - include: "#scriptletFunction"
           "7":
             name: punctuation.section.adblock
+
   blockingScriptletRules:
     patterns:
       - match: |-
           (?x)
-            ^                   # Start of the line
-            \s*                 # Optional leading whitespace
-            (\[.+?\])?          # Group 1. AdGuard modifier list
-            (.*)?               # Group 2. Domain list
-            (\#%\#)             # Group 3. Cosmetic rule marker
-            (\/\/scriptlet)     # Group 4. Scriptlet marker
-            (\()                # Group 5. Opening parenthesis
-            (.*\S.*)            # Group 6. Arguments. Note: we look for a parameter that contain at least one non-whitespace character
-            (\))                # Group 7. Closing parenthesis
-            \s*                 # Optional trailing whitespace
-            $                   # End of the line
+            ^                                                # Start of the line
+            (                                                # Group 1. Cosmetic rule options (optional)
+              \[                                             #   Opening bracket
+                (?:                                          #   One or more of:
+                  \/(?:\\.|[^\/\\])*\/[a-z]*                 #     Regex pattern (handles ] inside regex like /[class]/)
+                  |[^\]]                                     #     OR any character except closing bracket
+                )+
+              \]                                             #   Closing bracket
+            )?
+            (.*?)                                            # Group 2. Domain list
+            (\#%\#)                                          # Group 3. Cosmetic rule marker
+            (\/\/scriptlet)                                  # Group 4. Scriptlet marker
+            (\()                                             # Group 5. Opening parenthesis
+            (.*\S.*)                                         # Group 6. Arguments. Note: we look for a parameter that contain at least one non-whitespace character
+            (\))                                             # Group 7. Closing parenthesis
+            \s*                                              # Optional trailing whitespace
+            $                                                # End of the line
         captures:
           "1":
             patterns:
@@ -289,6 +333,7 @@ repository:
               - include: "#scriptletFunction"
           "7":
             name: punctuation.section.adblock
+
   scriptletRulesUBO:
     patterns:
       - match: "^(.*?)(#@?#)(\\+js)(\\()(.+)(\\)\\s*)$"
@@ -307,6 +352,7 @@ repository:
               - include: "#scriptletFunctionUBO"
           "6":
             name: punctuation.section.adblock
+
   jsRules:
     # In this case, we embed the JS grammar in the adblock grammar
     # by using the include: "source.js" scope.
@@ -316,12 +362,15 @@ repository:
     patterns:
       # Do not confuse with #%#//scriptlet, so we use a negative lookahead
       # to make sure the separator is not followed by //scriptlet
-      - begin: "^(.*?)(#@?%#(?!\\/\\/scriptlet))"
+      - begin: ^(\[(?:\/(?:\\.|[^\/\\])*\/[a-z]*|[^\]])+\])?(.*?)(#@?%#(?!\/\/scriptlet))
         beginCaptures:
           "1":
             patterns:
-              - include: "#domainListCommaSeparated"
+              - include: "#cosmeticRulesOptions"
           "2":
+            patterns:
+              - include: "#domainListCommaSeparated"
+          "3":
             name: keyword.control.adblock
         end: "$"
         contentName: source.js
@@ -338,6 +387,7 @@ repository:
             name: keyword.control.adblock
           "3":
             name: invalid.illegal
+
   basicRulesNoUrl:
     patterns:
       - match: "^(\\$)(.+)$"
@@ -346,7 +396,8 @@ repository:
             name: keyword.control.adblock
           "2":
             patterns:
-              - include: "#basicRulesOptions"
+              - include: "#modifierList"
+
   basicRulesRegex:
     patterns:
       - match: "^(\\/[^\\/\\\\]*(?:\\\\.[^\\/\\\\]*)*\\/[dgimsuy]*)(?:(\\$)(.+))?$"
@@ -358,42 +409,209 @@ repository:
             name: keyword.control.adblock
           "3":
             patterns:
-              - include: "#basicRulesOptions"
+              - include: "#modifierList"
+
   basicRules:
     patterns:
-      - match: "^(.+?)((\\$(?!\\/))(.*))?$"
+      - match: |-
+          (?x)
+            ^
+            # Group 1. URL pattern (note: ? is used to make it non-greedy)
+            (.*?)
+            (?:
+              # Group 2. Network rule separator
+              (\$)(?=\s*~?\s*[\w-]+\s*(?:[=,]|$))
+              # Group 3. Network rule modifiers
+              (.*)
+            )?
+            $
         captures:
           "1":
             patterns:
               - include: "#urlPattern"
-          "3":
+          "2":
             name: keyword.control.adblock
-          "4":
+          "3":
             patterns:
-              - include: "#basicRulesOptions"
+              - include: "#modifierList"
+
   regularExpression:
     patterns:
       - begin: "(/)"
         beginCaptures:
           "1":
-            name: keyword.other.regex.begin
+            name: punctuation.definition.string.begin.regexp.adblock
         end: "((?<!\\\\)/)([dgimsuy]*)?"
         endCaptures:
           "1":
-            name: keyword.other.regex.end
+            name: punctuation.definition.string.end.regexp.adblock
           "2":
-            name: keyword.other.regex
-        contentName: string.regexp
+            name: keyword.other.regexp.adblock
+        contentName: string.regexp.adblock
         patterns:
-          - match: "(?<!\\\\)([/\\^\\$\\|])"
-            name: keyword.control.regex
+          - include: "#regexp"
+
+  regexp:
+    patterns:
+      # Character classes
+      - name: constant.other.character-class.set.regexp
+        match: "\\\\[wWsSdDpP]"
+      - name: constant.character.escape.regexp
+        match: "\\\\[bBnrtfv0]"
+      - name: constant.character.escape.regexp
+        match: "\\\\x[0-9A-Fa-f]{2}"
+      - name: constant.character.escape.regexp
+        match: "\\\\u[0-9A-Fa-f]{4}"
+      - name: constant.character.escape.regexp
+        match: "\\\\."
+      
+      # Character class brackets
+      - begin: "(\\[)(\\^)?"
+        beginCaptures:
+          "1":
+            name: punctuation.definition.character-class.regexp
+          "2":
+            name: keyword.operator.negation.regexp
+        end: "(\\])"
+        endCaptures:
+          "1":
+            name: punctuation.definition.character-class.regexp
+        name: constant.other.character-class.regexp
+        patterns:
+          - match: "\\\\[\\]\\-\\\\]"
+            name: constant.character.escape.regexp
+          - match: "[^\\]]"
+      
+      # Groups and captures
+      - begin: "(\\()(\\?[:=!<]|\\?<[=!]|\\?P?<[^>]+>)?"
+        beginCaptures:
+          "1":
+            name: punctuation.definition.group.regexp
+          "2":
+            name: punctuation.definition.group.assertion.regexp
+        end: "(\\))"
+        endCaptures:
+          "1":
+            name: punctuation.definition.group.regexp
+        patterns:
+          - include: "#regexp"
+      
+      # Alternation
+      - name: keyword.operator.or.regexp
+        match: "\\|"
+      
+      # Quantifiers
+      - name: keyword.operator.quantifier.regexp
+        match: "[*+?]\\??"
+      - name: keyword.operator.quantifier.regexp
+        match: "\\{\\d+(,\\d*)?\\}\\??"
+      
+      # Anchors and boundaries
+      - name: keyword.control.anchor.regexp
+        match: "\\^|\\$"
+      - name: keyword.control.anchor.regexp
+        match: "\\\\[bB]"
+      
+      # Backreferences
+      - name: keyword.other.back-reference.regexp
+        match: "\\\\[1-9]\\d*"
+
+  headerValue:
+    patterns:
+      # Header name with regex value: name:/pattern/flags or name:~/pattern/flags
+      - match: ([\w-]+)(:)(~?)(/.+?(?<!\\)/[a-z]*)
+        captures:
+          "1":
+            name: entity.name.tag.adblock
+          "2":
+            name: punctuation.separator.key-value.adblock
+          "3":
+            name: keyword.operator.logical.adblock
+          "4":
+            patterns:
+              - match: (/)(.+?(?<!\\))(/)([a-z]*)
+                captures:
+                  "1":
+                    name: punctuation.definition.string.begin.regexp.adblock
+                  "2":
+                    name: string.regexp.adblock
+                  "3":
+                    name: punctuation.definition.string.end.regexp.adblock
+                  "4":
+                    name: keyword.other.regexp.adblock
+      # Header name with literal value: name:value or name:~value
+      - match: ([\w-]+)(:)(~?)([^/]+)
+        captures:
+          "1":
+            name: entity.name.tag.adblock
+          "2":
+            name: punctuation.separator.key-value.adblock
+          "3":
+            name: keyword.operator.logical.adblock
+          "4":
+            name: string.unquoted.adblock
+      # Just header name: name
+      - match: ([\w-]+)
+        captures:
+          "1":
+            name: entity.name.tag.adblock
+
+  urlskipValue:
+    patterns:
+      # Regex directive in urlskip value
+      - include: "#regularExpression"
+      # Everything else as unquoted string
+      - match: ".+"
+        name: string.unquoted.adblock
+
+  replaceValue:
+    patterns:
+      - begin: "(/)"
+        beginCaptures:
+          "1":
+            name: keyword.operator.adblock
+        end: "((?<!\\\\)/)([igmsuy]*)?"
+        endCaptures:
+          "1":
+            name: keyword.operator.adblock
+          "2":
+            name: keyword.other.adblock
+        patterns:
+          # Regexp part (before middle slash)
+          - begin: "\\G"
+            end: "((?<!\\\\)/)"
+            endCaptures:
+              "1":
+                name: keyword.operator.adblock
+            contentName: string.regexp.adblock
+            patterns:
+              - include: "#regexp"
+          # Replacement part (after middle slash)
+          - begin: "(?=.)"
+            end: "(?=(?<!\\\\)/)"
+            contentName: string.unquoted.adblock
+            patterns:
+              - include: "#replaceReplacement"
+
+  replaceReplacement:
+    patterns:
+      # Escaped characters (including \$)
+      - match: '\\.'
+        name: constant.character.escape.adblock
+      # Number after escaped dollar (for $1, $2 etc.)
+      - match: '\d+'
+        name: keyword.other.adblock
+
   urlPattern:
     patterns:
       - name: string.regexp.adblock
-        match: "^(@@)?(\\/)(.+)\\/$"
+        match: "^(@@)?((\\/)(.+)\\/$)"
         captures:
           "1":
             name: keyword.other.adblock
+          "2":
+            patterns:
+              - include: "#regularExpression"
       - match: "^@@\\|?\\|?"
         name: keyword.other.adblock
       - match: "^\\|\\|"
@@ -406,107 +624,144 @@ repository:
         name: keyword.other.adblock
       - match: "\\*"
         name: keyword.other.adblock
-  basicRulesOptions:
+
+  modifierList:
     patterns:
-      - match: replace=((\/)(((\\\/)|[^,/]|(\\,))+?)(\/)(((\\\/)|[^,/]|(\\,))*?)(\/)([a-z]*))
-        name: keyword.other.adblock
-        captures:
-          "1":
-            name: string.regexp.adblock
-      - match: "(domain|denyallow|from|to)(=)([^,]+)"
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            patterns:
-              - include: "#domainListPipeSeparated"
-      - match: "(app)(=)([^,]+)"
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            patterns:
-              - include: "#appListPipeSeparated"
-      - match: "(dnstype)(=)([^,]+)"
+      # Special case for header modifier with regex value
+      # https://github.com/gorhill/uBlock/wiki/Static-filter-syntax#header
+      - match: |-
+          (?x)
+            (~?\s*header)                         # Group 1. header modifier name
+            \s*                                   #   Optional whitespace before =
+            (=)                                   #   Group 2. Assignment operator
+            \s*                                   #   Optional whitespace after =
+            ([\w-]+)                              #   Group 3. Header name
+            (:)                                   #   Group 4. Colon
+            (~?)                                  #   Group 5. Optional negation
+            (/)                                   #   Group 6. Opening slash
+            (.+?)                                 #   Group 7. Regex content
+            (?<!\\)(/)                            #   Group 8. Closing slash (not escaped)
+            ([a-z]*)                              #   Group 9. Flags
+            (?:\s*(?<!\\)(,)\s*(?=~?\s*[\w-])|$)  #   End: unescaped comma followed by modifier, or end
         captures:
           "1":
             name: keyword.other.adblock
           "2":
             name: keyword.operator.adblock
           "3":
-            patterns:
-              - include: "#dnsTypesPipeSeparated"
-      - match: "(client|ctag)(=)(((\\\\,)|[^,])+)"
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            patterns:
-              - include: "#dnsClientsPipeSeparated"
-      - match: "(redirect|redirect-rule|csp|cookie)(=)?(((\\\\,)|[^,])+)?"
-        name: keyword.other.adblock
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            name: string.unquoted.adblock
-      - match: "(dnsrewrite)(=)(((\\\\,)|[^,])+)"
-        name: keyword.other.adblock
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            patterns:
-              - name: keyword.other.delimiter
-                match: ";"
-              - name: string.unquoted.adblock
-                match: "[^;]*"
-      - match: "(removeheader)(=)?(((\\\\,)|[^,])+)?"
-        name: keyword.other.adblock
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            patterns:
-              - name: keyword.other.delimiter
-                match: ":"
-              - name: string.unquoted.adblock
-                match: "[^:]*"
-      - match: "(rewrite)(=)(abp-resource:)([^,]+)"
-        name: keyword.other.adblock
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
-            name: keyword.operator.adblock
-          "3":
-            name: keyword.other.adblock
+            name: entity.name.tag.adblock
           "4":
-            name: string.unquoted.adblock
-      - match: "(removeparam|queryprune)(=)?(~)?(((\\\\,)|[^,])+)?"
-        name: keyword.other.adblock
+            name: punctuation.separator.key-value.adblock
+          "5":
+            name: keyword.operator.logical.adblock
+          "6":
+            name: punctuation.definition.string.begin.regexp.adblock
+          "7":
+            patterns:
+              - include: "#regexp"
+              - match: .+
+                name: string.regexp.adblock
+          "8":
+            name: punctuation.definition.string.end.regexp.adblock
+          "9":
+            name: keyword.other.regexp.adblock
+          "10":
+            name: keyword.operator.adblock
+
+      # Special case for header modifier with literal value or no value
+      - match: |-
+          (?x)
+            (~?\s*header)                         # Group 1. header modifier name
+            \s*                                   #   Optional whitespace before =
+            (=)                                   #   Group 2. Assignment operator
+            \s*                                   #   Optional whitespace after =
+            ([\w-]+)                              #   Group 3. Header name
+            (?:
+              (:)                                 #   Group 4. Colon (optional)
+              (~?)                                #   Group 5. Optional negation
+              ([^,/]+)                            #   Group 6. Literal value (not starting with /)
+            )?
+            (?:\s*(?<!\\)(,)\s*(?=~?\s*[\w-])|$)  #   End: unescaped comma followed by modifier, or end
         captures:
           "1":
             name: keyword.other.adblock
           "2":
             name: keyword.operator.adblock
           "3":
-            name: keyword.other.adblock
+            name: entity.name.tag.adblock
           "4":
+            name: punctuation.separator.key-value.adblock
+          "5":
+            name: keyword.operator.logical.adblock
+          "6":
             name: string.unquoted.adblock
-      - match: "(method)(=)([^,]+)"
+          "7":
+            name: keyword.operator.adblock
+
+      # Special case for domain-like modifiers (domain, to, from, app, denyallow)
+      # These accept: ["~"] entry_0 ["|" ["~"] entry_1 ["|" ["~"]entry_2 ...]]
+      # where entry_i = ( item / regexp )
+      # ~ and | are operators, simple values are strings, /.../ is regexp
+      - begin: |-
+          (?x)
+            (~?\s*(?:domain|to|from|app|denyallow))   # Group 1. Modifier name
+            \s*                                       #   Optional whitespace before =
+            (=)                                       #   Group 2. Assignment operator
+            \s*                                       #   Optional whitespace after =
+        beginCaptures:
+          "1":
+            name: keyword.other.adblock
+          "2":
+            name: keyword.operator.adblock
+        end: (?:\s*(?<!\\)(,)\s*(?=~?\s*[\w-])|$)
+        endCaptures:
+          "1":
+            name: keyword.operator.adblock
+        patterns:
+          # Negation operator
+          - match: "~"
+            name: keyword.operator.logical.adblock
+          # Pipe separator
+          - match: "\\|"
+            name: keyword.operator.adblock
+          # Regex value: /pattern/ (allowing unescaped pipes inside)
+          - begin: "/"
+            beginCaptures:
+              "0":
+                name: punctuation.definition.string.begin.regexp.adblock
+            end: (?<!\\)/
+            endCaptures:
+              "0":
+                name: punctuation.definition.string.end.regexp.adblock
+            contentName: string.regexp.adblock
+            patterns:
+              - include: "#regexp"
+              - match: '[^/\\]+'
+                name: string.regexp.adblock
+              - match: '\\.'
+                name: string.regexp.adblock
+          # Simple domain/value (not starting with / or special chars)
+          - match: "[^~|/,\\s]+"
+            name: string.unquoted.adblock
+
+      # Special case for replace / urltransform modifier (uses /regexp/replacement/modifiers syntax)
+      # https://adguard.com/kb/general/ad-filtering/create-own-filters/#replace-modifier
+      # https://adguard.com/kb/general/ad-filtering/create-own-filters/#urltransform-modifier
+      - match: |-
+          (?x)
+            (~?\s*(?:replace|urltransform))       # Group 1. replace modifier name
+            \s*                                   #   Optional whitespace before =
+            (=)                                   #   Group 2. Assignment operator
+            \s*                                   #   Optional whitespace after =
+            (                                     #   Group 3. replace value (/regexp/replacement/modifiers)
+              (\/)                                #     Group 4. Opening slash
+              (?:[^\/\\]|\\.)*                    #     Regexp part (escaped chars allowed)
+              (\/)                                #     Group 5. Middle slash
+              (?:[^\/\\]|\\.)*                    #     Replacement part (escaped chars allowed)
+              (\/)                                #     Group 6. Closing slash
+              ([a-z]*)                            #     Group 7. Optional modifiers (e.g., i)
+            )
+            (?:\s*(?<!\\)(,)\s*(?=~?\s*[\w-])|$)  #   End: unescaped comma followed by modifier, or end
         captures:
           "1":
             name: keyword.other.adblock
@@ -514,13 +769,36 @@ repository:
             name: keyword.operator.adblock
           "3":
             patterns:
-              - match: "(?i)(connect|delete|get|head|options|patch|post|put)"
-                name: string.unquoted.adblock
-              - match: "~|\\|"
-                name: keyword.operator.adblock
-              - match: ".+"
-                name: invalid.illegal.method-value
-      - match: "(referrerpolicy)(=)?((\\w|-)+)?"
+              - include: "#replaceValue"
+            # name: string.unquoted.adblock
+          "4":
+            name: keyword.operator.adblock
+
+      # Special case for urlskip modifier (allows regex with commas and multiple directives)
+      # https://github.com/gorhill/uBlock/wiki/Static-filter-syntax#urlskip
+      - match: |-
+          (?x)
+            (~?\s*urlskip)                        # Group 1. urlskip modifier name
+            \s*                                   #   Optional whitespace before =
+            (=)                                   #   Group 2. Assignment operator
+            \s*                                   #   Optional whitespace after =
+            (                                     #   Group 3. urlskip value (space-separated directives)
+              (?:
+                \/(?:[^\/\\]|\\.)+\/              #     Regex directive: /pattern/
+                |\?[\w-]+                         #     Parameter extraction: ?name
+                |&\d+                             #     Position extraction: &1
+                |\#                               #     Hash extraction: #
+                |\+https:?                        #     Protocol prepend: +https or +https:
+                |-(?:
+                  base64
+                  |safebase64
+                  |uricomponent
+                  |blocked
+                )                                 # Transformation directives
+                |\s+                              #     Whitespace between directives
+              )+?
+            )
+            (?:\s*(?<!\\)(,)\s*(?=~?\s*[\w-])|$)  #   End: unescaped comma followed by modifier, or end
         captures:
           "1":
             name: keyword.other.adblock
@@ -528,91 +806,77 @@ repository:
             name: keyword.operator.adblock
           "3":
             patterns:
-              - match: "(?i)(no-referrer|no-referrer-when-downgrade|origin|origin-when-cross-origin|same-origin|strict-origin|strict-origin-when-cross-origin|unsafe-url)"
-                name: string.unquoted.adblock
-              - match: "~|\\|.+"
-                name: invalid.illegal.referrerpolicy-value
-      - match: "(permissions)(=)?(((\\\\,)|[^,])+)?"
+              - include: "#urlskipValue"
+          "4":
+            name: keyword.operator.adblock
+
+      # General pattern for other modifiers
+      - match: |-
+          (?x)
+            (~?\s*[\w-]+)                                      # Group 1. Modifier name
+            (?:                                                # Optional value assignment
+              \s*                                              #   Optional whitespace before =
+              (=)                                              #   Group 2. Assignment operator
+              \s*                                              #   Optional whitespace after =
+              (?:                                              #   Value (one of three types)
+                ('(?:[^'\\]|\\.)*')                            #     Group 3. Quoted string (single quotes)
+                |(                                             #     Group 4. Regex (e.g., /pattern/flags or /pattern/replacement/flags)
+                  \/                                           #       Opening slash
+                  (?:[^\/\\]|\\.)+                             #       Pattern body (anything except unescaped /)
+                  \/                                           #       Closing slash
+                  (?:                                          #       Optional replacement part
+                    (?:[^\/\\]|\\.)+                           #         Replacement body (anything except unescaped /)
+                    \/                                         #         Closing slash
+                  )?
+                  [a-z]*                                       #       Optional flags (e.g., i, g, m)
+                )
+                |((?:\\.|[^,\\]|,(?!\s*~?\s*[\w-]))+?)         #     Group 5. Unquoted list (allows escaped commas with \,)
+              )
+            )?
+            (?:\s*(?<!\\)(,)\s*(?=~?\s*[\w-])|$)               # End of modifier: unescaped comma followed by another modifier, or end of string
         captures:
           "1":
             name: keyword.other.adblock
           "2":
             name: keyword.operator.adblock
           "3":
+            name: string.quoted.adblock
+          "4":
+            patterns:
+              - include: "#regularExpression"
+          "5":
             name: string.unquoted.adblock
-      - match: "(header)(=)([^,]+)"
-        captures:
-          "1":
-            name: keyword.other.adblock
-          "2":
+          "6":
             name: keyword.operator.adblock
-          "3":
-            name: string.unquoted.adblock
-      - match: "(inline-script|inline-font|mp4|empty|badfilter|genericblock|generichide|network|popup|popunder|important|replace|stealth)"
-        name: keyword.other.adblock
-      - match: "(~?)(first-party|third-party|match-case|elemhide|content|jsinject|urlblock|extension|all|strict1p|strict3p|1p|3p|css|frame|ghide|ehide|shide|specifichide)"
-        name: keyword.other.adblock
-      - match: "(~)?(document|doc|font|image|media|object|other|ping|beacon|script|stylesheet|css|subdocument|frame|websocket|xmlhttprequest|xhr|webrtc)(,|$)"
-        name: keyword.other.adblock
-      - match: "(~)?(object-subrequest)"
-        name: invalid.illegal.removed.modifier
-      - match: ","
-        name: punctuation.definition.adblock
-      - match: "\\$"
-        name: invalid.illegal.redundant.modifier.separator
+      - name: invalid.illegal.adblock
+        match: ".*"
+
   cosmeticRulesOptions:
-    match: "(\\[)(.+?)(\\])"
+    match: |-
+      (?x)
+        (\[)     # Group 1. Opening bracket
+          \s*    #   Optional whitespace
+          (\$)   #   Group 2. Modifier separator
+          \s*    #   Optional whitespace
+          (.*)   #   Group 3. Modifier list
+          \s*    #   Optional whitespace
+        (\])     # Group 4. Closing bracket
     captures:
       "1":
         name: keyword.control.adblock
       "2":
-        patterns:
-          - match: "(path)(=)(((\\\\,)|[^,])+)"
-            captures:
-              "1":
-                name: keyword.other.adblock
-              "2":
-                name: keyword.operator.adblock
-              "3":
-                name: string.unquoted.adblock
-          - match: "(domain)(=)([^,]+)"
-            captures:
-              "1":
-                name: keyword.other.adblock
-              "2":
-                name: keyword.operator.adblock
-              "3":
-                patterns:
-                  - include: "#domainListPipeSeparated"
-          - match: "(app)(=)([^,]+)"
-            captures:
-              "1":
-                name: keyword.other.adblock
-              "2":
-                name: keyword.operator.adblock
-              "3":
-                patterns:
-                  - include: "#appListPipeSeparated"
-          - match: "(url)(=)([^,]+)"
-            captures:
-              "1":
-                name: keyword.other.adblock
-              "2":
-                name: keyword.operator.adblock
-              "3":
-                name: string.unquoted.adblock
-          - match: "\\$"
-            name: keyword.control.adblock
-          - match: ","
-            name: punctuation.definition.adblock
-          - name: invalid.illegal.adblock
-            match: ".*"
-      "3":
         name: keyword.control.adblock
+      "3":
+        patterns:
+          - include: "#modifierList"
+      "4":
+        name: keyword.control.adblock
+
   emptyScriptletFunction:
     patterns:
       - match: \s*\z
         name: entity.name.section.adblock.empty-scriptlet
+
   scriptletFunction:
     patterns:
       - match: ((['|"])(.*?)(?<!\\)(\2))(,\s*)?
@@ -623,6 +887,7 @@ repository:
             name: keyword.operator.adblock
       - name: invalid.illegal.adblock
         match: ".*"
+
   scriptletFunctionUBO:
     patterns:
       - match: "((?:[^\\\\,]+|\\\\.?)*)(,|$)"
@@ -633,6 +898,7 @@ repository:
             name: keyword.operator.adblock
       - name: invalid.illegal.adblock
         match: ".*"
+
   cssStyle:
     patterns:
       - match: "(@media[\\s]+[^\\{]*)(\\{)([\\s]*[^\\{]*)(\\{)([\\s]*[^\\}]*)(\\})[\\s]*(\\})"
@@ -663,6 +929,7 @@ repository:
             name: punctuation.section.adblock
       - name: invalid.illegal.adblock
         match: ".*"
+
   cssSelector:
     patterns:
       # ID selector
@@ -900,6 +1167,7 @@ repository:
             name: punctuation.definition.adblock
       - name: invalid.illegal.domain-list
         match: ".*"
+
   domainListPipeSeparated:
     patterns:
       - match: "(~?)([^|]+)(\\|?)"
@@ -912,6 +1180,7 @@ repository:
             name: punctuation.definition.adblock
       - name: invalid.illegal.domain-list
         match: ".*"
+
   appListPipeSeparated:
     patterns:
       - match: "((~?)([a-zA-Z0-9.-_]+)(\\|?))"
@@ -924,6 +1193,7 @@ repository:
             name: punctuation.definition.adblock
       - name: invalid.illegal.app-list
         match: ".*"
+
   dnsTypesPipeSeparated:
     patterns:
       - match: "((~?)([a-zA-Z0-9.-_]+)(\\|?))"
@@ -936,6 +1206,7 @@ repository:
             name: punctuation.definition.adblock
       - name: invalid.illegal.app-list
         match: ".*"
+
   dnsClientsPipeSeparated:
     patterns:
       - match: "((~?)([^|]+)(\\|?))"

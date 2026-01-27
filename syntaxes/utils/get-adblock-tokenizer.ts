@@ -27,7 +27,7 @@ export async function getAdblockTokenizer(): Promise<AdblockTokenizer> {
 
     // Throw an error if the grammar could not be loaded
     if (result === null) {
-        throw new Error('Couldn\'t load the adblock grammar');
+        throw new Error('Could not load the adblock grammar');
     }
 
     return (source: string) => result.tokenizeLine(source, INITIAL).tokens;

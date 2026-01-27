@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## Unreleased
+
+### Changed
+
+- Improved syntax highlighting for network rules and modifiers [#93], [#120], [#131], [#137].
+
+### Fixed
+
+- Highlighting for cosmetic rules modifiers [#134], [#151].
+
+[#120]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/120
+[#131]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/131
+[#134]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/134
+[#137]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/137
+[#151]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/151
+
 ## [2.1.4] (prerelease) - 2025-12-26
 
 ### Added

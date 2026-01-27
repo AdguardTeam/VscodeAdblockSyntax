@@ -596,7 +596,7 @@ describe('HTML filtering rules', () => {
                 actual: '$$',
                 expected: [
                     { fragment: '$', scopes: SEPARATOR },
-                    { fragment: '$', scopes: ['text.adblock', 'invalid.illegal.redundant.modifier.separator'] },
+                    { fragment: '$', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
                 ],
             },
             {

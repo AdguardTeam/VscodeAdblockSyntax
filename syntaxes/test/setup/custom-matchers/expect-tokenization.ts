@@ -52,6 +52,8 @@ const toBeTokenizedProperly = (
         return {
             pass: false,
             message: () => 'The merged fragments do not match the source, so the expectation is invalid',
+            expected: mergedFragments,
+            actual: receivedParsed,
         };
     }
 
@@ -62,7 +64,9 @@ const toBeTokenizedProperly = (
     if (tokens.length !== expectedTokens.length) {
         return {
             pass: false,
-            message: () => `Expected ${expectedTokens.length} tokens, but got ${tokens.length}`,
+            message: () => 'The number of tokens does not match the number of expected tokens',
+            expected: expectedTokens.length,
+            actual: tokens.length,
         };
     }
 
@@ -70,7 +74,15 @@ const toBeTokenizedProperly = (
 
     // Check that each token matches the expected token
     for (let i = 0; i < tokens.length; i += 1) {
-        const endOffset = offset + expectedTokens[i].fragment.length;
+        const fragmentLength = expectedTokens[i].fragment.length;
+        let endOffset = offset + fragmentLength;
+
+        // tokenizeLine adds a trailing newline. For the last token, check if it extends beyond the source length.
+        // Simple match patterns include the newline (endIndex = length + 1), but begin/end patterns with
+        // embedded grammars don't (endIndex = length).
+        if (i === tokens.length - 1 && tokens[i].endIndex > receivedParsed.length) {
+            endOffset = receivedParsed.length + 1;
+        }
 
         // Check location
         if (tokens[i].startIndex !== offset) {
@@ -78,6 +90,8 @@ const toBeTokenizedProperly = (
                 pass: false,
                 // eslint-disable-next-line max-len, @typescript-eslint/no-loop-func
                 message: () => `Expected token ${i} to start at offset ${offset}, but it starts at offset ${tokens[i].startIndex}`,
+                expected: offset,
+                actual: tokens[i].startIndex,
             };
         }
 
@@ -86,6 +100,8 @@ const toBeTokenizedProperly = (
                 pass: false,
                 // eslint-disable-next-line max-len, @typescript-eslint/no-loop-func
                 message: () => `Expected token ${i} to end at offset ${endOffset}, but it ends at offset ${tokens[i].endIndex}`,
+                expected: endOffset,
+                actual: tokens[i].endIndex,
             };
         }
 
@@ -94,6 +110,8 @@ const toBeTokenizedProperly = (
                 pass: false,
                 // eslint-disable-next-line max-len, @typescript-eslint/no-loop-func
                 message: () => `Expected token ${i} to have scopes [${expectedTokens[i].scopes.join(', ')}], but got [${tokens[i].scopes.join(', ')}]`,
+                expected: expectedTokens[i].scopes,
+                actual: tokens[i].scopes,
             };
         }
 

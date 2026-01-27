@@ -12,7 +12,7 @@ const makeRelative = (file) => path.relative(process.cwd(), file);
 
 module.exports = {
     // run tests if the grammar file are changed
-    'adblock.yaml-tmlanguage': 'vitest run',
+    'adblock.yaml-tmlanguage': () => 'vitest run',
     '**/*.md': 'markdownlint',
     '**/*.js': 'eslint --cache',
     '**/*.ts': [

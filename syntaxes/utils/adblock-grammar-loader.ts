@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { loadWASM, OnigScanner, OnigString } from 'vscode-oniguruma';
 import { type IGrammar, parseRawGrammar, Registry } from 'vscode-textmate';
 
+import { getErrorMessage } from './error';
 import { convertYamlToPlist } from './grammar-converter';
 
 /**
@@ -60,7 +61,30 @@ export async function loadAdblockGrammar(): Promise<IGrammar | null> {
     const wasmBin = await readFile(join(__dirname, '../', 'node_modules/vscode-oniguruma/release/onig.wasm'));
     const vscodeOnigurumaLib = loadWASM(wasmBin).then(() => {
         return {
-            createOnigScanner(patterns: string[]) { return new OnigScanner(patterns); },
+            createOnigScanner(patterns: string[]) {
+                try {
+                    return new OnigScanner(patterns);
+                } catch (error) {
+                    // Make logging more helpful by trying to find the invalid pattern
+                    for (const pattern of patterns) {
+                        try {
+                            new OnigScanner([pattern]);
+                        } catch (e) {
+                            let message: string;
+                            message = 'Invalid pattern:';
+                            message += '\n';
+                            message += pattern;
+                            message += '\n';
+                            message += 'Got error from OnigScanner: ';
+                            message += getErrorMessage(e);
+                            // eslint-disable-next-line no-console
+                            console.error(message);
+                            break;
+                        }
+                    }
+                    throw error;
+                }
+            },
             createOnigString(s: string) { return new OnigString(s); },
         };
     });
