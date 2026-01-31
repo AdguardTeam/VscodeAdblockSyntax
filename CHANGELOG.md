@@ -16,12 +16,14 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ### Fixed
 
 - Highlighting for cosmetic rules modifiers [#134], [#151].
+- Highlighting nested selector in CSS pseudo-class [#156].
 
 [#120]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/120
 [#131]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/131
 [#134]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/134
 [#137]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/137
 [#151]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/151
+[#156]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/156
 
 ## [2.1.4] (prerelease) - 2025-12-26
 

@@ -219,6 +219,7 @@ $$:class1(arg1), :class2("arg2"), :class3('arg3'), :class4(/arg4/i)
 $$:class1("arg \" 1"), :class2('arg \' 2'), :class3(/arg\/3/i)
 $$:class1( arg1 ), :class2( "arg2" ), :class3( 'arg3' ), :class4( /arg4/i )
 $$:class(arg with spaces), :class(multiple, args, here)
+$$div:has(> div:not([class]) > a)
 $$tag > tag + tag ~ tag tag, tag + tag
 example.org$$script[id="hello"][tag-content="hello"][max-length="100"]
 example.org,example.com$@$script[id="hello"][tag-content="something"]

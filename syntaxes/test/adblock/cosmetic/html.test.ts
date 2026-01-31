@@ -555,6 +555,18 @@ describe('HTML filtering rules', () => {
                 ],
             },
             {
+                actual: '$$div:has(> div:not([class]) > a)',
+                expected: [
+                    { fragment: '$$', scopes: SEPARATOR },
+                    { fragment: 'div', scopes: TYPE_SELECTOR },
+                    { fragment: ':', scopes: PSEUDO_CLASS_PREFIX },
+                    { fragment: 'has', scopes: PSEUDO_CLASS },
+                    { fragment: '(', scopes: PSEUDO_CLASS_OPEN },
+                    { fragment: '> div:not([class]) > a', scopes: PSEUDO_CLASS_UNQUOTED },
+                    { fragment: ')', scopes: PSEUDO_CLASS_CLOSE },
+                ],
+            },
+            {
                 actual: '$$tag > tag + tag ~ tag tag, tag + tag',
                 expected: [
                     { fragment: '$$', scopes: SEPARATOR },

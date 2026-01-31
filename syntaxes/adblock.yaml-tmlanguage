@@ -246,7 +246,7 @@ repository:
             name: keyword.control.adblock
           "4":
             patterns:
-              - include: "#cssSelector"
+              - include: "#htmlFilteringCssSelector"
 
   scriptletRules:
     patterns:
@@ -464,7 +464,7 @@ repository:
         match: "\\\\u[0-9A-Fa-f]{4}"
       - name: constant.character.escape.regexp
         match: "\\\\."
-      
+
       # Character class brackets
       - begin: "(\\[)(\\^)?"
         beginCaptures:
@@ -481,7 +481,7 @@ repository:
           - match: "\\\\[\\]\\-\\\\]"
             name: constant.character.escape.regexp
           - match: "[^\\]]"
-      
+
       # Groups and captures
       - begin: "(\\()(\\?[:=!<]|\\?<[=!]|\\?P?<[^>]+>)?"
         beginCaptures:
@@ -495,23 +495,23 @@ repository:
             name: punctuation.definition.group.regexp
         patterns:
           - include: "#regexp"
-      
+
       # Alternation
       - name: keyword.operator.or.regexp
         match: "\\|"
-      
+
       # Quantifiers
       - name: keyword.operator.quantifier.regexp
         match: "[*+?]\\??"
       - name: keyword.operator.quantifier.regexp
         match: "\\{\\d+(,\\d*)?\\}\\??"
-      
+
       # Anchors and boundaries
       - name: keyword.control.anchor.regexp
         match: "\\^|\\$"
       - name: keyword.control.anchor.regexp
         match: "\\\\[bB]"
-      
+
       # Backreferences
       - name: keyword.other.back-reference.regexp
         match: "\\\\[1-9]\\d*"
@@ -932,6 +932,11 @@ repository:
 
   cssSelector:
     patterns:
+      - name: entity.name.function.adblock
+        match: ".+"
+
+  htmlFilteringCssSelector:
+    patterns:
       # ID selector
       - match: |-
           (?x)
@@ -1087,7 +1092,25 @@ repository:
                   \s*                 #       Optional whitespace after regexp value
                 )
                 |(                    #     Group 13: unquoted value
-                  [^\)]+              #       Value is 1 or more non-) characters
+                  (?:                 #       Nested parentheses allowed up to 3 levels
+                    [^()]+            #       TODO: This can be improved to allow any level of nesting with recursion,
+                    |                 #       but to do so, the whole selector logic would need to be rewritten with begin/end.
+                    \(
+                      (?:
+                        [^()]+
+                        |
+                        \(
+                          (?:
+                            [^()]+
+                            |
+                            \(
+                              [^()]+
+                            \)
+                          )*
+                        \)
+                      )*
+                    \)
+                  )*
                 )
               )?
               (\))                    #   Group 14: Closing parenthesis
