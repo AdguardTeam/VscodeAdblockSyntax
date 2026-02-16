@@ -49,13 +49,6 @@ marketplace.visualstudio.com:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
     - extension: 'true'
-  notifications:
-    - events:
-        - deployment-started-and-finished
-      recipients:
-        - webhook:
-            name: Deploy webhook
-            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
 
 open-vsx.org:
   docker:
@@ -96,13 +89,6 @@ open-vsx.org:
           - "./bamboo-specs/scripts/cleanup.sh"
   requirements:
     - extension: 'true'
-  notifications:
-    - events:
-        - deployment-started-and-finished
-      recipients:
-        - webhook:
-            name: Deploy webhook
-            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
 
 GitHub:
   triggers: []
@@ -136,10 +122,3 @@ GitHub:
   final-tasks: []
   requirements:
     - extension: 'true'
-  notifications:
-    - events:
-        - deployment-started-and-finished
-      recipients:
-        - webhook:
-            name: Deploy webhook
-            url: http://prod.jirahub.service.eu.consul/v1/webhook/bamboo
