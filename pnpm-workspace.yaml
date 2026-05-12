@@ -5,6 +5,13 @@ packages:
   - syntaxes
   - tools
   - test/static/aglint
+
+# AG-54210
+# minimumReleaseAge is in minutes; 10080 = 7 days.
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+  - '@adguard/*'
+
 catalog:
   "@adguard/aglint": ^4.0.0-beta.3
   "@adguard/agtree": ^2.3.0
