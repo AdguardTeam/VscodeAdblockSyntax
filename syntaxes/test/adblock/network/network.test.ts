@@ -22,49 +22,49 @@ describe('network rules', () => {
             expect('-468x60-').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '-468x60-', scopes: ['text.adblock'] },
+                    { fragment: '-468x60-', scopes: ['text.adblock', 'meta.network.adblock'] },
                 ],
             );
 
             expect('/ads.js').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '/ads.js', scopes: ['text.adblock'] },
+                    { fragment: '/ads.js', scopes: ['text.adblock', 'meta.network.adblock'] },
                 ],
             );
 
             expect('||example.com^').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('||example.com/*_banner_').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com/', scopes: ['text.adblock'] },
-                    { fragment: '*', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '_banner_', scopes: ['text.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com/', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '*', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '_banner_', scopes: ['text.adblock', 'meta.network.adblock'] },
                 ],
             );
 
             expect('|http://example.org').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '|', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'http://example.org', scopes: ['text.adblock'] },
+                    { fragment: '|', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'http://example.org', scopes: ['text.adblock', 'meta.network.adblock'] },
                 ],
             );
 
             expect('swf|').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: 'swf', scopes: ['text.adblock'] },
-                    { fragment: '|', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'swf', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '|', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
         });
@@ -75,20 +75,20 @@ describe('network rules', () => {
                 [
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
-                    { fragment: 'banner', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'banner', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '\\d',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'constant.other.character-class.set.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'constant.other.character-class.set.regexp'],
                     },
                     {
                         fragment: '+',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
                     },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
                 ],
             );
@@ -98,34 +98,34 @@ describe('network rules', () => {
             expect('$script').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('$~websocket,~xmlhttprequest').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: '~websocket', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '~xmlhttprequest', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: '~websocket', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '~xmlhttprequest', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('$script,third-party,___,domain=example.com').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'third-party', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '___', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'domain', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'third-party', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '___', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'domain', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
 
@@ -133,23 +133,23 @@ describe('network rules', () => {
             expect(String.raw`$foo=',',bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: "','", scopes: ['text.adblock', 'string.quoted.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: "','", scopes: ['text.adblock', 'meta.network.adblock', 'string.quoted.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
             expect(String.raw`$foo='/b{3,}/',bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: "'/b{3,}/'", scopes: ['text.adblock', 'string.quoted.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: "'/b{3,}/'", scopes: ['text.adblock', 'meta.network.adblock', 'string.quoted.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
@@ -157,24 +157,24 @@ describe('network rules', () => {
             expect(String.raw`$foo=/b{3,}/,bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
-                    { fragment: 'b', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'b', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '{3,}',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
                     },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
@@ -182,23 +182,23 @@ describe('network rules', () => {
             expect(String.raw`$foo='$',bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: "'$'", scopes: ['text.adblock', 'string.quoted.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: "'$'", scopes: ['text.adblock', 'meta.network.adblock', 'string.quoted.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
             expect(String.raw`$foo='/b{3,}$/',bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: "'/b{3,}$/'", scopes: ['text.adblock', 'string.quoted.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: "'/b{3,}$/'", scopes: ['text.adblock', 'meta.network.adblock', 'string.quoted.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
@@ -206,68 +206,68 @@ describe('network rules', () => {
             expect(String.raw`$foo=/b{3,}$/,bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
-                    { fragment: 'b', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'b', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '{3,}',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
                     },
                     {
                         fragment: '$',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.control.anchor.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.control.anchor.regexp'],
                     },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
             expect(String.raw`$foo=/(b{3,}|foo$)/,bar`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
                     {
                         fragment: '(',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
                     },
-                    { fragment: 'b', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'b', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '{3,}',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
                     },
                     {
                         fragment: '|',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.operator.or.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.operator.or.regexp'],
                     },
-                    { fragment: 'foo', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '$',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.control.anchor.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.control.anchor.regexp'],
                     },
                     {
                         fragment: ')',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
                     },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
@@ -275,16 +275,16 @@ describe('network rules', () => {
             expect('$foo = bar ,  baz').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'foo', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ' ', scopes: ['text.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: ' ', scopes: ['text.adblock'] },
-                    { fragment: 'bar', scopes: ['text.adblock', 'string.unquoted.adblock'] },
-                    { fragment: ' ', scopes: ['text.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '  ', scopes: ['text.adblock'] },
-                    { fragment: 'baz', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'foo', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ' ', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: ' ', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: 'bar', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
+                    { fragment: ' ', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '  ', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: 'baz', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
         });
@@ -293,39 +293,39 @@ describe('network rules', () => {
             expect('||example.com^$script').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('||example.com^$~websocket,~xmlhttprequest').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: '~websocket', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '~xmlhttprequest', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: '~websocket', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '~xmlhttprequest', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('||example.com^$script,__,3p').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '__', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '3p', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '__', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '3p', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
         });
@@ -336,25 +336,25 @@ describe('network rules', () => {
                 [
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
-                    { fragment: 'banner', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'banner', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '\\d',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'constant.other.character-class.set.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'constant.other.character-class.set.regexp'],
                     },
                     {
                         fragment: '+',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'keyword.operator.quantifier.regexp'],
                     },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'image', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'third-party', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'image', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'third-party', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
         });
@@ -364,22 +364,22 @@ describe('network rules', () => {
             expect('*$script,header=via:/, 1\\.1 google$/').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '*', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'header', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'via', scopes: ['text.adblock', 'entity.name.tag.adblock'] },
-                    { fragment: ':', scopes: ['text.adblock', 'punctuation.separator.key-value.adblock'] },
+                    { fragment: '*', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'header', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'via', scopes: ['text.adblock', 'meta.network.adblock', 'entity.name.tag.adblock'] },
+                    { fragment: ':', scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.separator.key-value.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
-                    { fragment: ', 1\\.1 google$', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: ', 1\\.1 google$', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
                 ],
             );
@@ -388,15 +388,15 @@ describe('network rules', () => {
             expect('*$script,header=via:1.1 google').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '*', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'header', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'via', scopes: ['text.adblock', 'entity.name.tag.adblock'] },
-                    { fragment: ':', scopes: ['text.adblock', 'punctuation.separator.key-value.adblock'] },
-                    { fragment: '1.1 google', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '*', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'header', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'via', scopes: ['text.adblock', 'meta.network.adblock', 'entity.name.tag.adblock'] },
+                    { fragment: ':', scopes: ['text.adblock', 'meta.network.adblock', 'punctuation.separator.key-value.adblock'] },
+                    { fragment: '1.1 google', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
 
@@ -404,13 +404,13 @@ describe('network rules', () => {
             expect('*$script,header=via').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '*', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'header', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'via', scopes: ['text.adblock', 'entity.name.tag.adblock'] },
+                    { fragment: '*', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'header', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'via', scopes: ['text.adblock', 'meta.network.adblock', 'entity.name.tag.adblock'] },
                 ],
             );
 
@@ -418,18 +418,18 @@ describe('network rules', () => {
             expect(String.raw`||example.org^$replace=/test/replacement/i`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.org', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'replace', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '/', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'test', scopes: ['text.adblock', 'string.regexp.adblock'] },
-                    { fragment: '/', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'replacement', scopes: ['text.adblock', 'string.unquoted.adblock'] },
-                    { fragment: '/', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'i', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.org', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'replace', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '/', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'test', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
+                    { fragment: '/', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'replacement', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '/', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'i', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
@@ -437,29 +437,29 @@ describe('network rules', () => {
             expect(String.raw`||example.org^$replace=/(test)/\$1/`).toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.org', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'replace', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '/', scopes: ['text.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.org', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'replace', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '/', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
                     {
                         fragment: '(',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
                     },
-                    { fragment: 'test', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'test', scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: ')',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.regexp.adblock', 'punctuation.definition.group.regexp'],
                     },
-                    { fragment: '/', scopes: ['text.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '/', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
                     {
                         fragment: '\\$',
-                        scopes: ['text.adblock', 'string.unquoted.adblock', 'constant.character.escape.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock', 'constant.character.escape.adblock'],
                     },
-                    { fragment: '1', scopes: ['text.adblock', 'string.unquoted.adblock', 'keyword.other.adblock'] },
-                    { fragment: '/', scopes: ['text.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '1', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock', 'keyword.other.adblock'] },
+                    { fragment: '/', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
                 ],
             );
 
@@ -501,12 +501,12 @@ describe('network rules', () => {
             expect('||example.com/path/to/tracker$urlskip=?url -base64').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com/path/to/tracker', scopes: ['text.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'urlskip', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '?url -base64', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com/path/to/tracker', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'urlskip', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '?url -base64', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
         });
@@ -516,15 +516,15 @@ describe('network rules', () => {
             expect('||example.com^$script,domain=example.org').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'domain', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'example.org', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'domain', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'example.org', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
 
@@ -532,13 +532,13 @@ describe('network rules', () => {
             expect('||ads.js$domain=~example.com').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'ads.js', scopes: ['text.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'domain', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '~', scopes: ['text.adblock', 'keyword.operator.logical.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'ads.js', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'domain', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '~', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.logical.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
 
@@ -546,17 +546,17 @@ describe('network rules', () => {
             expect('||ads.js$domain=example.com|example.org|~test.com').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'ads.js', scopes: ['text.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'domain', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock', 'string.unquoted.adblock'] },
-                    { fragment: '|', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'example.org', scopes: ['text.adblock', 'string.unquoted.adblock'] },
-                    { fragment: '|', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: '~', scopes: ['text.adblock', 'keyword.operator.logical.adblock'] },
-                    { fragment: 'test.com', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'ads.js', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'domain', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '|', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'example.org', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '|', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: '~', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.logical.adblock'] },
+                    { fragment: 'test.com', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
 
@@ -602,17 +602,17 @@ describe('network rules', () => {
             expect('||example.com^$to=com|org|net').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'to', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'com', scopes: ['text.adblock', 'string.unquoted.adblock'] },
-                    { fragment: '|', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'org', scopes: ['text.adblock', 'string.unquoted.adblock'] },
-                    { fragment: '|', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'net', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '||', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'to', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'com', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '|', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'org', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '|', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'net', scopes: ['text.adblock', 'meta.network.adblock', 'string.unquoted.adblock'] },
                 ],
             );
         });
@@ -669,35 +669,35 @@ describe('network rules', () => {
             expect('@@-468x60-').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '-468x60-', scopes: ['text.adblock'] },
+                    { fragment: '@@', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '-468x60-', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
                 ],
             );
 
             expect('@@/ads.js').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '/ads.js', scopes: ['text.adblock'] },
+                    { fragment: '@@', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '/ads.js', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
                 ],
             );
 
             expect('@@||example.com^').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '@@||', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('@@||example.com/*_banner_').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com/', scopes: ['text.adblock'] },
-                    { fragment: '*', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '_banner_', scopes: ['text.adblock'] },
+                    { fragment: '@@||', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com/', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
+                    { fragment: '*', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '_banner_', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
                 ],
             );
         });
@@ -708,24 +708,28 @@ describe('network rules', () => {
                 [
                     {
                         fragment: '@@',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'keyword.other.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'string.regexp.adblock', 'keyword.other.adblock'],
                     },
                     {
                         fragment: '/',
                         scopes: [
                             'text.adblock',
+                            'meta.network.adblock',
+                            'meta.exception.adblock',
                             'string.regexp.adblock',
                             'punctuation.definition.string.begin.regexp.adblock',
                         ],
                     },
                     {
                         fragment: 'ads',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'string.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'string.regexp.adblock', 'string.regexp.adblock'],
                     },
                     {
                         fragment: '\\.',
                         scopes: [
                             'text.adblock',
+                            'meta.network.adblock',
+                            'meta.exception.adblock',
                             'string.regexp.adblock',
                             'string.regexp.adblock',
                             'constant.character.escape.regexp',
@@ -733,12 +737,14 @@ describe('network rules', () => {
                     },
                     {
                         fragment: 'js',
-                        scopes: ['text.adblock', 'string.regexp.adblock', 'string.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'string.regexp.adblock', 'string.regexp.adblock'],
                     },
                     {
                         fragment: '/',
                         scopes: [
                             'text.adblock',
+                            'meta.network.adblock',
+                            'meta.exception.adblock',
                             'string.regexp.adblock',
                             'punctuation.definition.string.end.regexp.adblock',
                         ],
@@ -751,26 +757,26 @@ describe('network rules', () => {
             expect('@@||example.com^$script').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
+                    { fragment: '@@||', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
                 ],
             );
 
             expect('@@||example.com^$script,domain=example.org').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: ',', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'domain', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'example.org', scopes: ['text.adblock', 'string.unquoted.adblock'] },
+                    { fragment: '@@||', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: ',', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'domain', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'example.org', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'string.unquoted.adblock'] },
                 ],
             );
         });
@@ -779,28 +785,28 @@ describe('network rules', () => {
             expect('@@||example.com^$header=via:/^referer/i').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '@@||', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: 'example.com', scopes: ['text.adblock'] },
-                    { fragment: '^', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'header', scopes: ['text.adblock', 'keyword.other.adblock'] },
-                    { fragment: '=', scopes: ['text.adblock', 'keyword.operator.adblock'] },
-                    { fragment: 'via', scopes: ['text.adblock', 'entity.name.tag.adblock'] },
-                    { fragment: ':', scopes: ['text.adblock', 'punctuation.separator.key-value.adblock'] },
+                    { fragment: '@@||', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: 'example.com', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock'] },
+                    { fragment: '^', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'header', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
+                    { fragment: '=', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.operator.adblock'] },
+                    { fragment: 'via', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'entity.name.tag.adblock'] },
+                    { fragment: ':', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'punctuation.separator.key-value.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'punctuation.definition.string.begin.regexp.adblock'],
                     },
                     {
                         fragment: '^',
-                        scopes: ['text.adblock', 'keyword.control.anchor.regexp'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.control.anchor.regexp'],
                     },
-                    { fragment: 'referer', scopes: ['text.adblock', 'string.regexp.adblock'] },
+                    { fragment: 'referer', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'string.regexp.adblock'] },
                     {
                         fragment: '/',
-                        scopes: ['text.adblock', 'punctuation.definition.string.end.regexp.adblock'],
+                        scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'punctuation.definition.string.end.regexp.adblock'],
                     },
-                    { fragment: 'i', scopes: ['text.adblock', 'keyword.other.regexp.adblock'] },
+                    { fragment: 'i', scopes: ['text.adblock', 'meta.network.adblock', 'meta.exception.adblock', 'keyword.other.regexp.adblock'] },
                 ],
             );
         });
@@ -812,8 +818,8 @@ describe('network rules', () => {
             expect('$script,').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script,', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script,', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             );
 
@@ -821,8 +827,8 @@ describe('network rules', () => {
             expect('$important!').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'important!', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'important!', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             );
 
@@ -830,8 +836,8 @@ describe('network rules', () => {
             expect('$script third-party').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script third-party', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script third-party', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             );
         });
@@ -841,8 +847,8 @@ describe('network rules', () => {
             expect('$script,').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script,', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script,', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             );
 
@@ -850,8 +856,8 @@ describe('network rules', () => {
             expect('$important!').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'important!', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'important!', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             );
 
@@ -859,8 +865,8 @@ describe('network rules', () => {
             expect('$script third-party').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '$', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                    { fragment: 'script third-party', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: 'script third-party', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             );
         });

@@ -22,8 +22,8 @@ describe('JS injection rules', () => {
         expect('#%#window.hello = 1').toBeTokenizedProperly(
             tokenizer,
             [
-                { fragment: '#%#', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                { fragment: 'window.hello = 1', scopes: ['text.adblock', 'source.js'] },
+                { fragment: '#%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                { fragment: 'window.hello = 1', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'source.js'] },
             ],
         );
     });
@@ -34,8 +34,8 @@ describe('JS injection rules', () => {
         expect('#%#//scriptlet(\'a\',').toBeTokenizedProperly(
             tokenizer,
             [
-                { fragment: '#%#', scopes: ['text.adblock', 'keyword.control.adblock'] },
-                { fragment: '//scriptlet(\'a\',', scopes: ['text.adblock', 'invalid.illegal'] },
+                { fragment: '#%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                { fragment: '//scriptlet(\'a\',', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'invalid.illegal'] },
             ],
         );
     });

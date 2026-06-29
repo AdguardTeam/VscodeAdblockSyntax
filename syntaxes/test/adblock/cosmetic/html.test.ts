@@ -20,7 +20,7 @@ beforeAll(async () => {
 /**
  * Below are scope definitions used in the tests.
  */
-const ROOT = ['text.adblock'];
+const ROOT = ['text.adblock', 'meta.cosmetic.adblock'];
 const INVALID = [...ROOT, 'invalid.illegal.adblock'];
 const SEPARATOR = [...ROOT, 'keyword.control.adblock'];
 const COMBINATOR = [...ROOT, 'keyword.operator.combinator.css'];
@@ -607,8 +607,7 @@ describe('HTML filtering rules', () => {
             {
                 actual: '$$',
                 expected: [
-                    { fragment: '$', scopes: SEPARATOR },
-                    { fragment: '$', scopes: ['text.adblock', 'invalid.illegal.adblock'] },
+                    { fragment: '$$', scopes: ROOT },
                 ],
             },
             {

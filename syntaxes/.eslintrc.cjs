@@ -10,4 +10,14 @@ module.exports = {
         // In this package we do not have real dependencies, all of them are dev dependencies
         'import/no-extraneous-dependencies': 'off',
     },
+    overrides: [
+        {
+            files: ['test/**/*.ts'],
+            rules: {
+                // Test files contain verbose scope array literals that naturally
+                // exceed the line length limit after adding category scopes.
+                'max-len': 'off',
+            },
+        },
+    ],
 };

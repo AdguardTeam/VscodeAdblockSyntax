@@ -23,14 +23,14 @@ describe('test comments', () => {
         expect('! this is a comment').toBeTokenizedProperly(
             tokenizer,
             [
-                { fragment: '! this is a comment', scopes: [BASE_SCOPE, 'comment.line.exclamation-sign'] },
+                { fragment: '! this is a comment', scopes: [BASE_SCOPE, 'meta.comment.adblock', 'comment.line.exclamation-sign'] },
             ],
         );
 
         expect('# this is a hashtag comment').toBeTokenizedProperly(
             tokenizer,
             [
-                { fragment: '# this is a hashtag comment', scopes: [BASE_SCOPE, 'comment.line.hashtag-sign'] },
+                { fragment: '# this is a hashtag comment', scopes: [BASE_SCOPE, 'meta.comment.adblock', 'comment.line.hashtag-sign'] },
             ],
         );
     });

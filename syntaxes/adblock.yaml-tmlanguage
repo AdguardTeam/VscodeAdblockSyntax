@@ -20,21 +20,75 @@ name: Adblock
 scopeName: text.adblock
 
 patterns:
-  - include: "#adblockAgent"
-  - include: "#preprocessor"
-  - include: "#comments"
-  - include: "#snippetRulesABP"
-  - include: "#cssRules"
-  - include: "#scriptletRules"
-  - include: "#scriptletRulesUBO"
-  - include: "#jsRules"
-  - include: "#contentRules"
-  - include: "#elemhideRules"
-  - include: "#basicRulesNoUrl"
-  - include: "#basicRulesRegex"
-  - include: "#basicRules"
+  - include: "#commentRules"
+  - include: "#cosmeticRules"
+  - include: "#networkRules"
 
 repository:
+  commentRules:
+    patterns:
+      # Comment family: agent headers, preprocessor directives, and plain comments.
+      # The begin lookahead matches a line starting with '!', or '#' that is NOT a
+      # cosmetic separator, or a full bracketed agent line. It never matches a
+      # cosmetic options prefix like [$path=/x]##... because the bracket form
+      # requires the line to end right after the closing bracket.
+      - begin: '^(?=!|#(?!@?(?:\$?\?|\$|%)?#)|\[[^\]]+\]\s*$)'
+        end: '$'
+        name: meta.comment.adblock
+        patterns:
+          - include: "#adblockAgent"
+          - include: "#preprocessor"
+          - include: "#comments"
+
+  cosmeticRules:
+    patterns:
+      # Exception cosmetic rules first (separator's second character is '@').
+      - begin: '^(?=[^\n]*(?:#@(?:\$?\?|\$|%)?#|\$@\$))'
+        end: '$'
+        name: meta.cosmetic.adblock meta.exception.adblock
+        patterns:
+          - include: "#cosmeticRuleCore"
+      # Blocking cosmetic rules (any cosmetic separator).
+      - begin: '^(?=[^\n]*(?:#@?(?:\$?\?|\$|%)?#|\$@?\$))'
+        end: '$'
+        name: meta.cosmetic.adblock
+        patterns:
+          - include: "#cosmeticRuleCore"
+
+  cosmeticRuleCore:
+    # Preserves the original relative ordering of cosmetic patterns so
+    # disambiguation (e.g. $$div as content rule before network) is unchanged.
+    patterns:
+      - include: "#snippetRulesABP"
+      - include: "#cssRules"
+      - include: "#scriptletRules"
+      - include: "#scriptletRulesUBO"
+      - include: "#jsRules"
+      - include: "#contentRules"
+      - include: "#elemhideRules"
+
+  networkRules:
+    patterns:
+      # Exception network rules first (line begins with '@@').
+      - begin: '^(?=@@)'
+        end: '$'
+        name: meta.network.adblock meta.exception.adblock
+        patterns:
+          - include: "#networkRuleCore"
+      # Blocking network rules: any non-blank line that reaches here. The \S guard
+      # keeps blank / whitespace-only lines uncategorized (FR-011).
+      - begin: '^(?=\s*\S)'
+        end: '$'
+        name: meta.network.adblock
+        patterns:
+          - include: "#networkRuleCore"
+
+  networkRuleCore:
+    patterns:
+      - include: "#basicRulesNoUrl"
+      - include: "#basicRulesRegex"
+      - include: "#basicRules"
+
   adblockAgent:
     patterns:
       - match: "^(\\[)([^\\]]+)(\\])\\s*$"
