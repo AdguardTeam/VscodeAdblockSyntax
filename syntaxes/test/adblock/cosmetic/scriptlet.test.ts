@@ -65,11 +65,13 @@ describe('scriptlet rules', () => {
             expect("#@%#//scriptlet('foo')").toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '#@%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
-                    { fragment: '//scriptlet', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'entity.name.function.adblock'] },
-                    { fragment: '(', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'punctuation.section.adblock'] },
-                    { fragment: "'foo'", scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'string.quoted.adblock'] },
-                    { fragment: ')', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'punctuation.section.adblock'] },
+                    { fragment: '#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                    { fragment: '@', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock', 'meta.exception.adblock'] },
+                    { fragment: '%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                    { fragment: '//scriptlet', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'entity.name.function.adblock'] },
+                    { fragment: '(', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'punctuation.section.adblock'] },
+                    { fragment: "'foo'", scopes: ['text.adblock', 'meta.cosmetic.adblock', 'string.quoted.adblock'] },
+                    { fragment: ')', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'punctuation.section.adblock'] },
                 ],
             );
         });
@@ -78,21 +80,25 @@ describe('scriptlet rules', () => {
             expect('#@%#//scriptlet()').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '#@%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
-                    { fragment: '//scriptlet', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'entity.name.function.adblock'] },
-                    { fragment: '(', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'punctuation.section.adblock'] },
-                    { fragment: ')', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'punctuation.section.adblock'] },
+                    { fragment: '#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                    { fragment: '@', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock', 'meta.exception.adblock'] },
+                    { fragment: '%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                    { fragment: '//scriptlet', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'entity.name.function.adblock'] },
+                    { fragment: '(', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'punctuation.section.adblock'] },
+                    { fragment: ')', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'punctuation.section.adblock'] },
                 ],
             );
 
             expect('#@%#//scriptlet( )').toBeTokenizedProperly(
                 tokenizer,
                 [
-                    { fragment: '#@%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
-                    { fragment: '//scriptlet', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'entity.name.function.adblock'] },
-                    { fragment: '(', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'punctuation.section.adblock'] },
-                    { fragment: ' ', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'entity.name.section.adblock.empty-scriptlet'] },
-                    { fragment: ')', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'punctuation.section.adblock'] },
+                    { fragment: '#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                    { fragment: '@', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock', 'meta.exception.adblock'] },
+                    { fragment: '%#', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                    { fragment: '//scriptlet', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'entity.name.function.adblock'] },
+                    { fragment: '(', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'punctuation.section.adblock'] },
+                    { fragment: ' ', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'entity.name.section.adblock.empty-scriptlet'] },
+                    { fragment: ')', scopes: ['text.adblock', 'meta.cosmetic.adblock', 'punctuation.section.adblock'] },
                 ],
             );
         });

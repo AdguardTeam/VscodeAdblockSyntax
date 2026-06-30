@@ -20,78 +20,25 @@ name: Adblock
 scopeName: text.adblock
 
 patterns:
-  - include: "#commentRules"
-  - include: "#cosmeticRules"
-  - include: "#networkRules"
+  - include: "#adblockAgent"
+  - include: "#preprocessor"
+  - include: "#comments"
+  - include: "#snippetRulesABP"
+  - include: "#cssRules"
+  - include: "#scriptletRules"
+  - include: "#scriptletRulesUBO"
+  - include: "#jsRules"
+  - include: "#contentRules"
+  - include: "#elemhideRules"
+  - include: "#basicRulesNoUrl"
+  - include: "#basicRulesRegex"
+  - include: "#basicRules"
 
 repository:
-  commentRules:
-    patterns:
-      # Comment family: agent headers, preprocessor directives, and plain comments.
-      # The begin lookahead matches a line starting with '!', or '#' that is NOT a
-      # cosmetic separator, or a full bracketed agent line. It never matches a
-      # cosmetic options prefix like [$path=/x]##... because the bracket form
-      # requires the line to end right after the closing bracket.
-      - begin: '^(?=!|#(?!@?(?:\$?\?|\$|%)?#)|\[[^\]]+\]\s*$)'
-        end: '$'
-        name: meta.comment.adblock
-        patterns:
-          - include: "#adblockAgent"
-          - include: "#preprocessor"
-          - include: "#comments"
-
-  cosmeticRules:
-    patterns:
-      # Exception cosmetic rules first (separator's second character is '@').
-      - begin: '^(?=[^\n]*(?:#@(?:\$?\?|\$|%)?#|\$@\$))'
-        end: '$'
-        name: meta.cosmetic.adblock meta.exception.adblock
-        patterns:
-          - include: "#cosmeticRuleCore"
-      # Blocking cosmetic rules (any cosmetic separator).
-      - begin: '^(?=[^\n]*(?:#@?(?:\$?\?|\$|%)?#|\$@?\$))'
-        end: '$'
-        name: meta.cosmetic.adblock
-        patterns:
-          - include: "#cosmeticRuleCore"
-
-  cosmeticRuleCore:
-    # Preserves the original relative ordering of cosmetic patterns so
-    # disambiguation (e.g. $$div as content rule before network) is unchanged.
-    patterns:
-      - include: "#snippetRulesABP"
-      - include: "#cssRules"
-      - include: "#scriptletRules"
-      - include: "#scriptletRulesUBO"
-      - include: "#jsRules"
-      - include: "#contentRules"
-      - include: "#elemhideRules"
-
-  networkRules:
-    patterns:
-      # Exception network rules first (line begins with '@@').
-      - begin: '^(?=@@)'
-        end: '$'
-        name: meta.network.adblock meta.exception.adblock
-        patterns:
-          - include: "#networkRuleCore"
-      # Blocking network rules: any non-blank line that reaches here. The \S guard
-      # keeps blank / whitespace-only lines uncategorized (FR-011).
-      - begin: '^(?=\s*\S)'
-        end: '$'
-        name: meta.network.adblock
-        patterns:
-          - include: "#networkRuleCore"
-
-  networkRuleCore:
-    patterns:
-      - include: "#basicRulesNoUrl"
-      - include: "#basicRulesRegex"
-      - include: "#basicRules"
-
   adblockAgent:
     patterns:
       - match: "^(\\[)([^\\]]+)(\\])\\s*$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: punctuation.definition.array.start.adblock.agent
@@ -126,6 +73,7 @@ repository:
   preprocessor:
     patterns:
       - match: "^(!#if)(\\s)(.*)$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: keyword.preprocessor.directive
@@ -157,6 +105,7 @@ repository:
               - name: invalid.illegal
                 match: ".*"
       - match: "^(!#include) (.*)$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: keyword.preprocessor.directive
@@ -164,18 +113,21 @@ repository:
             name: string.unquoted
       # TODO: handle leading and trailing whitespace in the beginning, and not for every rule type
       - match: "^(!#else)(\\s*)$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: keyword.preprocessor.directive
           "2":
             name: keyword.other.delimiter.whitespace
       - match: "^(!#endif)(\\s*)$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: keyword.preprocessor.directive
           "2":
             name: keyword.other.delimiter.whitespace
       - match: "^(!#safari_cb_affinity)(.*)$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: keyword.preprocessor.directive
@@ -188,6 +140,7 @@ repository:
               - name: invalid.illegal
                 match: ".*"
       - match: "^(!\\+) (.*)$"
+        name: meta.comment.adblock
         captures:
           "1":
             name: keyword.preprocessor.hint
@@ -201,13 +154,13 @@ repository:
               - name: keyword.control.characters
                 match: "(\\(|\\)|,)"
       - match: "^!#(?!#).+$"
-        name: invalid.illegal.preprocessor
+        name: meta.comment.adblock invalid.illegal.preprocessor
 
   comments:
     patterns:
-      - name: comment.line.exclamation-sign
+      - name: meta.comment.adblock comment.line.exclamation-sign
         match: "^!.*"
-      - name: comment.line.hashtag-sign
+      - name: meta.comment.adblock comment.line.hashtag-sign
         # It's important to distinguish between hashmark based comments and general cosmetic rules, so we need to
         # exclude valid cosmetic rule separators from the match. This way, for example ##.foo will not be incorrectly
         # marked as a comment.
@@ -216,6 +169,10 @@ repository:
 
   elemhideRules:
     patterns:
+      # Element hiding rules. The optional '@' inside the separator (e.g. '#@#',
+      # '#@?#') is captured separately and scoped as the exception marker.
+      # The domain group is pinned to the first '#' so a '#@#' substring inside
+      # the selector cannot be mistaken for the separator.
       - match: |-
           (?x)
             ^                                                # Start of the line
@@ -227,10 +184,11 @@ repository:
                 )+
               \]                                             #   Closing bracket
             )?
-            (.*?)                                            # Group 2. Domain list
-            (\#@?\??\#\^?)                                   # Group 3. Cosmetic rule separator
-            (.+)                                             # Group 4. CSS selector
+            ([^#]*?)                                         # Group 2. Domain list
+            (\#(@?)\??\#\^?)                                 # Group 3. Separator (Group 4. optional exception marker)
+            (.+)                                             # Group 5. CSS selector
             $                                                # End of the line
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -241,12 +199,17 @@ repository:
           "3":
             name: keyword.control.adblock
           "4":
+            name: meta.exception.adblock
+          "5":
             patterns:
               - include: "#cssSelector"
 
   snippetRulesABP:
     patterns:
-      - match: "^(.*?)(#@?\\$#)([^{]+)$"
+      # ABP snippet rules. The optional '@' in the separator ('#$#' / '#@$#')
+      # is captured separately and scoped as the exception marker.
+      - match: "^([^#]*?)(#(@?)\\$#)([^{]+)$"
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -254,11 +217,16 @@ repository:
           "2":
             name: keyword.control.adblock
           "3":
+            name: meta.exception.adblock
+          "4":
             name: constant.character.snippet.adblock
 
   cssRules:
     patterns:
-      - match: "^(\\[.+?\\])?(.*?)(#@?\\$\\??#)(.+)$"
+      # CSS injection rules. The optional '@' in the separator ('#$#' / '#$?#' /
+      # '#@$#' / '#@$?#') is captured separately and scoped as the exception marker.
+      - match: "^(\\[.+?\\])?([^#]*?)(#(@?)\\$\\??#)(.+)$"
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -269,11 +237,17 @@ repository:
           "3":
             name: keyword.control.adblock
           "4":
+            name: meta.exception.adblock
+          "5":
             patterns:
               - include: "#cssStyle"
 
   contentRules:
     patterns:
+      # HTML filtering rules. The optional '@' in the marker ('$$' / '$@$') is
+      # captured separately and scoped as the exception marker. The domain group
+      # is pinned to the first '$' so a '$@$' substring inside the selector
+      # cannot be mistaken for the marker.
       - match: |-
           (?x)
             ^                                                # Start of the line
@@ -285,10 +259,11 @@ repository:
                 )+
               \]                                             #   Closing bracket
             )?
-            (.*?)                                            # Group 2. Domain list
-            (\$@?\$)                                         # Group 3. Cosmetic rule marker
-            (.+)                                             # Group 4. CSS selector
+            ([^$]*?)                                         # Group 2. Domain list
+            (\$(@?)\$)                                       # Group 3. Marker (Group 4. optional exception marker)
+            (.+)                                             # Group 5. CSS selector
             $                                                # End of the line
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -299,6 +274,8 @@ repository:
           "3":
             name: keyword.control.adblock
           "4":
+            name: meta.exception.adblock
+          "5":
             patterns:
               - include: "#htmlFilteringCssSelector"
 
@@ -321,13 +298,14 @@ repository:
               \]                                             #   Closing bracket
             )?
             (.*?)                                            # Group 2. Domain list
-            (\#@%\#)                                         # Group 3. Cosmetic rule marker
-            (\/\/scriptlet)                                  # Group 4. Scriptlet marker
-            (\()                                             # Group 5. Opening parenthesis
-            (.*)?                                            # Group 6. Arguments
-            (\))                                             # Group 7. Closing parenthesis
+            (\#(@)%\#)                                       # Group 3. Marker (Group 4. exception marker)
+            (\/\/scriptlet)                                  # Group 5. Scriptlet marker
+            (\()                                             # Group 6. Opening parenthesis
+            (.*)?                                            # Group 7. Arguments
+            (\))                                             # Group 8. Closing parenthesis
             \s*                                              # Optional trailing whitespace
             $                                                # End of the line
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -338,14 +316,16 @@ repository:
           "3":
             name: keyword.control.adblock
           "4":
-            name: entity.name.function.adblock
+            name: meta.exception.adblock
           "5":
-            name: punctuation.section.adblock
+            name: entity.name.function.adblock
           "6":
+            name: punctuation.section.adblock
+          "7":
             patterns:
               - include: "#emptyScriptletFunction"
               - include: "#scriptletFunction"
-          "7":
+          "8":
             name: punctuation.section.adblock
 
   blockingScriptletRules:
@@ -369,6 +349,7 @@ repository:
             (\))                                             # Group 7. Closing parenthesis
             \s*                                              # Optional trailing whitespace
             $                                                # End of the line
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -390,7 +371,10 @@ repository:
 
   scriptletRulesUBO:
     patterns:
-      - match: "^(.*?)(#@?#)(\\+js)(\\()(.+)(\\)\\s*)$"
+      # uBO scriptlet rules. The optional '@' in the separator ('##' / '#@#') is
+      # captured separately and scoped as the exception marker.
+      - match: "^([^#]*?)(#(@?)#)(\\+js)(\\()(.+)(\\)\\s*)$"
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -398,13 +382,15 @@ repository:
           "2":
             name: keyword.control.adblock
           "3":
-            name: entity.name.function.adblock
+            name: meta.exception.adblock
           "4":
-            name: punctuation.section.adblock
+            name: entity.name.function.adblock
           "5":
+            name: punctuation.section.adblock
+          "6":
             patterns:
               - include: "#scriptletFunctionUBO"
-          "6":
+          "7":
             name: punctuation.section.adblock
 
   jsRules:
@@ -415,8 +401,12 @@ repository:
     # See https://github.com/github-linguist/linguist/discussions/6020#discussioncomment-3397226
     patterns:
       # Do not confuse with #%#//scriptlet, so we use a negative lookahead
-      # to make sure the separator is not followed by //scriptlet
-      - begin: ^(\[(?:\/(?:\\.|[^\/\\])*\/[a-z]*|[^\]])+\])?(.*?)(#@?%#(?!\/\/scriptlet))
+      # to make sure the separator is not followed by //scriptlet.
+      # JS injection rules (separator '#%#' / '#@%#'). The optional '@' in the
+      # separator is captured separately and scoped as the exception marker.
+      # The domain group is pinned to the first '#' so a '#@%#' substring later
+      # in the JS body cannot be mistaken for the separator.
+      - begin: ^(\[(?:\/(?:\\.|[^\/\\])*\/[a-z]*|[^\]])+\])?([^#]*?)(#(@?)%#(?!\/\/scriptlet))
         beginCaptures:
           "1":
             patterns:
@@ -426,13 +416,17 @@ repository:
               - include: "#domainListCommaSeparated"
           "3":
             name: keyword.control.adblock
+          "4":
+            name: meta.exception.adblock
         end: "$"
+        name: meta.cosmetic.adblock
         contentName: source.js
         patterns:
           - include: source.js
       # Mark any other JS inject as invalid, typically unclosed / invalid
-      # scriptlet calls
-      - match: "^(.*?)(#@?%#)(.+)$"
+      # scriptlet calls (separator '#%#' / '#@%#').
+      - match: "^([^#]*?)(#(@?)%#)(.+)$"
+        name: meta.cosmetic.adblock
         captures:
           "1":
             patterns:
@@ -440,11 +434,14 @@ repository:
           "2":
             name: keyword.control.adblock
           "3":
+            name: meta.exception.adblock
+          "4":
             name: invalid.illegal
 
   basicRulesNoUrl:
     patterns:
       - match: "^(\\$)(.+)$"
+        name: meta.network.adblock
         captures:
           "1":
             name: keyword.control.adblock
@@ -455,6 +452,7 @@ repository:
   basicRulesRegex:
     patterns:
       - match: "^(\\/[^\\/\\\\]*(?:\\\\.[^\\/\\\\]*)*\\/[dgimsuy]*)(?:(\\$)(.+))?$"
+        name: meta.network.adblock
         captures:
           "1":
             patterns:
@@ -467,9 +465,13 @@ repository:
 
   basicRules:
     patterns:
+      # Exception (allowlist) network rules: the line begins with '@@'. The
+      # '@@' is consumed by Group 1 (urlPattern) exactly as in the blocking
+      # variant, so token boundaries and leaf scopes are unchanged.
       - match: |-
           (?x)
             ^
+            (?=@@)                                # Exception marker: line starts with @@
             # Group 1. URL pattern (note: ? is used to make it non-greedy)
             (.*?)
             (?:
@@ -479,6 +481,30 @@ repository:
               (.*)
             )?
             $
+        name: meta.network.adblock meta.exception.adblock
+        captures:
+          "1":
+            patterns:
+              - include: "#urlPattern"
+          "2":
+            name: keyword.control.adblock
+          "3":
+            patterns:
+              - include: "#modifierList"
+      - match: |-
+          (?x)
+            ^
+            (?=\s*\S)                             # Skip blank / whitespace-only lines (kept uncategorized)
+            # Group 1. URL pattern (note: ? is used to make it non-greedy)
+            (.*?)
+            (?:
+              # Group 2. Network rule separator
+              (\$)(?=\s*~?\s*[\w-]+\s*(?:[=,]|$))
+              # Group 3. Network rule modifiers
+              (.*)
+            )?
+            $
+        name: meta.network.adblock
         captures:
           "1":
             patterns:

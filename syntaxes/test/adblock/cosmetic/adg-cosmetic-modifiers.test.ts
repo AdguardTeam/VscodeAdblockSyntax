@@ -107,12 +107,12 @@ describe('cosmetic rules modifiers', () => {
         test('different rule types with modifiers', () => {
             const tokens1 = tokenizer('[$path=/test]#@#banner');
             expect(tokens1.slice(0, 6)).toEqual([
-                { startIndex: 0, endIndex: 1, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
-                { startIndex: 1, endIndex: 2, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
-                { startIndex: 2, endIndex: 6, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.other.adblock'] },
-                { startIndex: 6, endIndex: 7, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.operator.adblock'] },
-                { startIndex: 7, endIndex: 12, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'string.unquoted.adblock'] },
-                { startIndex: 12, endIndex: 13, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'meta.exception.adblock', 'keyword.control.adblock'] },
+                { startIndex: 0, endIndex: 1, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                { startIndex: 1, endIndex: 2, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
+                { startIndex: 2, endIndex: 6, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.other.adblock'] },
+                { startIndex: 6, endIndex: 7, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.operator.adblock'] },
+                { startIndex: 7, endIndex: 12, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'string.unquoted.adblock'] },
+                { startIndex: 12, endIndex: 13, scopes: ['text.adblock', 'meta.cosmetic.adblock', 'keyword.control.adblock'] },
             ]);
 
             const tokens2 = tokenizer('[$path=/test]#?#.banner');

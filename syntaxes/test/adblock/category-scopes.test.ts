@@ -47,6 +47,18 @@ const noTokenHasScope = (source: string, scope: string): boolean => {
     return tokenizer(source).every(({ scopes }) => !scopes.includes(scope));
 };
 
+/**
+ * Returns true if at least one token of the source carries the given scope.
+ *
+ * @param source Source line to tokenize.
+ * @param scope Scope that must be present on some token.
+ *
+ * @returns Whether the scope is present on any token.
+ */
+const anyTokenHasScope = (source: string, scope: string): boolean => {
+    return tokenizer(source).some(({ scopes }) => scopes.includes(scope));
+};
+
 describe('rule category scopes', () => {
     describe('comment category', () => {
         test.each([
@@ -112,7 +124,7 @@ describe('exception flag', () => {
             expect(noTokenHasScope(blocking, META_EXCEPTION_SCOPE)).toBe(true);
             expect(everyTokenHasScope(blocking, META_NETWORK_SCOPE)).toBe(true);
 
-            expect(everyTokenHasScope(exception, META_EXCEPTION_SCOPE)).toBe(true);
+            expect(anyTokenHasScope(exception, META_EXCEPTION_SCOPE)).toBe(true);
             expect(everyTokenHasScope(exception, META_NETWORK_SCOPE)).toBe(true);
         });
     });
@@ -129,8 +141,24 @@ describe('exception flag', () => {
             expect(noTokenHasScope(blocking, META_EXCEPTION_SCOPE)).toBe(true);
             expect(everyTokenHasScope(blocking, META_COSMETIC_SCOPE)).toBe(true);
 
-            expect(everyTokenHasScope(exception, META_EXCEPTION_SCOPE)).toBe(true);
+            expect(anyTokenHasScope(exception, META_EXCEPTION_SCOPE)).toBe(true);
             expect(everyTokenHasScope(exception, META_COSMETIC_SCOPE)).toBe(true);
+        });
+    });
+
+    describe('exception-looking substrings do not trigger the flag', () => {
+        // A separator-looking substring inside a selector, value, or argument
+        // must NOT be treated as the rule separator. Only the first real
+        // separator on the line determines the exception flag.
+        test.each([
+            'example.com##a[href="#@#"]',
+            'example.com#$#.x { content: "$@$"; }',
+            'example.com#%#//scriptlet(\'x\', \'bar#@#baz\')',
+            'example.com##+js(set, \'x#@#y\', 1)',
+            'example.com$$script[tag-content="$@$"]',
+        ])('blocking rule %j is not flagged as an exception', (rule) => {
+            expect(noTokenHasScope(rule, META_EXCEPTION_SCOPE)).toBe(true);
+            expect(everyTokenHasScope(rule, META_COSMETIC_SCOPE)).toBe(true);
         });
     });
 });

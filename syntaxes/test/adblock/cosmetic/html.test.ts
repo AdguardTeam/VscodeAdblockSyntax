@@ -607,7 +607,8 @@ describe('HTML filtering rules', () => {
             {
                 actual: '$$',
                 expected: [
-                    { fragment: '$$', scopes: ROOT },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'keyword.control.adblock'] },
+                    { fragment: '$', scopes: ['text.adblock', 'meta.network.adblock', 'invalid.illegal.adblock'] },
                 ],
             },
             {
