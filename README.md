@@ -18,7 +18,7 @@
 <img src="https://cdn.adguard.com/website/github.com/AGLint/ab_logo_128x128.png" width="14px" alt="AdBlock"> AdBlock・
 <img src="https://cdn.adguard.com/website/github.com/AGLint/abp_logo_128x128.png" width="14px" alt="Adblock Plus"> Adblock Plus
 
-[Install][marketplace] • [Documentation](#features) • [Report Issue][issues] • [Contributing][contributing]
+[Install][marketplace] • [Documentation](#features) • [Report Issue][issues] • [Development Guide][development]
 
 </div>
 
@@ -152,7 +152,7 @@ like `[Adblock Plus 2.0]` or `[AdGuard]`.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guide][contributing] for details on how to get started.
+Contributions are welcome! Please read our [Development Guide][development] for details on how to get started.
 
 ## 📝 License
 
@@ -209,7 +209,7 @@ Made with ❤️ by [AdGuard][adguard]
 [badge-license]: https://img.shields.io/github/license/AdguardTeam/VscodeAdblockSyntax
 [badge-openvsx]: https://img.shields.io/open-vsx/v/adguard/adblock?label=Open%20VSX
 [badge-vscode]: https://img.shields.io/visual-studio-marketplace/v/adguard.adblock?label=VSCode%20Marketplace
-[contributing]: CONTRIBUTING.md
+[development]: DEVELOPMENT.md
 [discussions]: https://github.com/AdguardTeam/VscodeAdblockSyntax/discussions
 [feature-request]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/new
 [issues]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues
