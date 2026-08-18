@@ -1,0 +1,174 @@
+name: Publish release
+
+description: >-
+  Tags the release commit, builds and packages the .vsix, publishes to
+  VS Marketplace and Open VSX, mirrors to the public repo, creates a
+  GitHub Release, and notifies Slack.
+
+  Note: ext-shared-actions/publish-release.yml is npm-only and is not used
+  here. This workflow reuses org building blocks (tag-from-changelog,
+  mirror-and-release, slack) with a local vsce/ovsx publish step.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Ref to publish manually
+        required: false
+        type: string
+
+# Serialize release runs: a manual dispatch must not race the automatic
+# post-merge run during tagging, publishing, and mirroring.
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/tag-from-changelog.yml@master
+    with:
+      ref: ${{ inputs.ref || github.event.pull_request.merge_commit_sha || github.ref_name }}
+      team: extensions
+    permissions:
+      contents: write
+
+  build:
+    name: Test and package
+    needs: tag
+    runs-on: team-extensions
+    outputs:
+      marketplace_prerelease: ${{ steps.flags.outputs.marketplace_prerelease }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.merge_commit_sha || github.ref_name }}
+
+      - name: Inject version into package.json
+        run: npm pkg set version="${{ needs.tag.outputs.version }}"
+
+      # Marketplace / Open VSX only accept major.minor.patch (no -alpha/-beta).
+      # This project uses odd minor versions as the pre-release track (2.1.x),
+      # matching the legacy Bamboo prerelease plans. Also honor semver
+      # prerelease identifiers if a future release uses them.
+      - name: Detect marketplace pre-release
+        id: flags
+        run: |
+          VERSION="${{ needs.tag.outputs.version }}"
+          SEMVER_PRE="${{ needs.tag.outputs.prerelease }}"
+          MINOR="$(echo "${VERSION}" | cut -d. -f2)"
+          MARKETPLACE_PRE=false
+          if [ "${SEMVER_PRE}" = "true" ]; then
+            MARKETPLACE_PRE=true
+          elif [ -n "${MINOR}" ] && [ $((MINOR % 2)) -eq 1 ]; then
+            MARKETPLACE_PRE=true
+          fi
+          echo "marketplace_prerelease=${MARKETPLACE_PRE}" >> "${GITHUB_OUTPUT}"
+          echo "Version ${VERSION}: marketplace pre-release=${MARKETPLACE_PRE}"
+
+      - name: Lint, test, and package via Docker
+        run: |
+          DOCKER_BUILDKIT=1 docker build --progress plain \
+            --target build-output \
+            --build-arg VERSION="${{ needs.tag.outputs.version }}" \
+            --build-arg PRE_RELEASE="${{ steps.flags.outputs.marketplace_prerelease }}" \
+            --output ./artifacts \
+            .
+
+      - name: Upload vsix package
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-adblock-vsix
+          path: |
+            artifacts/vscode-adblock.vsix
+            artifacts/adblock.plist
+
+  publish-marketplaces:
+    name: Publish to VS Marketplace and Open VSX
+    needs: [tag, build]
+    runs-on: team-extensions
+    # VS Marketplace: OIDC trusted publishing (`vsce publish --oidc`) — no PAT.
+    # Open VSX: still PAT-only (`OVSX_PAT` secret) — see DEPLOYMENT.md.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.merge_commit_sha || github.ref_name }}
+
+      - name: Download vsix artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: vscode-adblock-vsix
+          path: artifacts
+
+      - name: Install dependencies (publish CLIs)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Publish to Visual Studio Marketplace (OIDC)
+        run: |
+          PRE_ARGS=()
+          if [ "${{ needs.build.outputs.marketplace_prerelease }}" = "true" ]; then
+            PRE_ARGS+=(--pre-release)
+          fi
+          # Trusted publishing: configure the publisher policy on the Marketplace
+          # for this repo + workflow, then:
+          # https://github.com/microsoft/vscode-vsce#trusted-publishing
+          pnpm exec vsce publish --oidc --no-dependencies "${PRE_ARGS[@]}" \
+            -i artifacts/vscode-adblock.vsix
+
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "${OVSX_PAT}" ]; then
+            echo "OVSX_PAT secret is not set" >&2
+            exit 1
+          fi
+          PRE_ARGS=()
+          if [ "${{ needs.build.outputs.marketplace_prerelease }}" = "true" ]; then
+            PRE_ARGS+=(--pre-release)
+          fi
+          # Open VSX has no OIDC/trusted-publishing equivalent yet.
+          # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
+          pnpm exec ovsx publish artifacts/vscode-adblock.vsix \
+            -p "${OVSX_PAT}" \
+            "${PRE_ARGS[@]}"
+
+  mirror-and-release:
+    needs: [tag, build, publish-marketplaces]
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/mirror-and-release.yml@master
+    with:
+      team: extensions
+      target_repo: AdguardTeam/VscodeAdblockSyntax
+      tag: ${{ needs.tag.outputs.tag }}
+      changelog: ${{ needs.tag.outputs.changelog }}
+      artifact_name: vscode-adblock-vsix
+      # Mark the GitHub Release as a prerelease for odd-minor / semver pre tags.
+      prerelease: ${{ needs.build.outputs.marketplace_prerelease == 'true' }}
+    secrets: inherit
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+
+  notify:
+    name: Notify
+    needs: [tag, mirror-and-release]
+    if: needs.mirror-and-release.result == 'success'
+    runs-on: team-extensions
+    steps:
+      - name: Send Slack notification
+        uses: AdGuardSoftwareLimited/actions/actions/slack@master
+        with:
+          channel: '#adguard-extension-vcs'
+          message: >-
+            :white_check_mark: *adguard.adblock* *v${{ needs.tag.outputs.version }}*
+            published to VS Marketplace / Open VSX —
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|view run>
+          color: good

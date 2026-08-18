@@ -93,7 +93,9 @@ It is published to the VSCode Marketplace and Open VSX as `adguard.adblock`.
 ├── tools/                          # Repo build/utility scripts — see tools/AGENTS.md
 ├── test/static/                    # Static fixtures (sample rules, aglint test workspace)
 ├── icons/                          # Extension icons
-└── bamboo-specs/                   # CI/CD pipeline configuration
+├── Dockerfile                      # Multi-stage CI image (test-output / build-output .vsix)
+├── DEPLOYMENT.md                   # Release pipeline, secrets, Docker targets
+└── .github/workflows/              # CI, prepare-release, publish-release, mirror
 ```
 
 Each package has its own `AGENTS.md` with package-specific structure and
@@ -112,6 +114,13 @@ Run from the repository root unless noted. The package manager is pnpm v10.
 - **Clean**: `pnpm clean` (removes generated files / `node_modules`).
 - **Package extension**: `pnpm package` (produces `out/vscode-adblock.vsix`);
   `pnpm package:pre` for a pre-release build.
+- **CI in Docker**: `docker build --target test-output .` (typecheck, lint,
+  test, build); `docker build --target build-output --build-arg VERSION=… --output ./artifacts .`
+  for the `.vsix`. See [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Root `package.json` has **no `version` field** — CI injects it from
+`CHANGELOG.md` before packaging (`vsce` requires a version). Local packages
+need `npm pkg set version=…` or the Docker `VERSION` build arg.
 
 Per-package commands use workspace filters, e.g.:
 
@@ -321,10 +330,11 @@ for AI agents that consume this documentation as context.
 
 ### Other
 
-- **Versioning**: the extension uses an odd/even minor scheme — even minor
-  versions are releases, odd minor versions are pre-releases (see
-  [DEVELOPMENT.md](DEVELOPMENT.md)). Marketplaces accept only
-  `major.minor.patch`.
+- **Versioning**: root `package.json` has no committed `version` (CI injects
+  it from `CHANGELOG.md`). The extension uses an odd/even minor scheme — even
+  minor versions are releases, odd minor versions are Marketplace pre-releases
+  (see [DEVELOPMENT.md](DEVELOPMENT.md) and [DEPLOYMENT.md](DEPLOYMENT.md)).
+  Marketplaces accept only `major.minor.patch`.
 - **Git hooks**: Husky runs linters and tests on commit; do not bypass hooks
   with `--no-verify`.
 

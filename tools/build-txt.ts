@@ -17,12 +17,15 @@ const pkgFileLocation = path.join(__dirname, UPPER_LEVEL, PKG_FILE_NAME);
 // Read package.json
 const pkg = JSON.parse(fs.readFileSync(pkgFileLocation, 'utf-8'));
 
-if (!pkg.version) {
-    throw new Error('Missing required field "version" in package.json');
-}
+// package.json intentionally has no "version" field in the repository —
+// CI injects the release version before packaging. Local/dev builds fall
+// back to a placeholder so this helper still works without CI injection.
+const pkgVersion = typeof pkg.version === 'string' && pkg.version.length > 0
+    ? pkg.version
+    : '0.0.0-dev';
 
 const main = (): void => {
-    const content = `version=${pkg.version}`;
+    const content = `version=${pkgVersion}`;
 
     // Create the output folder if it doesn't exist
     if (!fs.existsSync(outputFolderLocation)) {

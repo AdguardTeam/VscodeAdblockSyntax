@@ -28,7 +28,8 @@ A collection of small, standalone, dependency-free Node.js scripts used by the
 repo's build and maintenance workflows:
 
 - [build-txt.ts](build-txt.ts) — writes the extension version from the root
-    `package.json` into `out/build.txt` (used by CI/packaging).
+    `package.json` into `out/build.txt` (falls back to `0.0.0-dev` when no
+    version is injected).
 - [clean.ts](clean.ts) — removes `node_modules` from every workspace package.
 
 The scripts are run via `tsx` and rely only on Node.js built-ins and the `pnpm`

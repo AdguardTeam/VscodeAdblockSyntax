@@ -32,7 +32,8 @@ A collection of small, standalone Node.js scripts used by the repo's build and
 maintenance workflows. Currently:
 
 - [build-txt.ts](build-txt.ts) — writes the extension version from the root
-  `package.json` into `out/build.txt` (used by CI/packaging).
+  `package.json` into `out/build.txt` (falls back to `0.0.0-dev` when CI has
+  not injected a version).
 - [clean.ts](clean.ts) — dependency-free cleanup that removes `node_modules`
   from every workspace package.
 
@@ -90,8 +91,9 @@ Design as run-and-exit command-line scripts:
   Exit non-zero on failure (e.g. [clean.ts](clean.ts) calls `process.exit(1)` on
   error).
 - Use stdout for normal progress output and stderr for diagnostics and errors.
-- Fail fast with clear messages: validate required inputs early (e.g.
-  [build-txt.ts](build-txt.ts) throws if `package.json` has no `version`).
+- Fail fast with clear messages: validate required inputs early. Prefer safe
+  defaults for optional metadata (e.g. [build-txt.ts](build-txt.ts) falls back
+  to `0.0.0-dev` when `package.json` has no `version`).
 - Keep startup fast and dependencies minimal — prefer Node.js built-ins so
   cleanup-style scripts can run even when package `node_modules` are absent.
 

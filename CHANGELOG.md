@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
-## Unreleased
+## [Unreleased]
 
 ### Changed
 
@@ -33,9 +33,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#140]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/140
 [#155]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/155
-[2.1.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/2.1.3...2.1.4
 
-## [2.1.3] (prerelease) - 2025-12-15
+## [2.1.3] - 2025-12-15
 
 ### Changed
 
@@ -45,9 +44,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 > **Note:** Starting from v2.1.0, we follow an odd/even versioning scheme for pre-releases.
 > Version 2.1.x will be the pre-release track, and 2.2.0 will be the next stable release.
 
-[2.1.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/2.0.4...2.1.3
 
-## [2.0.4] (prerelease) - 2025-11-28
+## [2.0.4] - 2025-11-28
 
 ### Changed
 
@@ -57,9 +55,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Loading AGLint on Windows.
 
-[2.0.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/2.0.3...2.0.4
 
-## [2.0.3] (prerelease) - 2025-11-28
+## [2.0.3] - 2025-11-28
 
 ### Added
 
@@ -81,14 +78,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
   This removed `useExternalAglintPackages` setting.
 - `packageManager` setting. It is now detected automatically.
 
-[2.0.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/1.1.17...2.0.3
 [#112]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/112
 [#117]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/117
 [#126]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/126
 [#127]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/127
 [#129]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/129
 
-## 1.1.17 - 2024-05-05
+## [1.1.17] - 2024-05-05
 
 ### Added
 
@@ -100,7 +96,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#149]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/149
 
-## 1.1.16 - 2025-03-31
+## [1.1.16] - 2025-03-31
 
 ### Added
 
@@ -112,13 +108,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#147]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/147
 
-## 1.1.15 - 2024-12-20
+## [1.1.15] - 2024-12-20
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.1.3.
 
-## 1.1.14 - 2024-09-21
+## [1.1.14] - 2024-09-21
 
 ### Added
 
@@ -130,19 +126,19 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#138]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/138
 
-## 1.1.13 - 2024-09-20
+## [1.1.13] - 2024-09-20
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.1.0.
 
-## 1.1.12 - 2024-09-04
+## [1.1.12] - 2024-09-04
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.0.10.
 
-## 1.1.11 - 2024-08-23
+## [1.1.11] - 2024-08-23
 
 ### Added
 
@@ -150,13 +146,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [FiltersCompiler#226]: https://github.com/AdguardTeam/FiltersCompiler/issues/226
 
-## 1.1.10 - 2024-04-26
+## [1.1.10] - 2024-04-26
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.0.9.
 
-## 1.1.8 - 2024-04-03
+## [1.1.8] - 2024-04-03
 
 ### Fixed
 
@@ -164,7 +160,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#132]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/132
 
-## 1.1.7 - 2024-01-10
+## [1.1.7] - 2024-01-10
 
 ### Added
 
@@ -178,7 +174,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#122]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/122
 [#123]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/123
 
-## 1.1.6 - 2024-01-04
+## [1.1.6] - 2024-01-04
 
 ### Fixed
 
@@ -186,7 +182,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#113]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/113
 
-## 1.1.5 - 2023-11-10
+## [1.1.5] - 2023-11-10
 
 ### Added
 
@@ -205,7 +201,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#102]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/102
 [#119]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/119
 
-## 1.1.3 - 2023-11-08
+## [1.1.3] - 2023-11-08
 
 ### Added
 
@@ -229,20 +225,20 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#114]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/114
 [#115]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/115
 
-## 1.1.2 - 2023-09-07
+## [1.1.2] - 2023-09-07
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.0.5.
 
-## 1.1.1 - 2023-08-30
+## [1.1.1] - 2023-08-30
 
 ### Changed
 
 - Updated integrated [AGLint] to v2.0.4.
 
 
-## 1.1.0 - 2023-08-14
+## [1.1.0] - 2023-08-14
 
 ### Added
 
@@ -274,7 +270,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#107]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/107
 [#108]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/108
 
-## 1.0.1 - 2023-04-25
+## [1.0.1] - 2023-04-25
 
 ### Added
 
@@ -295,7 +291,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#56]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/56
 [#59]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/59
 
-## 0.0.28 - 2022-11-11
+## [0.0.28] - 2022-11-11
 
 ### Added
 
@@ -314,7 +310,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#53]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/53
 [#54]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/54
 
-## 0.0.27 - 2022-08-15
+## [0.0.27] - 2022-08-15
 
 ### Added
 
@@ -327,7 +323,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#25]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/25
 [#49]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/49
 
-## 0.0.26 - 2022-05-29
+## [0.0.26] - 2022-05-29
 
 ### Added
 
@@ -335,7 +331,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#47]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/47
 
-## 0.0.25 - 2021-11-11
+## [0.0.25] - 2021-11-11
 
 ### Added
 
@@ -343,7 +339,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#46]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/46
 
-## 0.0.23 - 2021-05-31
+## [0.0.23] - 2021-05-31
 
 ### Fixed
 
@@ -351,7 +347,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#44]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/44
 
-## 0.0.22 - 2021-05-30
+## [0.0.22] - 2021-05-30
 
 ### Added
 
@@ -376,13 +372,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#42]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/42
 [#43]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/43
 
-## 0.0.21 - 2020-10-05
+## [0.0.21] - 2020-10-05
 
 ### Added
 
 - Support for `$denyallow` and `$redirect-rule` modifiers.
 
-## 0.0.20 - 2020-10-05
+## [0.0.20] - 2020-10-05
 
 ### Added
 
@@ -400,7 +396,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#34]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/34
 [#35]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/35
 
-## 0.0.19 - 2019-05-26
+## [0.0.19] - 2019-05-26
 
 ### Added
 
@@ -415,13 +411,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#28]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/28
 [#29]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/29
 
-## 0.0.18 - 2019-05-17
+## [0.0.18] - 2019-05-17
 
 ### Fixed
 
 - Domains with `-` are marked as invalid [#27].
 
-## 0.0.16 - 2019-05-16
+## [0.0.16] - 2019-05-16
 
 ### Changed
 
@@ -437,7 +433,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#26]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/26
 [#27]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/27
 
-## 0.0.15 - 2019-04-06
+## [0.0.15] - 2019-04-06
 
 ### Added
 
@@ -450,7 +446,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#14]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/14
 [#18]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/18
 
-## 0.0.14 - 2019-04-06
+## [0.0.14] - 2019-04-06
 
 ### Added
 
@@ -464,13 +460,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#19]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/19
 [#20]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/20
 
-## 0.0.12 - 2018-10-18
+## [0.0.12] - 2018-10-18
 
 ### Added
 
 - Hints and pre-processor syntax.
 
-## 0.0.11 - 2018-08-30
+## [0.0.11] - 2018-08-30
 
 ### Fixed
 
@@ -478,7 +474,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#13]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/13
 
-## 0.0.9 - 2018-08-30
+## [0.0.9] - 2018-08-30
 
 ### Added
 
@@ -493,7 +489,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#11]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/11
 [#12]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/12
 
-## 0.0.8 - 2018-01-16
+## [0.0.8] - 2018-01-16
 
 ### Added
 
@@ -508,26 +504,26 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#6]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/6
 [#8]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/8
 
-## 0.0.6 - 2018-01-15
+## [0.0.6] - 2018-01-15
 
 ### Changed
 
 - Improve extension's description & meta data.
 
-## 0.0.5 - 2017-12-29
+## [0.0.5] - 2017-12-29
 
 ### Fixed
 
 - `punycode` domains handling.
 
-## 0.0.4 - 2017-12-29
+## [0.0.4] - 2017-12-29
 
 ### Fixed
 
 - CSS selector regular expression.
 - CSS rules detection.
 
-## 0.0.2 - 2017-12-29
+## [0.0.2] - 2017-12-29
 
 ### Fixed
 
@@ -536,10 +532,55 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [#1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/1
 
-## 0.0.1 - 2017-12-29
+## [0.0.1] - 2017-12-29
 
 ### Added
 
 - Initial release
 
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
+
+[Unreleased]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.1.4...HEAD
+[2.1.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.1.3...v2.1.4
+[2.1.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.0.4...v2.1.3
+[2.0.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.0.3...v2.0.4
+[2.0.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.17...v2.0.3
+[1.1.17]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.16...v1.1.17
+[1.1.16]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.15...v1.1.16
+[1.1.15]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.14...v1.1.15
+[1.1.14]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.13...v1.1.14
+[1.1.13]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.12...v1.1.13
+[1.1.12]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.11...v1.1.12
+[1.1.11]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.10...v1.1.11
+[1.1.10]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.8...v1.1.10
+[1.1.8]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.7...v1.1.8
+[1.1.7]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.6...v1.1.7
+[1.1.6]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.5...v1.1.6
+[1.1.5]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.3...v1.1.5
+[1.1.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.2...v1.1.3
+[1.1.2]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.28...v1.0.1
+[0.0.28]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.27...v0.0.28
+[0.0.27]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.26...v0.0.27
+[0.0.26]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.25...v0.0.26
+[0.0.25]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.23...v0.0.25
+[0.0.23]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.22...v0.0.23
+[0.0.22]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.21...v0.0.22
+[0.0.21]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.20...v0.0.21
+[0.0.20]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.19...v0.0.20
+[0.0.19]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.18...v0.0.19
+[0.0.18]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.16...v0.0.18
+[0.0.16]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.15...v0.0.16
+[0.0.15]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.14...v0.0.15
+[0.0.14]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.12...v0.0.14
+[0.0.12]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.11...v0.0.12
+[0.0.11]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.9...v0.0.11
+[0.0.9]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.8...v0.0.9
+[0.0.8]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.6...v0.0.8
+[0.0.6]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.2...v0.0.4
+[0.0.2]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/AdguardTeam/VscodeAdblockSyntax/releases/tag/v0.0.1
