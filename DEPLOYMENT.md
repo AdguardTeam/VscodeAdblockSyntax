@@ -77,17 +77,27 @@ with `cancel-in-progress: false` to serialize releases.
 
 Runtime extension code needs no CI-specific environment variables.
 
-Publish uses long-lived PATs (not Marketplace OIDC):
+Publish still uses long-lived marketplace PATs (`vsce` / `ovsx` do not use
+Marketplace OIDC here). The PATs are **not** GitHub Actions secrets — CI
+loads them from Vault via GitHub OIDC (JWT):
 
-- **`VSCE_PAT`** — Azure DevOps PAT with Marketplace publish scope for the
-  `adguard` publisher (`vsce publish --pat`).
-- **`OVSX_PAT`** — Open VSX personal access token (`ovsx publish -p`).
+| Item | Value |
+| --- | --- |
+| Vault URL | `vars.VAULT_URL` (org variable) |
+| Auth | `method: jwt`, `path: jwt` |
+| Role | `ext-vscode-adblock-syntax` |
+| Secret path | `secret/data/ci-secrets/ext-vscode-adblock-syntax` |
+| Fields | `vsce_pat`, `ovsx_pat` (lowercase) |
 
-Store both as GitHub org/repo secrets (or Vault → GH via terraform-github).
+- **`vsce_pat`** — Azure DevOps PAT with Marketplace publish scope for the
+  `adguard` publisher (was Bamboo `vsceTokenPassword`).
+- **`ovsx_pat`** — Open VSX personal access token (was Bamboo
+  `openVsxTokenPassword`).
 
-Octopass / Slack / mirror credentials are provided by the shared org
-workflows and do not need per-project configuration once grants are in
-place (see [Gaps and Follow-ups](#gaps-and-follow-ups)).
+The publish job needs `permissions.id-token: write` so
+`hashicorp/vault-action@v4` can mint the JWT. Octopass / Slack / mirror
+credentials stay on the shared org workflows (see
+[Gaps and Follow-ups](#gaps-and-follow-ups)).
 
 ## Infrastructure Dependencies
 
@@ -98,8 +108,9 @@ Distribution is via VS Marketplace, Open VSX, and the public GitHub mirror.
 
 | Integration | Purpose | Configuration |
 | --- | --- | --- |
-| **VS Marketplace** | Extension distribution | `VSCE_PAT` + `vsce publish --pat` |
-| **Open VSX** | Extension distribution | `OVSX_PAT` + `ovsx publish` |
+| **Vault (ci-secrets)** | Marketplace PATs at publish time | OIDC JWT → role `ext-vscode-adblock-syntax` |
+| **VS Marketplace** | Extension distribution | Vault `vsce_pat` + `vsce publish --pat` |
+| **Open VSX** | Extension distribution | Vault `ovsx_pat` + `ovsx publish` |
 | **GitHub mirror** | Public mirror + Release | Octopass OIDC via shared workflows |
 | **Slack** | Release notifications | `#adguard-extension-vcs` |
 
@@ -141,26 +152,27 @@ version before packaging, and `vsce` requires one. Pass a placeholder via the
 
 ## Gaps and Follow-ups
 
-Out of scope for this repository PR, but required before the first GitHub
-Actions release:
+Out of scope for this repository PR / already handled outside it:
 
-1. **`VSCE_PAT` secret** — Azure DevOps PAT with Marketplace publish scope;
-   store as org/repo secret (or Vault → GH).
-2. **`OVSX_PAT` secret** — Open VSX PAT; same storage path as above.
-3. **Optional GitHub Environment** — e.g. `marketplace` with required
+1. **Vault ci-secrets** — `ci-secrets/ext-vscode-adblock-syntax` with role
+   `ext-vscode-adblock-syntax` and fields `vsce_pat` / `ovsx_pat` (done by
+   infra). Confirm the JWT role is bound to this repo +
+   `publish-release.yml` (or the expected `job_workflow_ref`) before the
+   first release.
+2. **Optional GitHub Environment** — e.g. `marketplace` with required
    reviewers in `terraform-github` (similar to the `npm` environment used by
    library packages). Not wired yet so the first publish is not blocked on a
    missing environment.
-4. **Octopass grants** — ensure `ext-vscode-adblock-syntax` is on
+3. **Octopass grants** — ensure `ext-vscode-adblock-syntax` is on
    `common-mirroring`, `keepchangelog-release-flow`, and
    `public-release-create` in microservices `grants.yaml` (private +
    `AdguardTeam/VscodeAdblockSyntax`). See
    https://github.com/AdGuardSoftwareLimited/microservices/pull/243.
-5. **disallow-issue-refs** — add `ext-vscode-adblock-syntax` to the org
+4. **disallow-issue-refs** — add `ext-vscode-adblock-syntax` to the org
    ruleset in `terraform-github` (mirrored repo must not use bare `#123` in
    commits). See
    https://github.com/AdGuardSoftwareLimited/terraform-github/pull/226.
-6. **Shared actions gap** — there is no org-wide
+5. **Shared actions gap** — there is no org-wide
    `deploy-to-vscode-marketplace` reusable workflow yet. Publish steps live
    in this repo until one exists.
 

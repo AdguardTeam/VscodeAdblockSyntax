@@ -90,9 +90,11 @@ jobs:
     name: Publish to VS Marketplace and Open VSX
     needs: [tag, build]
     runs-on: team-extensions
-    # Both marketplaces use PATs (VSCE_PAT / OVSX_PAT). See DEPLOYMENT.md.
+    # Marketplaces still use PATs (vsce/ovsx). PATs live in Vault; this job
+    # authenticates to Vault via GitHub OIDC (jwt). See DEPLOYMENT.md.
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -105,15 +107,27 @@ jobs:
           name: vscode-adblock-vsix
           path: artifacts
 
+      - name: Fetch marketplace PATs from Vault
+        id: vault
+        uses: hashicorp/vault-action@v4
+        with:
+          url: ${{ vars.VAULT_URL }}
+          method: jwt
+          path: jwt
+          role: ext-vscode-adblock-syntax
+          secrets: |
+            secret/data/ci-secrets/ext-vscode-adblock-syntax vsce_pat | VSCE_PAT ;
+            secret/data/ci-secrets/ext-vscode-adblock-syntax ovsx_pat | OVSX_PAT ;
+
       - name: Install dependencies (publish CLIs)
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Publish to Visual Studio Marketplace
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          VSCE_PAT: ${{ steps.vault.outputs.VSCE_PAT }}
         run: |
           if [ -z "${VSCE_PAT}" ]; then
-            echo "VSCE_PAT secret is not set" >&2
+            echo "VSCE_PAT was not returned from Vault" >&2
             exit 1
           fi
           PRE_ARGS=()
@@ -126,10 +140,10 @@ jobs:
 
       - name: Publish to Open VSX
         env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+          OVSX_PAT: ${{ steps.vault.outputs.OVSX_PAT }}
         run: |
           if [ -z "${OVSX_PAT}" ]; then
-            echo "OVSX_PAT secret is not set" >&2
+            echo "OVSX_PAT was not returned from Vault" >&2
             exit 1
           fi
           PRE_ARGS=()
