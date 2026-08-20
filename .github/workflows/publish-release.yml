@@ -27,7 +27,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Only release-bump merges (or manual dispatch) should tag/publish. Without
+  # this, every closed PR against master would start this workflow and rely on
+  # tag-from-changelog internals to no-op.
   tag:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'release-bump/'))
     uses: AdGuardSoftwareLimited/actions/.github/workflows/tag-from-changelog.yml@master
     with:
       ref: ${{ inputs.ref || github.event.pull_request.merge_commit_sha || github.ref_name }}

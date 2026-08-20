@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [#151]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/151
 [#156]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/156
 
-## [2.1.4] (prerelease) - 2025-12-26
+## [2.1.4] - 2025-12-26
 
 ### Added
 
