@@ -202,6 +202,10 @@ Made with ❤️ by [AdGuard][adguard]
 
 </div>
 
+> **Note:** Development takes place in a private repository and is mirrored to
+> [AdguardTeam/VscodeAdblockSyntax][mirror] for public visibility. Issues and
+> feature requests should be opened on the public mirror.
+
 <!-- Link Definitions -->
 [adguard]: https://adguard.com
 [aglint]: https://github.com/AdguardTeam/AGLint
@@ -216,6 +220,7 @@ Made with ❤️ by [AdGuard][adguard]
 [license]: LICENSE.md
 [linguist]: https://github.com/github/linguist
 [marketplace]: https://marketplace.visualstudio.com/items?itemName=adguard.adblock
+[mirror]: https://github.com/AdguardTeam/VscodeAdblockSyntax
 [openvsx]: https://open-vsx.org/extension/adguard/adblock
 
 <!-- Resource Links -->

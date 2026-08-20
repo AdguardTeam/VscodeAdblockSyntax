@@ -47,10 +47,7 @@ COPY . /extension
 # ============================================================================
 FROM source AS test-output
 
-ARG BUILD_RUN_ID=""
-
 RUN --mount=type=cache,target=/pnpm-store,id=vscode-adblock-pnpm \
-    echo "${BUILD_RUN_ID}" > /tmp/.build-run-id && \
     pnpm --filter @vscode-adblock-syntax/shared build && \
     pnpm test:compile && \
     pnpm lint:md && \
@@ -64,8 +61,6 @@ RUN --mount=type=cache,target=/pnpm-store,id=vscode-adblock-pnpm \
 # ============================================================================
 FROM source AS build
 
-ARG BUILD_RUN_ID=""
-
 # Optional package version for local builds. CI injects the release version
 # into package.json before building the image; locally this arg is required
 # because package.json has no version field and vsce needs one.
@@ -75,7 +70,6 @@ ARG VERSION=""
 ARG PRE_RELEASE="false"
 
 RUN --mount=type=cache,target=/pnpm-store,id=vscode-adblock-pnpm \
-    echo "${BUILD_RUN_ID}" > /tmp/.build-run-id && \
     if [ -n "${VERSION}" ]; then npm pkg set version="${VERSION}"; fi && \
     pnpm --filter @vscode-adblock-syntax/shared build && \
     pnpm test:compile && \
