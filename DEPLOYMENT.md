@@ -77,27 +77,17 @@ with `cancel-in-progress: false` to serialize releases.
 
 Runtime extension code needs no CI-specific environment variables.
 
-- **VS Marketplace — OIDC** (`vsce publish --oidc`): no long-lived secret.
-  Needs a Marketplace **trusted publishing** policy for this repo +
-  `publish-release.yml`, and job `permissions: id-token: write`.
-- **Open VSX — `OVSX_PAT` secret**: PAT still required (no OIDC yet). Store as
-  org/repo secret (or Vault → GH).
+Publish uses long-lived PATs (not Marketplace OIDC):
+
+- **`VSCE_PAT`** — Azure DevOps PAT with Marketplace publish scope for the
+  `adguard` publisher (`vsce publish --pat`).
+- **`OVSX_PAT`** — Open VSX personal access token (`ovsx publish -p`).
+
+Store both as GitHub org/repo secrets (or Vault → GH via terraform-github).
 
 Octopass / Slack / mirror credentials are provided by the shared org
 workflows and do not need per-project configuration once grants are in
 place (see [Gaps and Follow-ups](#gaps-and-follow-ups)).
-
-### Marketplace OIDC setup (one-time)
-
-1. On [Visual Studio Marketplace](https://marketplace.visualstudio.com/manage)
-   publisher settings for `adguard`, add a **trusted publishing** policy for
-   `AdGuardSoftwareLimited/ext-vscode-adblock-syntax` and the
-   `publish-release.yml` workflow.
-2. Ensure the publish job has `id-token: write` (already set in the workflow).
-3. First publish must run from GitHub Actions (OIDC is not available locally).
-
-`@vscode/vsce` is pinned to `3.9.3-5+` because that is the first line that
-ships `--oidc`. Revisit when a stable `3.9.3` (or newer) lands.
 
 ## Infrastructure Dependencies
 
@@ -108,7 +98,7 @@ Distribution is via VS Marketplace, Open VSX, and the public GitHub mirror.
 
 | Integration | Purpose | Configuration |
 | --- | --- | --- |
-| **VS Marketplace** | Extension distribution | OIDC trusted publishing (`vsce --oidc`) |
+| **VS Marketplace** | Extension distribution | `VSCE_PAT` + `vsce publish --pat` |
 | **Open VSX** | Extension distribution | `OVSX_PAT` + `ovsx publish` |
 | **GitHub mirror** | Public mirror + Release | Octopass OIDC via shared workflows |
 | **Slack** | Release notifications | `#adguard-extension-vcs` |
@@ -154,9 +144,9 @@ version before packaging, and `vsce` requires one. Pass a placeholder via the
 Out of scope for this repository PR, but required before the first GitHub
 Actions release:
 
-1. **Marketplace trusted publishing** — configure OIDC trust for this repo +
-   `publish-release.yml` on the `adguard` publisher (no `VSCE_PAT`).
-2. **Open VSX secret** — configure `OVSX_PAT` (org/repo secret or Vault → GH).
+1. **`VSCE_PAT` secret** — Azure DevOps PAT with Marketplace publish scope;
+   store as org/repo secret (or Vault → GH).
+2. **`OVSX_PAT` secret** — Open VSX PAT; same storage path as above.
 3. **Optional GitHub Environment** — e.g. `marketplace` with required
    reviewers in `terraform-github` (similar to the `npm` environment used by
    library packages). Not wired yet so the first publish is not blocked on a
@@ -164,15 +154,15 @@ Actions release:
 4. **Octopass grants** — ensure `ext-vscode-adblock-syntax` is on
    `common-mirroring`, `keepchangelog-release-flow`, and
    `public-release-create` in microservices `grants.yaml` (private +
-   `AdguardTeam/VscodeAdblockSyntax`).
+   `AdguardTeam/VscodeAdblockSyntax`). See
+   https://github.com/AdGuardSoftwareLimited/microservices/pull/243.
 5. **disallow-issue-refs** — add `ext-vscode-adblock-syntax` to the org
    ruleset in `terraform-github` (mirrored repo must not use bare `#123` in
-   commits).
+   commits). See
+   https://github.com/AdGuardSoftwareLimited/terraform-github/pull/226.
 6. **Shared actions gap** — there is no org-wide
    `deploy-to-vscode-marketplace` reusable workflow yet. Publish steps live
    in this repo until one exists.
-7. **vsce stable OIDC** — drop the `@vscode/vsce` prerelease pin once a
-   stable release includes `--oidc`.
 
 [ext-shared-actions]: https://github.com/AdGuardSoftwareLimited/ext-shared-actions
 [actions]: https://github.com/AdGuardSoftwareLimited/actions

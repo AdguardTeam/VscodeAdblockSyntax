@@ -90,11 +90,9 @@ jobs:
     name: Publish to VS Marketplace and Open VSX
     needs: [tag, build]
     runs-on: team-extensions
-    # VS Marketplace: OIDC trusted publishing (`vsce publish --oidc`) — no PAT.
-    # Open VSX: still PAT-only (`OVSX_PAT` secret) — see DEPLOYMENT.md.
+    # Both marketplaces use PATs (VSCE_PAT / OVSX_PAT). See DEPLOYMENT.md.
     permissions:
       contents: read
-      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -110,16 +108,20 @@ jobs:
       - name: Install dependencies (publish CLIs)
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Publish to Visual Studio Marketplace (OIDC)
+      - name: Publish to Visual Studio Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
+          if [ -z "${VSCE_PAT}" ]; then
+            echo "VSCE_PAT secret is not set" >&2
+            exit 1
+          fi
           PRE_ARGS=()
           if [ "${{ needs.build.outputs.marketplace_prerelease }}" = "true" ]; then
             PRE_ARGS+=(--pre-release)
           fi
-          # Trusted publishing: configure the publisher policy on the Marketplace
-          # for this repo + workflow, then:
-          # https://github.com/microsoft/vscode-vsce#trusted-publishing
-          pnpm exec vsce publish --oidc --no-dependencies "${PRE_ARGS[@]}" \
+          # https://code.visualstudio.com/api/working-with-extensions/publishing-extension
+          pnpm exec vsce publish --pat "${VSCE_PAT}" --no-dependencies "${PRE_ARGS[@]}" \
             -i artifacts/vscode-adblock.vsix
 
       - name: Publish to Open VSX
@@ -134,7 +136,6 @@ jobs:
           if [ "${{ needs.build.outputs.marketplace_prerelease }}" = "true" ]; then
             PRE_ARGS+=(--pre-release)
           fi
-          # Open VSX has no OIDC/trusted-publishing equivalent yet.
           # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
           pnpm exec ovsx publish artifacts/vscode-adblock.vsix \
             -p "${OVSX_PAT}" \
