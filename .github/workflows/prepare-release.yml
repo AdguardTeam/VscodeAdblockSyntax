@@ -2,13 +2,16 @@ name: Prepare release
 
 description: >-
   Opens a release PR that finalizes CHANGELOG.md for the given tag.
-  After merge, publish-release.yml takes over.
+  After merge, publish-release.yml takes over. Odd minor (e.g. v2.1.x) =
+  Marketplace pre-release; even minor (e.g. v2.2.x) = stable.
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag WITH "v" prefix (e.g. v2.2.0, v2.1.5)'
+        description: >-
+          Release tag WITH "v" prefix. Odd minor = pre-release channel
+          (e.g. v2.1.5); even minor = stable (e.g. v2.2.0).
         required: true
         type: string
 
