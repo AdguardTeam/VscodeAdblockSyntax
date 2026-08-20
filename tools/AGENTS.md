@@ -31,9 +31,6 @@ Markdown formatting, versioning, contribution rules) see the root
 A collection of small, standalone Node.js scripts used by the repo's build and
 maintenance workflows. Currently:
 
-- [build-txt.ts](build-txt.ts) — writes the extension version from the root
-  `package.json` into `out/build.txt` (falls back to `0.0.0-dev` when CI has
-  not injected a version).
 - [clean.ts](clean.ts) — dependency-free cleanup that removes `node_modules`
   from every workspace package.
 
@@ -47,7 +44,7 @@ These scripts are invoked from the repo root (e.g. `pnpm clean`) and run via
 - **Runtime**: Node.js (run-and-exit scripts).
 - **Primary Dependencies**: None — the scripts rely on Node.js built-ins
   (`node:fs`, `node:path`, `node:child_process`) and the `pnpm` CLI.
-- **Storage**: Filesystem only (writes `out/build.txt`, removes `node_modules`).
+- **Storage**: Filesystem only (removes `node_modules`).
 - **Testing**: None currently (no test runner configured for this package).
 - **Build**: None — scripts are executed in place via `tsx`.
 - **Project Type**: monorepo package (CLI/utility scripts).
@@ -58,7 +55,6 @@ These scripts are invoked from the repo root (e.g. `pnpm clean`) and run via
 tools/
 ├── package.json          # Minimal manifest (no build/test scripts)
 ├── tsconfig.json         # TypeScript config for the scripts
-├── build-txt.ts          # Writes version → out/build.txt
 └── clean.ts              # Removes node_modules from all workspace packages
 ```
 
@@ -91,9 +87,7 @@ Design as run-and-exit command-line scripts:
   Exit non-zero on failure (e.g. [clean.ts](clean.ts) calls `process.exit(1)` on
   error).
 - Use stdout for normal progress output and stderr for diagnostics and errors.
-- Fail fast with clear messages: validate required inputs early. Prefer safe
-  defaults for optional metadata (e.g. [build-txt.ts](build-txt.ts) falls back
-  to `0.0.0-dev` when `package.json` has no `version`).
+- Fail fast with clear messages: validate required inputs early.
 - Keep startup fast and dependencies minimal — prefer Node.js built-ins so
   cleanup-style scripts can run even when package `node_modules` are absent.
 
@@ -101,7 +95,7 @@ Design as run-and-exit command-line scripts:
 
 These are independent, single-file scripts with no shared internal layering.
 
-- **Separation of Concerns** — one script per task (versioning, cleanup).
+- **Separation of Concerns** — one script per task (cleanup).
 - **Single Responsibility** — each file does exactly one job.
 - **Dependency Direction** — scripts depend only on Node.js built-ins and CLI
   tools (`pnpm`); they do not import from other workspace packages.
@@ -115,7 +109,6 @@ Dependency flow:
 
 ```mermaid
 flowchart LR
-    buildTxt["build-txt.ts"] --> fs["node:fs, node:path"] --> output["out/build.txt"]
     clean["clean.ts"] --> pnpm["pnpm CLI + node:fs"] --> removes["removes node_modules"]
 ```
 
@@ -146,10 +139,8 @@ maintenance scripts (especially cleanup) do not themselves depend on installed
 
 ### Configuration & Documentation
 
-- These scripts read configuration from the repo (root `package.json` version,
-  `pnpm ls` output); they take no environment variables or config files of their
-  own. When a script's inputs or outputs change (e.g. the `build.txt` location),
-  update this file and any CI configuration that consumes the output.
+- These scripts read configuration from the repo (`pnpm ls` output); they take
+  no environment variables or config files of their own.
 
 ### Markdown Formatting
 

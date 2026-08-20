@@ -27,9 +27,6 @@ architecture, see [AGENTS.md](AGENTS.md).
 A collection of small, standalone, dependency-free Node.js scripts used by the
 repo's build and maintenance workflows:
 
-- [build-txt.ts](build-txt.ts) — writes the extension version from the root
-    `package.json` into `out/build.txt` (falls back to `0.0.0-dev` when no
-    version is injected).
 - [clean.ts](clean.ts) — removes `node_modules` from every workspace package.
 
 The scripts are run via `tsx` and rely only on Node.js built-ins and the `pnpm`
@@ -52,7 +49,6 @@ example via the root `pnpm clean` command.
 
 ```bash
 pnpm clean                          # runs tsx tools/clean.ts (removes node_modules)
-pnpm exec tsx tools/build-txt.ts    # writes version -> out/build.txt
 ```
 
 ### Lint
@@ -78,10 +74,6 @@ pnpm test:compile
     exits non-zero on failure. Prefer Node.js built-ins (`node:fs`, `node:path`,
     `node:child_process`) so cleanup-style scripts run even without installed
     `node_modules`. Update [AGENTS.md](AGENTS.md) Project Structure/Overview.
-- **Grow non-trivial logic**: extract the logic into a testable function before
-    adding a test setup (no test runner is configured here yet).
-- **Change a script's inputs/outputs**: update any CI configuration that consumes
-    the output (e.g. the `build.txt` location).
 
 ## Troubleshooting
 

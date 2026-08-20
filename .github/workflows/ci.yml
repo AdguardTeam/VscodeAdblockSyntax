@@ -26,20 +26,7 @@ jobs:
       # consistent across test-output and build-output layers. package.json
       # has no committed version — CI injects one derived from CHANGELOG.
       - name: Set dev version
-        env:
-          NIGHTLY_POSTFIX: -nightly
-        run: |
-          set +e
-          LATEST="$(grep -oE '## \[[0-9]+\.[0-9]+\.[0-9]+[^]]*\]' CHANGELOG.md \
-            | head -n1 | sed -E 's/## \[([^]]+)\].*/\1/')"
-          if [ -z "${LATEST:-}" ]; then
-            LATEST="$(git tag --sort=-v:refname | head -n1 | sed -E 's/^v//')"
-          fi
-          set -e
-          : "${LATEST:=0.0.0}"
-          DEV_VERSION="${LATEST}${NIGHTLY_POSTFIX}"
-          echo "Dev version: ${DEV_VERSION}"
-          npm pkg set version="${DEV_VERSION}"
+        uses: AdGuardSoftwareLimited/ext-shared-actions/.github/actions/set-dev-version@master
 
       - name: Build and test via Docker
         run: DOCKER_BUILDKIT=1 docker build --progress plain --target test-output .

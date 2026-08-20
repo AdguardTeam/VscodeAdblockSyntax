@@ -213,7 +213,7 @@ Layered architecture across the monorepo:
 | Shared contracts | Types/enums used by client and server | [shared/src/index.ts](shared/src/index.ts) |
 | Language server | LSP handlers, linting orchestration, AGLint integration | [server/src/server.ts](server/src/server.ts) |
 | Grammar | TextMate grammar source + compiler | [syntaxes/scripts/build.ts](syntaxes/scripts/build.ts) |
-| Build tooling | Repo-wide build/clean scripts | [tools/build-txt.ts](tools/build-txt.ts) |
+| Build tooling | Repo-wide build/clean scripts | [tools/clean.ts](tools/clean.ts) |
 
 Dependency flow:
 
