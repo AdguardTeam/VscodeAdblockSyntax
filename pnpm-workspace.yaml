@@ -22,7 +22,7 @@ catalog:
   "@typescript-eslint/parser": ^7.5.0
   "@vitest/coverage-v8": ^4.0.15
   "@vitest/expect": ^4.0.15
-  "@vscode/vsce": ^3.9.2
+  "@vscode/vsce": ^3.7.1
   chalk: ^5.6.2
   chokidar: ^5.0.0
   ci-info: ^4.3.1
