@@ -92,7 +92,8 @@ packages plus supporting folders:
 ├── tools/          # Repo build/utility scripts
 ├── test/           # Static fixtures (sample rules, AGLint test workspace)
 ├── icons/          # Extension icons
-└── bamboo-specs/   # CI/CD pipeline configuration
+├── Dockerfile      # Multi-stage CI image (lint/test/build + .vsix package)
+└── .github/        # GitHub Actions (CI, release, mirror)
 ```
 
 The dependency direction is one-way: `client` and `server` depend on `shared`;
@@ -191,9 +192,8 @@ Run from the repository root with pnpm v10:
 | `pnpm lint:code` | Lint code with ESLint (cached). |
 | `pnpm lint:md` | Lint Markdown with markdownlint. |
 | `pnpm clean` | Remove generated files / `node_modules`. |
-| `pnpm package` | Package the extension into `out/vscode-adblock.vsix`. |
+| `pnpm package` | Package the extension into `out/vscode-adblock.vsix` (requires `version` in package.json). |
 | `pnpm package:pre` | Package a pre-release build (`--pre-release`). |
-| `pnpm increment` | Increment the patch version (used by CI). |
 
 ### Updating syntax highlighting
 
@@ -236,11 +236,22 @@ Each package guide documents its own commands:
 
 ### Versioning
 
+`package.json` has **no committed `version` field**. The release version is
+taken from `CHANGELOG.md` and injected by CI before packaging. For a local
+`.vsix`, set a version first:
+
+```bash
+npm pkg set version=0.0.0-dev
+pnpm build && pnpm package
+```
+
 The extension uses an **odd/even minor** scheme: even minor versions are
-releases (`2.0.0`, `2.2.0`), odd minor versions are pre-releases (`2.1.0`,
-`2.3.0`). VSCode Marketplace and Open VSX accept only `major.minor.patch` — no
-`-alpha`/`-beta` suffixes. Always keep pre-release versions higher than the
+releases (`2.0.0`, `2.2.0`), odd minor versions are Marketplace / Open VSX
+pre-releases (`2.1.0`, `2.3.0`). Registries accept only `major.minor.patch` —
+no `-alpha`/`-beta` suffixes. Always keep pre-release versions higher than the
 latest release so VSCode does not downgrade pre-release users.
+
+Releases are automated via GitHub Actions — see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Troubleshooting
 

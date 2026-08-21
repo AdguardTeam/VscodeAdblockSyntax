@@ -2,7 +2,6 @@
     "name": "adblock",
     "displayName": "Adblock/AdGuard/uBlock filters grammar",
     "description": "VS code extension that adds support for ad blocking rules syntax.",
-    "version": "2.1.4",
     "publisher": "adguard",
     "icon": "icons/aglint_128x128.png",
     "main": "./client/out/extension",
@@ -78,7 +77,6 @@
     "scripts": {
         "build": "cross-env NODE_ENV=production pnpm --recursive build",
         "clean": "tsx tools/clean.ts",
-        "increment": "pnpm version patch --no-git-tag-version",
         "lint": "pnpm --recursive lint",
         "lint:md": "markdownlint .",
         "lint:code": "eslint . --cache --ext .ts --ext .js",

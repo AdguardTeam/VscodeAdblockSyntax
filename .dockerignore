@@ -1,0 +1,44 @@
+# Version control
+.git
+
+# IDE and editor files
+.idea
+.vscode
+.DS_Store
+
+# Build caches
+.eslintcache
+*.tsbuildinfo
+
+# Build outputs
+build/
+dist/
+output/
+out/
+tmp/
+client/out/
+server/out/
+shared/out/
+syntaxes/out/
+
+# Dependencies
+node_modules/
+
+# Dockerfile is passed explicitly via --file; excluding it here just keeps
+# it out of the build context (avoids cache busting on Dockerfile edits).
+Dockerfile*
+*.log
+*.tgz
+*.vsix
+
+# Git hooks
+.husky
+
+# GitHub workflows
+.github/
+
+# SDD specs
+.sdd/
+
+# Test coverage
+coverage/
