@@ -126,13 +126,13 @@ jobs:
             secret/data/ci-secrets/ext-vscode-adblock-syntax vsce_pat | VSCE_PAT ;
             secret/data/ci-secrets/ext-vscode-adblock-syntax ovsx_pat | OVSX_PAT ;
 
-      - name: Install dependencies (publish CLIs)
-        run: pnpm install --frozen-lockfile --ignore-scripts
-
+      # Host has npm but not pnpm. Publish only needs vsce/ovsx against the
+      # prebuilt .vsix — no monorepo install. Versions match pnpm-workspace catalog.
       - name: Publish to Visual Studio Marketplace
         env:
           VSCE_PAT: ${{ steps.vault.outputs.VSCE_PAT }}
         run: |
+          set -euo pipefail
           if [ -z "${VSCE_PAT}" ]; then
             echo "VSCE_PAT was not returned from Vault" >&2
             exit 1
@@ -142,13 +142,17 @@ jobs:
             PRE_ARGS+=(--pre-release)
           fi
           # https://code.visualstudio.com/api/working-with-extensions/publishing-extension
-          pnpm exec vsce publish --pat "${VSCE_PAT}" --no-dependencies "${PRE_ARGS[@]}" \
+          npx --yes @vscode/vsce@3.7.1 publish \
+            --pat "${VSCE_PAT}" \
+            --no-dependencies \
+            "${PRE_ARGS[@]}" \
             -i artifacts/vscode-adblock.vsix
 
       - name: Publish to Open VSX
         env:
           OVSX_PAT: ${{ steps.vault.outputs.OVSX_PAT }}
         run: |
+          set -euo pipefail
           if [ -z "${OVSX_PAT}" ]; then
             echo "OVSX_PAT was not returned from Vault" >&2
             exit 1
@@ -158,7 +162,8 @@ jobs:
             PRE_ARGS+=(--pre-release)
           fi
           # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
-          pnpm exec ovsx publish artifacts/vscode-adblock.vsix \
+          npx --yes ovsx@0.10.7 publish \
+            artifacts/vscode-adblock.vsix \
             -p "${OVSX_PAT}" \
             "${PRE_ARGS[@]}"
 
