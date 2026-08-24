@@ -126,41 +126,64 @@ jobs:
             secret/data/ci-secrets/ext-vscode-adblock-syntax vsce_pat | VSCE_PAT ;
             secret/data/ci-secrets/ext-vscode-adblock-syntax ovsx_pat | OVSX_PAT ;
 
-      - name: Install dependencies (publish CLIs)
-        run: pnpm install --frozen-lockfile --ignore-scripts
-
+      # team-extensions runners do not ship pnpm on the host PATH. Publish CLIs
+      # run inside the same node-ssh image used for package/build (has pnpm).
       - name: Publish to Visual Studio Marketplace
         env:
           VSCE_PAT: ${{ steps.vault.outputs.VSCE_PAT }}
+          MARKETPLACE_PRERELEASE: ${{ needs.build.outputs.marketplace_prerelease }}
         run: |
+          set -euo pipefail
           if [ -z "${VSCE_PAT}" ]; then
             echo "VSCE_PAT was not returned from Vault" >&2
             exit 1
           fi
-          PRE_ARGS=()
-          if [ "${{ needs.build.outputs.marketplace_prerelease }}" = "true" ]; then
-            PRE_ARGS+=(--pre-release)
-          fi
           # https://code.visualstudio.com/api/working-with-extensions/publishing-extension
-          pnpm exec vsce publish --pat "${VSCE_PAT}" --no-dependencies "${PRE_ARGS[@]}" \
-            -i artifacts/vscode-adblock.vsix
+          docker run --rm \
+            -e VSCE_PAT \
+            -e MARKETPLACE_PRERELEASE \
+            -v "${PWD}/artifacts:/artifacts:ro" \
+            adguard/node-ssh:22.22--0 \
+            bash -lc '
+              set -euo pipefail
+              PRE_ARGS=()
+              if [ "${MARKETPLACE_PRERELEASE}" = "true" ]; then
+                PRE_ARGS+=(--pre-release)
+              fi
+              pnpm dlx "@vscode/vsce@3.7.1" publish \
+                --pat "${VSCE_PAT}" \
+                --no-dependencies \
+                "${PRE_ARGS[@]}" \
+                -i /artifacts/vscode-adblock.vsix
+            '
 
       - name: Publish to Open VSX
         env:
           OVSX_PAT: ${{ steps.vault.outputs.OVSX_PAT }}
+          MARKETPLACE_PRERELEASE: ${{ needs.build.outputs.marketplace_prerelease }}
         run: |
+          set -euo pipefail
           if [ -z "${OVSX_PAT}" ]; then
             echo "OVSX_PAT was not returned from Vault" >&2
             exit 1
           fi
-          PRE_ARGS=()
-          if [ "${{ needs.build.outputs.marketplace_prerelease }}" = "true" ]; then
-            PRE_ARGS+=(--pre-release)
-          fi
           # https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
-          pnpm exec ovsx publish artifacts/vscode-adblock.vsix \
-            -p "${OVSX_PAT}" \
-            "${PRE_ARGS[@]}"
+          docker run --rm \
+            -e OVSX_PAT \
+            -e MARKETPLACE_PRERELEASE \
+            -v "${PWD}/artifacts:/artifacts:ro" \
+            adguard/node-ssh:22.22--0 \
+            bash -lc '
+              set -euo pipefail
+              PRE_ARGS=()
+              if [ "${MARKETPLACE_PRERELEASE}" = "true" ]; then
+                PRE_ARGS+=(--pre-release)
+              fi
+              pnpm dlx "ovsx@0.10.7" publish \
+                /artifacts/vscode-adblock.vsix \
+                -p "${OVSX_PAT}" \
+                "${PRE_ARGS[@]}"
+            '
 
   mirror-and-release:
     needs: [tag, build, publish-marketplaces]
