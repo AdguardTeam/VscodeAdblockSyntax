@@ -9,6 +9,20 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.1.6] - 2026-08-24
+
 ### Changed
 
 - Improved syntax highlighting for network rules and modifiers [#93], [#120], [#131], [#137].
@@ -17,7 +31,6 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Highlighting for cosmetic rules modifiers [#134], [#151].
 - Highlighting nested selector in CSS pseudo-class [#156].
-
 [#120]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/120
 [#131]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/131
 [#134]: https://github.com/AdguardTeam/VscodeAdblockSyntax/issues/134
@@ -540,7 +553,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [AGLint]: https://github.com/AdguardTeam/AGLint/blob/master/CHANGELOG.md
 
-[Unreleased]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.1.4...HEAD
+[Unreleased]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.1.6...HEAD
+[2.1.6]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.1.4...v2.1.6
 [2.1.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.0.4...v2.1.3
 [2.0.4]: https://github.com/AdguardTeam/VscodeAdblockSyntax/compare/v2.0.3...v2.0.4
