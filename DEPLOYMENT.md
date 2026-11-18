@@ -33,7 +33,8 @@ In short:
 
 1. A maintainer runs `prepare-release.yml` manually with a target tag
    (e.g. `v2.2.0` or `v2.1.5`) to open a release-bump PR that finalizes
-   `CHANGELOG.md`.
+   `CHANGELOG.md`. The Actions run list shows the requested tag, for example
+   `Prepare release v2.2.0`.
 2. Merging the release-bump PR triggers `publish-release.yml`, which:
    - tags the release commit from `CHANGELOG.md` (`tag-from-changelog`);
    - builds, tests, and packages the `.vsix` in Docker;
